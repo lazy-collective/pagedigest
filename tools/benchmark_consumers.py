@@ -46,7 +46,16 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--pages", type=int, default=100)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument(
+        "--freshness-study",
+        action="store_true",
+        help="Run the frozen bounded-freshness development matrix",
+    )
     args = parser.parse_args()
+    if args.freshness_study:
+        from benchmark_freshness import run_study
+
+        return run_study(args.output)
     if args.pages < 10:
         parser.error("at least 10 pages required")
     pages = {

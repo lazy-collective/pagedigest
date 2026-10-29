@@ -1,0 +1,1 @@
+{"matrix_complete": true, "correctness_pass": true, "economic_gate": "no-go", "response_byte_reduction": -0.3855474899422775, "budget": {"requests": 85680, "response_bytes": 25803420, "wall_seconds": 74.29882816714235}}
