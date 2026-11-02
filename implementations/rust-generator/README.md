@@ -1,6 +1,6 @@
-# Rust Generator (Minimal Reference)
+# PageDigest publisher generator
 
-Crate name: `pagedigest`. Installed binary: `pagedigest-generator`.
+Publish resource revisions from final site output, with durable history and optional digests for audits. No separate page catalog is needed. Crate name: `pagedigest`. Installed binary: `pagedigest-generator`.
 
 ## Behavior
 
@@ -33,7 +33,7 @@ The generator scans the input directory and emits one of:
   completeness claim.
 
 Changing coverage semantics (mode or prefix list) increments `site_rev`, per
-[SPEC.md §3.1](../../SPEC.md#31-top-level-fields).
+[SPEC.md §3.1](https://github.com/maxwellsantoro/pagedigest/blob/generator-v0.3.0/SPEC.md#31-top-level-fields).
 
 ## Digests
 
@@ -49,7 +49,7 @@ publisher foot-gun.
 4. Redeploy the manifest if digests changed; sample with `uv run --project implementations/python-consumer --locked pagedigest verify-live`.
 
 If you cannot reconcile (or the host rewrites HTML unpredictably), omit
-`--with-digest` and ship `rev` only. Details: [CONTENT_HYGIENE.md](../../CONTENT_HYGIENE.md).
+`--with-digest` and ship `rev` only. Details: [CONTENT_HYGIENE.md](https://github.com/maxwellsantoro/pagedigest/blob/main/CONTENT_HYGIENE.md).
 
 ## Modified timestamps
 
@@ -61,7 +61,7 @@ which often churn when otherwise identical build artifacts are copied.
 
 ## Revision state
 
-Version 0.3.0 requires explicit first initialization (`--init`) and fails if durable state is missing on recurring builds. Recover with `--recover-floor N` only after establishing a bound on all historical revisions. Both operations refuse existing state. [Durable state, serialized CI, and recovery](../../CONTENT_HYGIENE.md#durable-publisher-state) are part of setup. These flags were introduced in v0.3.0; v0.2.0 does not support them.
+Version 0.3.0 requires explicit first initialization (`--init`) and fails if durable state is missing on recurring builds. Recover with `--recover-floor N` only after establishing a bound on all historical revisions. Both operations refuse existing state. [Durable state, serialized CI, and recovery](https://github.com/maxwellsantoro/pagedigest/blob/main/CONTENT_HYGIENE.md#durable-publisher-state) are part of setup. These flags were introduced in v0.3.0; v0.2.0 does not support them.
 
 ## Run
 
@@ -91,10 +91,15 @@ pagedigest-generator ./site-dist --state ./publisher-state.json --init --with-di
 pagedigest-generator ./site-dist --state ./publisher-state.json --with-digest
 ```
 
-The [publisher quickstart](../../README.md#publish-a-manifest) owns the complete
+The [publisher quickstart](https://github.com/maxwellsantoro/pagedigest/blob/main/README.md#publish-a-manifest) owns the complete
 installation/deployment path; the commands above select source versus released
 generator execution, not separate state histories.
 
 Flags: `--index-style`, `--include-ext`, `--output`, `--state`,
 `--with-digest`, `--with-modified`, `--coverage complete|prefixes|none`,
 `--prefix` (repeatable; requires `--coverage prefixes`).
+
+Before adopting served hashes, confirm the intended content is live and its bytes
+are stable across supported request representations. Repeated reads from one
+client do not establish this. Preserve byte-stable responses or explicitly review
+representation differences; never strip scripts or normalize bodies during audits.

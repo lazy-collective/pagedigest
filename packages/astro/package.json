@@ -1,7 +1,7 @@
 {
   "name": "@pagedigest/astro",
   "version": "0.2.0",
-  "description": "Astro integration for generating /.well-known/pagedigest.json",
+  "description": "Publish PageDigest change manifests from Astro builds with durable revision history",
   "type": "module",
   "license": "MIT",
   "homepage": "https://pagedigest.org",

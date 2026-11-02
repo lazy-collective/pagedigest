@@ -1,4 +1,4 @@
-# Recurring source and finding updates (local experiment)
+# Recurring source and finding updates (public draft)
 
 This checkout adds `pagedigest sync` and `pagedigest remember`. They are not in the
 published 0.2.0 consumer. They reuse the existing atomic persistent-cache helpers

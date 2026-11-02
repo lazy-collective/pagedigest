@@ -1,7 +1,7 @@
 {
   "name": "pagedigest",
   "version": "0.3.0",
-  "description": "Run the PageDigest manifest generator with npx",
+  "description": "Generate PageDigest website change manifests from build output with npx",
   "type": "module",
   "license": "MIT",
   "homepage": "https://pagedigest.org",

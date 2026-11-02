@@ -4,8 +4,8 @@ Thin npm launcher for the PageDigest manifest generator.
 
 Version 0.3.0 pins generator 0.3.0, including explicit state initialization and
 recovery. Keep publisher state in durable, backed-up storage between builds.
-See the [publisher quickstart](../../README.md#publish-a-manifest) and
-[state recovery guide](../../CONTENT_HYGIENE.md#durable-publisher-state).
+See the [publisher quickstart](https://github.com/maxwellsantoro/pagedigest/blob/main/README.md#publish-a-manifest) and
+[state recovery guide](https://github.com/maxwellsantoro/pagedigest/blob/main/CONTENT_HYGIENE.md#durable-publisher-state).
 
 ```bash
 # First publication only, for an origin without previous history:
@@ -48,7 +48,7 @@ includes digests, the launcher prints a short reminder. Full pipeline:
 3. From a repository checkout root: `uv run --project implementations/python-consumer --locked python tools/reconcile_served_digests.py … --apply` when the CDN rewrites HTML.
 4. `uv run --project implementations/python-consumer --locked pagedigest verify-live https://example.com` to sample live audits.
 
-See [CONTENT_HYGIENE.md](../../CONTENT_HYGIENE.md).
+See [CONTENT_HYGIENE.md](https://github.com/maxwellsantoro/pagedigest/blob/main/CONTENT_HYGIENE.md).
 
 ## Generator options
 
@@ -59,5 +59,10 @@ npx pagedigest --help
 Requires Node.js 20 or newer (for global `fetch`). The generator and launcher
 are MIT licensed.
 
-Implementation versions and registry availability: [version matrix](../../README.md#version-matrix).
+Implementation versions and registry availability: [version matrix](https://github.com/maxwellsantoro/pagedigest/blob/main/README.md#version-matrix).
 The wire format remains version `1`.
+
+Before adopting served hashes, confirm the intended content is live and its bytes
+are stable across supported request representations. Repeated reads from one
+client do not establish this. Preserve byte-stable responses or explicitly review
+representation differences; never strip scripts or normalize bodies during audits.

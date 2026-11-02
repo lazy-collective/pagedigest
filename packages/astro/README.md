@@ -48,7 +48,7 @@ uv run --project implementations/python-consumer --locked python tools/reconcile
 uv run --project implementations/python-consumer --locked pagedigest verify-live https://example.com --sample-size 25
 ```
 
-Full rationale: [`CONTENT_HYGIENE.md`](../../CONTENT_HYGIENE.md). If you cannot
+Full rationale: [`CONTENT_HYGIENE.md`](https://github.com/maxwellsantoro/pagedigest/blob/main/CONTENT_HYGIENE.md). If you cannot
 reconcile, set `withDigest: false` and rely on `rev` only.
 
 ## Scope vs Rust generator
@@ -73,7 +73,7 @@ file-style index keys (`--index-style file`). CI runs
 `tools/smoke_generator_astro_conformance.py` on the shared HTML subset, including Unicode and escaped filenames so
 the two stay aligned for that matrix.
 
-Keep the state durable and serialize publication. A revision reset can reuse numbers silently; it is not always detectable by a consumer. [Initialization and recovery](../../CONTENT_HYGIENE.md#durable-publisher-state) describe the one-time `initialize` and `recoverFloor` options. Full build-byte comparison drives revisions even with `withDigest: false`.
+Keep the state durable and serialize publication. A revision reset can reuse numbers silently; it is not always detectable by a consumer. [Initialization and recovery](https://github.com/maxwellsantoro/pagedigest/blob/main/CONTENT_HYGIENE.md#durable-publisher-state) describe the one-time `initialize` and `recoverFloor` options. Full build-byte comparison drives revisions even with `withDigest: false`.
 
 ## Options
 
@@ -100,3 +100,8 @@ pagedigest({
 
 - `initialize`: first publication only; refuses existing state or output manifest.
 - `recoverFloor`: known historical upper bound used only to recover missing state.
+
+Before adopting served hashes, confirm the intended content is live and its bytes
+are stable across supported request representations. Repeated reads from one
+client do not establish this. Preserve byte-stable responses or explicitly review
+representation differences; never strip scripts or normalize bodies during audits.

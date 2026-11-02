@@ -1,16 +1,23 @@
 # Ecosystem and shared direction
 
-PageDigest and [dotrepo](https://dotrepo.org) share the Lazy Collective goal:
+**Publish what you know. Reuse what still holds. Investigate what changed.**
+
+PageDigest and [DotRepo](https://dotrepo.org) share the Lazy Collective goal:
 reduce repeated fetching, parsing, investigation and verification for publishers
 and consumers together, while preserving useful results and explicit uncertainty.
-Four roles live in two repositories, not four independent stacks:
+Lazy Collective is the chosen umbrella and local coordination project, not a
+released shared service or runtime. Four roles live in two repositories:
 
-- **DotRepo** derives repository declarations from manifests, CI and documentation;
-  **RepoDigest** uses source/revision evidence for discovery, preliminary decisions
-  and reusable findings. Runtime execution is a separate task and assurance level.
-- **DotPage** describes the publisher role in existing site/build workflows;
-  **PageDigest** supplies page change signals and consumer reuse. These role names
-  do not rename the v1 protocol or its packages.
+- **DotRepo** is the existing repository protocol, tools and public lookup index.
+  Declarations can be derived from manifests, CI and documentation; observed
+  overlays retain their separate provenance and authority.
+- **RepoDigest** is DotRepo's experimental discovery, requirement-assessment and
+  reuse workflow. A lead, a source-supported preliminary choice and successful
+  runtime execution establish different things.
+- **PageDigest** is the existing website manifest protocol and publisher/consumer
+  toolchain. Its recurring source workflow adds reports and retained findings.
+- **DotPage** names the publisher role in existing site/build workflows, not a
+  separately shipped product. It does not rename the v1 protocol or packages.
 
 Declarations can avoid repeated work when needed local results remain complete,
 available and fresh enough for the task. Missing bodies, failed processing,
@@ -33,7 +40,8 @@ found PageDigest used 38.6% more response bytes than ordinary HTTP freshness
 caching on its workload. That negative result remains intact. Neither batching
 nor fewer modeled requests establishes lower total work or model-token cost.
 
-This checkout's unreleased [recurring consumer workflow](recurring-consumer.md)
+The public draft source in [PR2](https://github.com/maxwellsantoro/pagedigest/pull/2)
+includes this checkout's unreleased [recurring consumer workflow](recurring-consumer.md), which
 reports changes, required rereading and source-bound findings using HTTP,
 sitemap and PageDigest signals as available. The [publisher workflow](publisher-workflow.md)
 uses existing builds, generator state and Astro integration. Local controls
@@ -43,6 +51,8 @@ The [roadmap](../ROADMAP.md) owns the next bounded outcomes. Compare useful
 completed results at equal quality/freshness, including publisher maintenance,
 consumer reads/parsing, verification, fallback and unfinished attempts. Link
 owning evidence instead of maintaining another catalog or shared runtime.
+DotRepo's [workflow status](https://github.com/maxwellsantoro/dotrepo/blob/main/docs/workflow-status.md)
+owns repository-side delivery and its negative or incomplete consumer studies.
 
 ## Design note: third-party observed-revision manifests
 

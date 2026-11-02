@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "pagedigest"
 version = "0.2.0"
-description = "Minimal pagedigest consumer reference implementation"
+description = "PageDigest manifest validation, download planning and digest audits for recurring website consumers"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.9"
