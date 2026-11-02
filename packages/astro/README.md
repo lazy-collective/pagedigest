@@ -19,8 +19,9 @@ export default defineConfig({
 ```
 
 The integration writes `.well-known/pagedigest.json` inside Astro's output
-directory during `astro:build:done`, and stores persistent revision state at
-`.astro/pagedigest-state.json`.
+directory during `astro:build:done`. Persistent revision state uses the explicit
+`state` path above; the default, when no path is supplied, is
+`.astro/pagedigest-state.json`. Keep the chosen path stable and backed up.
 
 Version 0.2.0 introduces explicit initialization and state recovery.
 Install with `npm install @pagedigest/astro@^0.2.0` to use these options.
@@ -33,17 +34,18 @@ Missing state then fails the build. Do not hardcode initialization in recurring 
 
 Digests are over **served** identity-encoded bytes. This integration hashes
 **build output**. After deploy, reconcile so CDN/edge rewrites do not poison
-audits:
+audits. Run the repository reconciliation tool from a PageDigest checkout root,
+using the absolute path to your Astro build when it is elsewhere:
 
 ```bash
 # 1) astro build  (writes dist/ + .well-known/pagedigest.json)
 # 2) Deploy pages + manifest (atomic if possible; else pages first, then manifest)
 # 3) Reconcile digests to live responses
-python tools/reconcile_served_digests.py ./dist/.well-known/pagedigest.json \
+uv run --project implementations/python-consumer --locked python tools/reconcile_served_digests.py ./dist/.well-known/pagedigest.json \
   --base-url https://example.com --apply
 # Redeploy the manifest if it changed.
 # 4) Sample live audits
-pagedigest verify-live https://example.com --sample-size 25
+uv run --project implementations/python-consumer --locked pagedigest verify-live https://example.com --sample-size 25
 ```
 
 Full rationale: [`CONTENT_HYGIENE.md`](../../CONTENT_HYGIENE.md). If you cannot

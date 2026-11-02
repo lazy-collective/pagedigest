@@ -59,12 +59,13 @@ an unchanged cached parent. Current-source replay is not a released adapter.
 
 ## Install & enable
 
-From this directory, use an isolated environment and install the local package
-(pulls `pagedigest>=0.1.0` from PyPI, or point at the in-tree consumer):
+From this directory, create an isolated development environment and install the
+adapter with the in-tree consumer. This tests current source, not a released
+adapter or the published consumer package:
 
 ```bash
-python -m pip install -e ../../implementations/python-consumer
-python -m pip install -e .
+uv venv
+uv pip install -e ../../implementations/python-consumer -e .
 ```
 
 ```python
@@ -88,8 +89,8 @@ first establishes the baseline.
 ## See it work
 
 ```bash
-python examples/run_demo.py --store /tmp/pd.db --port 8760   # run 1: cold
-python examples/run_demo.py --store /tmp/pd.db --port 8760   # run 2: warm
+uv run --no-sync python examples/run_demo.py --store /tmp/pd.db --port 8760   # run 1: cold
+uv run --no-sync python examples/run_demo.py --store /tmp/pd.db --port 8760   # run 2: warm
 ```
 
 Observed on run 2 against the bundled 5-page localhost publisher:
@@ -103,9 +104,9 @@ downloader/request_count      0     # every page skipped; manifest said nothing 
 ## Tests
 
 ```bash
-python tests/test_offline.py
-python tests/test_traversal.py
-python tests/test_cache_policy.py
+uv run --no-sync python tests/test_offline.py
+uv run --no-sync python tests/test_traversal.py
+uv run --no-sync python tests/test_cache_policy.py
 ```
 
 Reactor-free tests cover: no-manifest fallback, first-contact-then-skip,

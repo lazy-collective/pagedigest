@@ -4,8 +4,7 @@
 
 ```bash
 cd implementations/python-consumer
-uv sync
-uv pip install -e .
+uv sync --locked
 ```
 
 Requires Python ≥3.9. Runtime dependency: `requests`.
@@ -34,7 +33,7 @@ fetching them.
 ## CLI
 
 ```bash
-pagedigest verify-live https://example.com --sample-size 25
+uv run --locked pagedigest verify-live https://example.com --sample-size 25
 ```
 
 `verify-live` exits `2` on digest mismatches so it can act as a deployment gate.

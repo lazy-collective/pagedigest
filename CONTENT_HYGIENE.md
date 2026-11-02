@@ -1,4 +1,4 @@
-# Content Hygiene Guide (RC)
+# Content Hygiene Guide
 
 This guide helps publishers avoid false churn in `rev` and `digest` values.
 
@@ -7,6 +7,11 @@ build-output change review and explicit generation without a hand-maintained pag
 catalog. The existing [Astro hook](packages/astro/README.md) remains the direct
 integration for Astro sites.
 
+Repository tooling below runs from a source checkout root through the locked
+consumer environment: `uv sync --project implementations/python-consumer --locked`.
+Installed consumer usage is described separately in the
+[publisher quickstart](README.md#publish-a-manifest).
+
 ## Default pipeline (when digests are enabled)
 
 Generators hash **build output**. Audits hash **served** identity-encoded
@@ -14,15 +19,15 @@ bytes. Treat the following as the default publisher path whenever
 `--with-digest` / `withDigest: true` is on:
 
 1. Build final static (or deterministic) output.
-2. Optional: `python tools/check_content_hygiene.py ./site-dist`.
+2. Optional: `uv run --project implementations/python-consumer --locked python tools/check_content_hygiene.py ./site-dist`.
 3. Generate the manifest (`pagedigest-generator`, `npx pagedigest`, or
    `@pagedigest/astro`).
 4. Deploy pages + manifest (atomic if possible; else pages first, then
    manifest).
-5. **Reconcile:** `python tools/reconcile_served_digests.py <manifest>
+5. **Reconcile:** `uv run --project implementations/python-consumer --locked python tools/reconcile_served_digests.py <manifest>
    --base-url https://example.com --apply`, then redeploy the manifest if it
    changed.
-6. **Verify:** `pagedigest verify-live https://example.com --sample-size 25`.
+6. **Verify:** `uv run --project implementations/python-consumer --locked pagedigest verify-live https://example.com --sample-size 25`.
 
 Skipping step 5 is the usual cause of honest publishers failing their own
 audits (CDN minification, email obfuscation, script injectors). If you cannot
@@ -77,17 +82,17 @@ tool is read-only and exits non-zero on findings, so it can gate a deploy.
 
 ## Practical pipeline pattern
 
-Copy-paste default path (also on the [README](./README.md#publisher-pipeline-default-path)):
+Copy-paste default path (also on the [README](./README.md#publish-a-manifest)):
 
 1. Render site to final deployable artifacts.
-2. Optional: `python tools/check_content_hygiene.py ./site-dist --fail-on warning`.
+2. Optional: `uv run --project implementations/python-consumer --locked python tools/check_content_hygiene.py ./site-dist --fail-on warning`.
 3. Generate `pagedigest` from rendered output (`--with-digest` when you want audits).
 4. Deploy pages and manifest atomically (or pages first, then manifest).
 5. Reconcile against served bytes
    (`tools/reconcile_served_digests.py <manifest> --base-url <origin> --apply`)
    and redeploy the manifest if it changed — this absorbs CDN/edge rewrites
    without disabling any host feature.
-6. Sample live audits: `pagedigest verify-live <origin>`.
+6. Sample live audits: `uv run --project implementations/python-consumer --locked pagedigest verify-live <origin>`.
 
 ### Digest-only reconcile and `site_rev`
 
@@ -99,7 +104,7 @@ Consumers that short-circuit on equal `site_rev` will not re-read the entry map
 until the next content-driven bump, so their cached digests may lag until then.
 If your consumer pipeline only refreshes digests when `site_rev` moves, pass
 `--bump-site-rev --state <publisher-state.json>` with `--apply`, or re-audit
-digests out of band (`pagedigest verify-live`). The state must be the durable
+digests out of band (`uv run --project implementations/python-consumer --locked pagedigest verify-live`). The state must be the durable
 Rust or Astro state used to generate that manifest. Reconciliation verifies
 matching revisions and reserves the new `site_rev` in state before replacing
 the manifest, so subsequent builds retain the high-water mark. Run generation
@@ -132,7 +137,7 @@ Run the local checker against final rendered output before generating the
 manifest:
 
 ```bash
-python tools/check_content_hygiene.py ./site-dist
+uv run --project implementations/python-consumer --locked python tools/check_content_hygiene.py ./site-dist
 ```
 
 By default, warnings are informational and only hard errors fail the command.
@@ -151,12 +156,12 @@ For URLs with unavoidable non-content churn:
 
 ## Dogfood verification helper
 
-Use `pagedigest verify-live` against a live deployment to sample digest-bearing entries and compare manifest hashes to identity-encoded responses over the wire.
+Use `uv run --project implementations/python-consumer --locked pagedigest verify-live` against a live deployment to sample digest-bearing entries and compare manifest hashes to identity-encoded responses over the wire.
 
 Example:
 
 ```bash
-pagedigest verify-live https://example.com --sample-size 25
+uv run --project implementations/python-consumer --locked pagedigest verify-live https://example.com --sample-size 25
 ```
 
 The legacy `tools/verify_over_wire_digests.py` script remains as a compatibility

@@ -1,5 +1,9 @@
 # Well-Known URI Registration Request: `pagedigest.json`
 
+> Recorded submission text, retained unchanged below. Its dates and future-tense
+> wording describe that submission, not current protocol/package status or registry
+> approval. See [current status](../../README.md#status).
+
 Filed as:
 [protocol-registries/well-known-uris#98](https://github.com/protocol-registries/well-known-uris/issues/98).
 

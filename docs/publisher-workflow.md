@@ -9,7 +9,7 @@ Build the first-party generator and review a first publication:
 
 ```bash
 cargo build --locked --manifest-path implementations/rust-generator/Cargo.toml
-uv run --project implementations/python-consumer python tools/publisher_workflow.py \
+uv run --project implementations/python-consumer --locked python tools/publisher_workflow.py \
   /path/to/site-dist --state /durable/example/state.json \
   --initialize --coverage complete
 ```
@@ -17,8 +17,10 @@ uv run --project implementations/python-consumer python tools/publisher_workflow
 The only initial declarations are facts the build cannot establish: that this
 is the first publication and which URL set is covered. Choose `complete` only
 when the output covers the entire declared origin set. For a partial collection,
-use `--coverage prefixes --prefix /docs/`; choose `none` when omission must not
-assert deletion. With omitted choices, the helper reports the exact
+use `--coverage prefixes --prefix /docs/`; choose `none` when no coverage claim
+can be established and omitted URLs must remain undescribed. Complete-coverage
+omission means removal from the covered set, not proof of HTTP deletion.
+With omitted choices, the helper reports the exact
 clarifications and writes nothing. Durable state must live outside disposable
 build output.
 
@@ -27,7 +29,7 @@ revision. Add `--apply` to generate the manifest and persist revision state.
 Only the first invocation includes `--initialize`. Recurring builds use:
 
 ```bash
-uv run --project implementations/python-consumer python tools/publisher_workflow.py \
+uv run --project implementations/python-consumer --locked python tools/publisher_workflow.py \
   /path/to/site-dist --state /durable/example/state.json --apply
 ```
 

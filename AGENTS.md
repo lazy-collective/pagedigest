@@ -11,8 +11,14 @@ Quick orientation for AI agents working in this repo. **Do not duplicate normati
 | Wire format & consumer algorithm | [SPEC.md](./SPEC.md) |
 | Publisher/consumer obligations | [CONTRACT.md](./CONTRACT.md) |
 | Digest churn & post-deploy reconcile | [CONTENT_HYGIENE.md](./CONTENT_HYGIENE.md) |
-| Priorities & v1.0 path | [ROADMAP.md](./ROADMAP.md) |
+| Current priorities and outcome gates | [ROADMAP.md](./ROADMAP.md) |
 | Release gates | [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md) |
+
+Check the actual branch/HEAD and [README status](./README.md#status) before
+choosing work. The recurring consumer and publisher helpers described in this
+checkout are local source workflows, not commands in the published Python 0.2.0
+package. Relative guides describe this branch; canonical folder names and old
+release announcements do not establish current capabilities or priorities.
 
 ## Repo map
 
@@ -36,6 +42,8 @@ pagedigest.schema.json            # Validation aid; SPEC is normative boundary
 ./tools/run_checks.sh
 ```
 
+Use `uv` for Python commands in this checkout; package-install instructions for
+external consumers and captured historical commands retain their own scope.
 Requires [uv](https://docs.astral.sh/uv/) and Rust/Cargo. CI runs the same script (`.github/workflows/ci.yml`).
 
 Focused runs:
@@ -52,7 +60,10 @@ cd implementations/rust-generator && cargo test --locked
 - **URL keys** are byte-exact, pre-redirect, origin-relative (`/about` ≠ `/about/`).
 - **Digests** are over identity-encoded **served** bytes, not necessarily on-disk build artifacts. Generator hashes files; live audits need [CONTENT_HYGIENE.md](./CONTENT_HYGIENE.md) reconcile pipeline.
 - **Malformed manifests** → consumer fallback, not hard failure ([SPEC.md](./SPEC.md) §5.3).
-- **Partial manifests:** omitted URLs are not implicitly unchanged unless `coverage.mode` is `complete`.
+- **Omitted URLs:** omission never proves unchanged. Under complete coverage,
+  previously listed omitted URLs leave the covered set; under partial or absent
+  coverage they are not described. Coverage removal does not prove HTTP deletion
+  ([SPEC.md](./SPEC.md) §5.1).
 - **Schema ≠ full conformance.** Apply SPEC text in addition to `pagedigest.schema.json`.
 
 When changing protocol behavior: update **SPEC** if normative, add/adjust **test-vectors**, extend **python-consumer** validation/diff tests (`tests/test_vectors.py`).
@@ -83,6 +94,8 @@ Do not document planned install paths as available without updating [README.md](
 |------|------------|
 | Generator behavior / URL keys | `implementations/rust-generator/src/main.rs` |
 | Consumer fetch/diff/audit | `implementations/python-consumer/pagedigest/core.py` |
+| Recurring sync and source-bound findings | [Recurring workflow](docs/recurring-consumer.md); `implementations/python-consumer/pagedigest/recurring.py` and `persistence.py` |
+| Publisher setup and build-output updates | [Publisher workflow](docs/publisher-workflow.md); `tools/publisher_workflow.py` and the existing Astro hook |
 | New manifest fixture | `test-vectors/` + `index.json` + `tools/validate_vectors.py` |
 | Post-deploy digest tooling | `tools/reconcile_served_digests.py`, `tools/verify_over_wire_digests.py` |
 | Dogfood site | `site/`, regenerate manifest via generator, `site-state/` |

@@ -99,7 +99,7 @@ When digests are enabled, run the repository reconciliation tool from a checkout
 after deployment:
 
 ```bash
-python tools/reconcile_served_digests.py ./site-dist/.well-known/pagedigest.json \
+uv run --project implementations/python-consumer --locked python tools/reconcile_served_digests.py ./site-dist/.well-known/pagedigest.json \
   --base-url https://example.com --apply
 # Redeploy the manifest if reconciliation changed it.
 pagedigest verify-live https://example.com --sample-size 25
@@ -120,11 +120,12 @@ needed. This source tooling is also unreleased.
 
 ## Integrate a consumer
 
-Install the consumer, then run the persistent example from this checkout:
+For installed-package use, install `pagedigest==0.2.0` in your consumer
+environment. To run the persistent example from this source checkout instead:
 
 ```bash
-python -m pip install pagedigest==0.2.0
-python implementations/python-consumer/examples/cache_persistence.py \
+uv sync --project implementations/python-consumer --locked
+uv run --project implementations/python-consumer --locked python implementations/python-consumer/examples/cache_persistence.py \
   https://example.com ./cache/example.json --audit-rate 0.01
 ```
 

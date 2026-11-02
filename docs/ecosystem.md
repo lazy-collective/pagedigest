@@ -1,58 +1,58 @@
 # Ecosystem and shared direction
 
-`pagedigest` is one layer of a broader goal shared with its sibling project
-[dotrepo](https://dotrepo.org): a cooperation layer that lets automated
-consumers stop re-deriving what a publisher — or a trustworthy third party —
-can declare once.
+PageDigest and [dotrepo](https://dotrepo.org) share the Lazy Collective goal:
+reduce repeated fetching, parsing, investigation and verification for publishers
+and consumers together, while preserving useful results and explicit uncertainty.
+Four roles live in two repositories, not four independent stacks:
 
-The layering:
+- **DotRepo** derives repository declarations from manifests, CI and documentation;
+  **RepoDigest** uses source/revision evidence for discovery, preliminary decisions
+  and reusable findings. Runtime execution is a separate task and assurance level.
+- **DotPage** describes the publisher role in existing site/build workflows;
+  **PageDigest** supplies page change signals and consumer reuse. These role names
+  do not rename the v1 protocol or its packages.
 
-- **`pagedigest` answers "what changed?"** for any published URL set: one
-  manifest request, monotonic revisions, optional auditable digests.
-- **dotrepo answers "what is this and how do I use it?"** for software
-  repositories: a trust-aware semantic record covering build, test, license,
-  ownership, security, docs, and relationships, with provenance and honest
-  absence.
+Declarations can avoid repeated work when needed local results remain complete,
+available and fresh enough for the task. Missing bodies, failed processing,
+representation changes, audits and uncertain facts still need work. Authenticity,
+correctness and freshness answer different questions. Publishers should derive
+metadata from existing sources and clarify genuine ambiguity; consumers should
+benefit from ordinary HTTP/source caches even without publisher participation.
 
-They target the same waste from adjacent angles. AI crawlers and agents today
-re-fetch unchanged pages and re-read entire repositories to recover facts that
-have not changed and could have been declared. `pagedigest` removes the
-redundant *fetch*; dotrepo removes the redundant *interpretation*. Both pitch
-measured waste reduction to the same audience — crawler operators and
-agent-framework authors — so positioning and distribution effort are
-coordinated across the two projects rather than duplicated.
+## Existing integration and evidence
 
-## dotrepo as a production publisher
+DotRepo's public exporter already emits `/.well-known/pagedigest.json` alongside
+its snapshot and per-file manifests. The [July 3 case study](case-studies/dotrepo.md)
+records that implementation and estimates a cycle against naive full covered-file
+fetching. It is operator dogfood and a dated export estimate, not independently
+measured consumer savings, adoption or proof of current deployment freshness.
 
-dotrepo's static public export already emits a per-file digest manifest
-(`v0/files.json` plus a snapshot digest) in a bespoke shape — the pagedigest
-pattern before pagedigest existed. The planned integration is for that export
-to also emit `/.well-known/pagedigest.json`, making dotrepo:
+The [controlled comparisons](benchmarks/README.md) require equivalent results
+before counting costs. The [bounded-freshness P1 study](benchmarks/digest-exchange-p1-20261029/README.md)
+found PageDigest used 38.6% more response bytes than ordinary HTTP freshness
+caching on its workload. That negative result remains intact. Neither batching
+nor fewer modeled requests establishes lower total work or model-token cost.
 
-- pagedigest's first production publisher with real, continuously refreshed
-  content and real automated consumers (mirrors and agent caches), and
-- a live demonstration that the manifest lets a consumer sync a
-  many-thousand-file corpus with one request plus only the changed files.
+This checkout's unreleased [recurring consumer workflow](recurring-consumer.md)
+reports changes, required rereading and source-bound findings using HTTP,
+sitemap and PageDigest signals as available. The [publisher workflow](publisher-workflow.md)
+uses existing builds, generator state and Astro integration. Local controls
+establish implementation behavior, not combined savings or independent adoption.
 
-Each project becomes the other's proof: pagedigest gets a working publisher
-with measurable savings; dotrepo gets standard change detection instead of a
-project-specific manifest format.
-
-dotrepo's crawler is also a natural pagedigest *consumer*: where an evidence
-source publishes a manifest, the crawler's work-avoidance ladder can honor it
-before materializing anything, the same way it honors cached repository heads.
+The [roadmap](../ROADMAP.md) owns the next bounded outcomes. Compare useful
+completed results at equal quality/freshness, including publisher maintenance,
+consumer reads/parsing, verification, fallback and unfinished attempts. Link
+owning evidence instead of maintaining another catalog or shared runtime.
 
 ## Design note: third-party observed-revision manifests
 
 This is a possible future direction, not part of version 1. The v1 wire format
 and publisher/consumer contract are unaffected.
 
-As specified, `pagedigest` is publisher-gated: a site gets a manifest only if
-its operator publishes one. dotrepo faced the same two-sided-adoption problem
-and escaped it with autonomous overlays — records generated on the
-repository's behalf, clearly marked as non-authoritative, useful before any
-maintainer participates, and designed to be superseded by a native record
-without losing provenance.
+Version 1 manifests come from the publisher origin. Consumers can still use
+ordinary HTTP caching without them. DotRepo supports autonomous overlays with
+explicit non-authority and provenance before maintainer participation; that is an
+implemented bootstrap mechanism, not proof that adoption economics are solved.
 
 The analogous unilateral bootstrap for pagedigest is a **third-party
 observed-revision manifest**: a party that already crawls a site (a search
@@ -76,5 +76,6 @@ Key properties any future design would need to preserve:
 - **Provenance survives handoff.** When a publisher later adopts pagedigest
   natively, consumers switch to the authoritative manifest without ambiguity.
 
-The payoff is the same one dotrepo demonstrated: usefulness stops depending on
-publisher adoption, while native adoption remains the authority upgrade.
+This is a hypothesis for later evaluation, not an implemented v1 extension or a
+reason to start a shared service now. Any native authority upgrade still leaves
+correctness, freshness, combined cost and adoption to be established separately.

@@ -45,8 +45,8 @@ includes digests, the launcher prints a short reminder. Full pipeline:
 
 1. Generate the manifest from final static output.
 2. Deploy pages + manifest.
-3. `python tools/reconcile_served_digests.py … --apply` when the CDN rewrites HTML.
-4. `pagedigest verify-live https://example.com` to sample live audits.
+3. From a repository checkout root: `uv run --project implementations/python-consumer --locked python tools/reconcile_served_digests.py … --apply` when the CDN rewrites HTML.
+4. `uv run --project implementations/python-consumer --locked pagedigest verify-live https://example.com` to sample live audits.
 
 See [CONTENT_HYGIENE.md](../../CONTENT_HYGIENE.md).
 

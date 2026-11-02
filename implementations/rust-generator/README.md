@@ -21,7 +21,8 @@ The generator scans the input directory and emits one of:
 - `--coverage complete` (default): `{"mode": "complete"}`. Use **only** when the
   input directory is the entire covered URL set for the origin — `complete`
   tells consumers that any URL they know which is absent from the manifest has
-  been removed. Pointing the generator at a subdirectory while keeping
+  left the covered set, not necessarily been deleted over HTTP. Pointing the
+  generator at a subdirectory while keeping
   `complete` would overclaim coverage.
 - `--coverage prefixes --prefix /blog/ [--prefix /docs/]`:
   `{"mode": "prefixes", "prefixes": [...]}`. Only entries whose URL key starts
@@ -44,8 +45,8 @@ publisher foot-gun.
 
 1. Generate from final static output (`--with-digest`).
 2. Deploy pages + manifest (atomic if possible; else pages first).
-3. `python tools/reconcile_served_digests.py <manifest> --base-url https://… --apply`
-4. Redeploy the manifest if digests changed; sample with `pagedigest verify-live`.
+3. From a repository checkout root: `uv run --project implementations/python-consumer --locked python tools/reconcile_served_digests.py <manifest> --base-url https://… --apply`
+4. Redeploy the manifest if digests changed; sample with `uv run --project implementations/python-consumer --locked pagedigest verify-live`.
 
 If you cannot reconcile (or the host rewrites HTML unpredictably), omit
 `--with-digest` and ship `rev` only. Details: [CONTENT_HYGIENE.md](../../CONTENT_HYGIENE.md).
@@ -64,17 +65,35 @@ Version 0.3.0 requires explicit first initialization (`--init`) and fails if dur
 
 ## Run
 
-```bash
-cargo run -- ./site-dist --state ./publisher-state.json --init
-cargo run -- ./site-dist --output ./site-dist/.well-known/pagedigest.json --state ./state.json --with-digest
-```
-
-Or install the released crate:
+From the repository root, after building your site into `./site-dist`:
 
 ```bash
-cargo install pagedigest
-pagedigest-generator ./site-dist
+# First publication only, for an origin with no previous revision history:
+cargo run --locked --manifest-path implementations/rust-generator/Cargo.toml -- \
+  ./site-dist --state ./publisher-state.json --init --with-digest
+
+# Every later build uses the SAME durable state; missing state must fail:
+cargo run --locked --manifest-path implementations/rust-generator/Cargo.toml -- \
+  ./site-dist --state ./publisher-state.json --with-digest
 ```
+
+Keep `publisher-state.json` outside build output, backed up and available to each
+serialized build. Do not turn `--init` into a missing-state fallback. Digests
+require the served-byte validation/reconciliation path above.
+
+Or use the released crate with the same first-run/update distinction:
+
+```bash
+cargo install pagedigest --version 0.3.0 --locked
+# First publication only:
+pagedigest-generator ./site-dist --state ./publisher-state.json --init --with-digest
+# Subsequent builds:
+pagedigest-generator ./site-dist --state ./publisher-state.json --with-digest
+```
+
+The [publisher quickstart](../../README.md#publish-a-manifest) owns the complete
+installation/deployment path; the commands above select source versus released
+generator execution, not separate state histories.
 
 Flags: `--index-style`, `--include-ext`, `--output`, `--state`,
 `--with-digest`, `--with-modified`, `--coverage complete|prefixes|none`,
