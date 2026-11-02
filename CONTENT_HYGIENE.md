@@ -176,15 +176,27 @@ uv run --project implementations/python-consumer --locked pagedigest verify-live
 The legacy `tools/verify_over_wire_digests.py` script remains as a compatibility
 wrapper for existing repository automation.
 
+<a id="dogfood-response-policy"></a>
+
 ### Dogfood deployment policy
 
-The source deployment for pagedigest.org sets `Cache-Control: no-transform` on
-HTML responses in its Pages Worker, preserving full build bytes for digest
-verification. This is a response policy, not a protocol requirement. According
+The production deployment for pagedigest.org sets `Cache-Control: no-transform`
+on HTML responses in its Pages Worker, preserving full build bytes, status and
+existing headers. This is a response policy, not a protocol requirement. According
 to [Cloudflare's analytics documentation](https://developers.cloudflare.com/web-analytics/get-started/),
-it prevents automatic analytics-beacon injection; it can also affect automatic
-compression. Deploying this policy therefore stops automatic Web Analytics on
-those HTML responses. The separate cooperation observation endpoint is unchanged.
+it prevents automatic analytics-beacon injection and can affect compression.
+The separate cooperation observation endpoint is unchanged.
+
+[Repair PR3](https://github.com/maxwellsantoro/pagedigest/pull/3) deployed this policy
+on November 2, 2026 while preserving the original HTML, manifest and durable state
+at site revision 13. Strict full-body checks passed in the deployment runner and
+independently. All 18 observations in an additional identity/gzip matrix matched;
+no injected beacon appeared, and HTML was served without compression even when
+gzip was requested. These dated results cover the tested representations, not
+every future response or edge location. This checkout's broader workflow and
+messaging changes remain public draft source; its generated site is not the
+deployed revision. See [delivery status](README.md#status). No account, credential
+or access setting was changed by the repair.
 
 The deployment gate `tools/verify_deployed_site.py` requires the exact intended
 manifest and every covered identity body, with a digest for each entry, on two
