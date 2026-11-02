@@ -2,6 +2,34 @@
 
 This guide helps publishers avoid false churn in `rev` and `digest` values.
 
+## Dogfood response policy
+
+pagedigest.org's Pages Worker adds `Cache-Control: no-transform` to HTML
+responses, preserving their body, status and existing headers. In the November 2
+tested matrix, requests without `Accept` received an injected analytics script
+while ordinary `Accept: */*` requests matched the manifest. Replacing the digest
+with either variant's hash would leave the other wrong. The repair retains the
+existing manifest and durable revision history at site revision 13.
+
+The deployment gate `tools/verify_deployed_site.py` requires the exact intended
+manifest, every covered digest and full identity bodies twice under consumer,
+absent-Accept and browser-style HTML request profiles. It requires `no-transform`
+on HTML and never strips scripts, normalizes bytes, adopts transformed hashes or
+removes digests to pass. Cold/warm persistent-consumer checks follow it. Only
+current main may deploy; older queued/manual commits are refused.
+
+Deploying this response policy suppresses automatic Cloudflare Web Analytics
+injection on HTML, including HTML errors, and can affect automatic compression.
+The cooperation observation endpoint and counters remain unchanged. These effects
+follow [Cloudflare's documentation](https://developers.cloudflare.com/web-analytics/get-started/);
+the actual production result must pass the gate after a separately approved
+deployment. No account, credential or access setting is changed by this patch.
+
+The general publisher guidance below describes deliberate reconciliation for
+other deployments. Confirm the intended content and supported representations
+before adopting observed hashes; two matching reads from one client cannot
+establish byte uniformity across clients.
+
 ## Default pipeline (when digests are enabled)
 
 Generators hash **build output**. Audits hash **served** identity-encoded

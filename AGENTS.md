@@ -1,5 +1,10 @@
 # Agent guide
 
+For this site's production deployment, use the strict
+[dogfood response policy](CONTENT_HYGIENE.md#dogfood-response-policy).
+It preserves HTML bytes and verifies every digest across request profiles;
+generic automatic reconciliation is not the dogfood deployment gate.
+
 Quick orientation for AI agents working in this repo. **Do not duplicate normative prose here** — link to canonical docs ([docs/README.md](./docs/README.md)).
 
 ## What this is
