@@ -16,7 +16,7 @@ Quick orientation for AI agents working in this repo. **Do not duplicate normati
 
 Check the actual branch/HEAD and [README status](./README.md#status) before
 choosing work. The recurring consumer and publisher helpers described in this
-checkout are local source workflows, not commands in the published Python 0.2.0
+checkout are public draft source workflows, not commands in the published Python 0.2.0
 package. Relative guides describe this branch; canonical folder names and old
 release announcements do not establish current capabilities or priorities.
 
@@ -58,7 +58,9 @@ cd implementations/rust-generator && cargo test --locked
 
 - **Revisions never decrease.** Rollback content still bumps `rev` / `site_rev` ([SPEC.md](./SPEC.md) §4.1).
 - **URL keys** are byte-exact, pre-redirect, origin-relative (`/about` ≠ `/about/`).
-- **Digests** are over identity-encoded **served** bytes, not necessarily on-disk build artifacts. Generator hashes files; live audits need [CONTENT_HYGIENE.md](./CONTENT_HYGIENE.md) reconcile pipeline.
+- **Digests** are over identity-encoded **served** bytes. Generators hash files;
+  generic publishers deliberately validate/reconcile supported representations.
+  Dogfood preserves HTML bytes and uses the strict [deployment policy](CONTENT_HYGIENE.md#dogfood-deployment-policy), never automatic hash adoption.
 - **Malformed manifests** → consumer fallback, not hard failure ([SPEC.md](./SPEC.md) §5.3).
 - **Omitted URLs:** omission never proves unchanged. Under complete coverage,
   previously listed omitted URLs leave the covered set; under partial or absent
@@ -77,7 +79,10 @@ When changing protocol behavior: update **SPEC** if normative, add/adjust **test
 | Astro integration (`npm install @pagedigest/astro`) | Additional SSG plugins |
 | Conformance vectors + CI | IANA short-form `rel` (extension URI works today) |
 
-Publisher digests: generate → deploy → `tools/reconcile_served_digests.py --apply` → verify. Version matrix: [README.md](./README.md#version-matrix).
+Publisher digests: generate → deploy → validate supported representations →
+deliberately reconcile when appropriate → verify. Dogfood uses
+`tools/verify_deployed_site.py` and cold/warm controls; mismatches block completion.
+Version matrix: [README.md](./README.md#version-matrix).
 
 Do not document planned install paths as available without updating [README.md](./README.md) and [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md).
 

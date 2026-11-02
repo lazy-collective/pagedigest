@@ -102,6 +102,22 @@ export default {
       return jsonResponse(await observationStats(env));
     }
 
-    return env.ASSETS.fetch(request);
+    const response = await env.ASSETS.fetch(request);
+    // Digests describe the complete identity body. Keep host middleware from
+    // injecting analytics or rewriting HTML after the build has been hashed.
+    // This also applies to HTML error responses, without maintaining a URL list.
+    if (!/^text\/html(?:;|$)/i.test(response.headers.get("content-type") ?? "")) {
+      return response;
+    }
+    const headers = new Headers(response.headers);
+    const cacheControl = headers.get("cache-control");
+    if (!cacheControl?.split(",").some((value) => value.trim().toLowerCase() === "no-transform")) {
+      headers.set("cache-control", cacheControl ? `${cacheControl}, no-transform` : "no-transform");
+    }
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
   },
 };

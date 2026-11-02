@@ -104,7 +104,7 @@ def fetch_identity_digest(
     try:
         r = requests.get(
             url,
-            headers={"Accept-Encoding": "identity"},
+            headers={"Accept-Encoding": "identity", "Cache-Control": "no-cache"},
             allow_redirects=False,
             timeout=timeout,
             stream=True,
@@ -134,18 +134,16 @@ def reconcile_entry(
     first, first_detail = fetch_identity_digest(base_url, path, timeout, max_bytes)
     if first is None:
         return Reconciliation(path, "inconclusive", first_detail)
-    if first == expected_digest:
-        # One matching fetch is sufficient: the digest verifies over the wire.
-        return Reconciliation(path, "match", "ok")
-
     second, second_detail = fetch_identity_digest(base_url, path, timeout, max_bytes)
     if second is None:
         return Reconciliation(path, "inconclusive", second_detail)
-    if second == expected_digest:
+    if first == second == expected_digest:
+        return Reconciliation(path, "match", "two matching observations")
+    if first == expected_digest or second == expected_digest:
         # Alternating between the published digest and something else means
         # the bytes are not stable; treat as unstable rather than a match.
         return Reconciliation(
-            path, "unstable", f"served bytes alternate: {first} vs {expected_digest}"
+            path, "unstable", f"served bytes alternate: {first} vs {second}"
         )
     if first == second:
         return Reconciliation(
@@ -231,6 +229,13 @@ def main() -> int:
                     args.base_url, path, digest, args.timeout, args.max_bytes
                 )
             )
+
+    # Do not partially rewrite a deployment after an unresolved observation.
+    if any(result.status == "inconclusive" for result in results):
+        for result in results:
+            print(f"- {result.status}: {result.path} ({result.detail})")
+        print("inconclusive observations remain; no manifest or state changes applied")
+        return 2
 
     changed = False
     for result in results:

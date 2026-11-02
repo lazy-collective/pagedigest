@@ -24,7 +24,8 @@ bytes. Treat the following as the default publisher path whenever
    `@pagedigest/astro`).
 4. Deploy pages + manifest (atomic if possible; else pages first, then
    manifest).
-5. **Reconcile:** `uv run --project implementations/python-consumer --locked python tools/reconcile_served_digests.py <manifest>
+5. Confirm the intended content is live and representations are stable for supported
+   clients. **Reconcile deliberately:** `uv run --project implementations/python-consumer --locked python tools/reconcile_served_digests.py <manifest>
    --base-url https://example.com --apply`, then redeploy the manifest if it
    changed.
 6. **Verify:** `uv run --project implementations/python-consumer --locked pagedigest verify-live https://example.com --sample-size 25`.
@@ -65,12 +66,14 @@ offenders include email obfuscation, auto-minification, script injectors
 snippets.
 
 Publishers do not need to disable these features. Run
-`tools/reconcile_served_digests.py --apply` after every deploy: it fetches
-each digest-bearing URL twice with identity encoding and makes the manifest
-converge to served reality —
+`tools/reconcile_served_digests.py --apply` only after confirming that the intended
+content is deployed and its identity representation is stable for the supported
+request profiles. It samples each digest-bearing URL twice under one request
+profile; two matching observations do not establish uniform bytes for every client —
 
 - **stable transforms** (deterministic rewrites such as minification): the
-  digest is adopted from the served bytes, so audits pass;
+  digest can be adopted for that observed representation; other representations
+  still need explicit validation;
 - **unstable transforms** (per-response rewrites such as randomized email
   obfuscation — the pagedigest.org case above): the digest is removed for
   that URL, which the spec defines as the honest state.
@@ -79,6 +82,12 @@ converge to served reality —
 `digest` audits, but a poisoned audit reads as publisher dishonesty to
 consumers, which is worse than omitting the digest. Without `--apply` the
 tool is read-only and exits non-zero on findings, so it can gate a deploy.
+
+An injector can vary by request headers even when repeated reads from one client
+are stable. In that case, adopting one variant's hash makes the other variant
+wrong. The [dogfood deployment policy](#dogfood-deployment-policy) preserves exact
+HTML bytes and checks multiple request profiles instead of automatically adopting
+transformed hashes. This does not change the protocol's digest semantics.
 
 ## Practical pipeline pattern
 
@@ -166,6 +175,37 @@ uv run --project implementations/python-consumer --locked pagedigest verify-live
 
 The legacy `tools/verify_over_wire_digests.py` script remains as a compatibility
 wrapper for existing repository automation.
+
+### Dogfood deployment policy
+
+The source deployment for pagedigest.org sets `Cache-Control: no-transform` on
+HTML responses in its Pages Worker, preserving full build bytes for digest
+verification. This is a response policy, not a protocol requirement. According
+to [Cloudflare's analytics documentation](https://developers.cloudflare.com/web-analytics/get-started/),
+it prevents automatic analytics-beacon injection; it can also affect automatic
+compression. Deploying this policy therefore stops automatic Web Analytics on
+those HTML responses. The separate cooperation observation endpoint is unchanged.
+
+The deployment gate `tools/verify_deployed_site.py` requires the exact intended
+manifest and every covered identity body, with a digest for each entry, on two
+complete passes for each of three request profiles: ordinary consumer, absent
+`Accept`, and browser-style HTML. It also requires the HTML response policy.
+In the November 2 tested matrix, analytics injection appeared when `Accept`
+was absent, while `*/*` requests matched; adopting the injected variant's hashes
+would break those ordinary consumer audits.
+The gate rejects stale pages paired with a new manifest, redirects,
+missing digests and inconclusive fetches. Bounded retries allow edge propagation;
+they never rewrite hashes, normalize bytes or accept a smaller audit sample.
+The existing cold/warm persistent-consumer checks then verify completed reuse.
+Only current main can deploy; a queued older SHA must not roll revisions back.
+
+This strict gate is specific to the fully digested dogfood collection. Other
+publishers may use the protocol's optional digests and deliberate reconciliation.
+Reconciliation now fails before writes if any observation is inconclusive and
+checks both responses even when the first digest matches. Before adopting a
+stable transformed digest, establish that the intended page content reached the
+edge: a matching manifest alone does not prove that. Do not reconcile a new
+build against an older live deployment.
 
 ## Durable publisher state
 
