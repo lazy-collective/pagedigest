@@ -2,9 +2,24 @@
 
 **Now:** v1.0 — stable wire format, shipped reference implementations and packages, dogfood on [pagedigest.org](https://pagedigest.org). Gates: [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md).
 
-**Next:** an independently operated benchmark with equivalent results and
-freshness, building on the released consumer safety workflow. Additional publisher
-integrations and v1.1 features follow that evidence.
+**Local source milestone (November 2, unreleased):** a recurring consumer reports
+what changed, what needs rereading and which findings retain their source
+bindings. A publisher helper derives the manifest from final build output,
+previews changes and preserves durable state/coverage. These workflows reuse
+the current protocol and generator rather than adding a separate DotPage service.
+See [recurring consumption](docs/recurring-consumer.md) and
+[publisher setup/update](docs/publisher-workflow.md).
+
+**Next outcome:** demonstrate that independently operated recurring work finishes
+correctly with useful findings at a stated freshness target, and measure the
+publisher's setup/update effort. Compare total work against competent HTTP caching
+and sitemap discovery, including acquisition, audits, missing bodies, failures and
+maintenance. Local tests are implementation evidence, not adoption or savings.
+
+The local [P1 bounded-freshness experiment](docs/benchmarks/digest-exchange-p1-20261029/README.md)
+failed its savings gate: PageDigest used 38.6% more response bytes than HTTP
+freshness caching. Preserve that result. Additional integrations, a shared
+coordinator or v1.1 features need a new bounded workload demonstrating their value.
 
 ## Consumer safety milestone (released September 16, 2026)
 
@@ -97,8 +112,8 @@ Short-form IANA `rel` remains optional follow-up, not a v1.0 blocker.
 
 ## Post-1.0 (reserved)
 
-The v1.1 extension will finalize `PageDigest-State` intermediary semantics using
-lessons from measured consumers. Manifest sharding, content extracts, DNS
+Any v1.1 extension must first justify `PageDigest-State` intermediary semantics
+using measured consumers. Manifest sharding, content extracts, DNS
 discovery, and additional hash algorithms remain reserved; see [SPEC.md](./SPEC.md) §6.
 
 | Item | Disposition |

@@ -51,6 +51,14 @@ Scrapy adapter replays cached responses to preserve traversal. See the
 [migration notes and artifact verification](./docs/releases/consumer-safety.md).
 Independent recurring-consumer evidence remains an open adoption milestone.
 
+**Local source workflows (unreleased):** `pagedigest sync` reports changed
+sources, required rereading, and which source-bound findings remain usable;
+`pagedigest remember` retains a finding against the exact cached sources you
+name. It uses HTTP freshness/validators, optional sitemap discovery and PageDigest
+signals with bounded validation and fallback. See the
+[recurring workflow](docs/recurring-consumer.md). These commands are not in the
+published Python 0.2.0 package, and local validation is not a deployment.
+
 ### Version matrix
 
 | Component | Version / tag | Notes |
@@ -104,6 +112,12 @@ semantic significance; disabling digests does not suppress revision churn.
 [Generator flags](./implementations/rust-generator/README.md) ·
 [Astro setup](./packages/astro/README.md)
 
+The local [publisher setup/update helper](docs/publisher-workflow.md) previews
+changes directly from final build output and preserves durable coverage/state.
+It asks for first-publication and coverage decisions only when they cannot be
+derived. Astro users keep their existing build hook; no second page catalog is
+needed. This source tooling is also unreleased.
+
 ## Integrate a consumer
 
 Install the consumer, then run the persistent example from this checkout:
@@ -143,6 +157,13 @@ The savings primarily come from batching metadata. Counters are a design tradeof
 not the sole source of request reduction. [Comparison and primary references](./SPEC.md#8-relationship-to-existing-mechanisms-non-normative).
 
 ## Evidence and limits
+
+The local [October 29 bounded-freshness comparison](docs/benchmarks/digest-exchange-p1-20261029/README.md)
+found PageDigest transferred **38.6% more response bytes** than HTTP freshness
+caching on its frozen workload, failing its savings gate. Correctness under the
+declared bounded-staleness policy passed; immediate detection was not promised.
+The new workflow preserves that negative result and makes no token, bandwidth or
+economic savings claim. HTTP caching remains the baseline to beat.
 
 - [Controlled consumer benchmark](./docs/benchmarks/README.md): equivalent results,
   conditional sitemap fetching, matched audit policies, and the real persistent

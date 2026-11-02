@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from collections.abc import Sequence
+from pathlib import Path
 from typing import TextIO
 
 from .core import DEFAULT_MAX_AUDIT_BYTES, DEFAULT_MAX_MANIFEST_BYTES, verify_live
@@ -101,9 +103,53 @@ def main(argv: Sequence[str] | None = None, stdout: TextIO | None = None, stderr
     verify_parser = subcommands.add_parser("verify-live", help="Verify manifest digests against live responses")
     _add_verify_live_args(verify_parser)
 
+    sync_parser = subcommands.add_parser("sync", help="Run one bounded recurring source/finding update (experimental)")
+    sync_parser.add_argument("base_url")
+    sync_parser.add_argument("state", type=Path)
+    sync_parser.add_argument("--url", action="append", dest="urls", help="Origin-relative source URL; repeat as needed")
+    sync_parser.add_argument("--sitemap", help="Origin-relative urlset for discovery, e.g. /sitemap.xml")
+    sync_parser.add_argument("--http-only", action="store_true", help="Use HTTP without requesting PageDigest")
+    sync_parser.add_argument("--max-age", type=float, default=3600, help="Maximum seconds since body validation")
+    sync_parser.add_argument("--audit-rate", type=float, default=0.01)
+    sync_parser.add_argument("--language", default="", help="Fixed Accept-Language representation")
+    sync_parser.add_argument("--max-requests", type=int, default=250)
+    sync_parser.add_argument("--max-bytes", type=int, default=50 * 1024 * 1024)
+
+    remember_parser = subcommands.add_parser("remember", help="Retain a finding bound to synchronized sources")
+    remember_parser.add_argument("state", type=Path)
+    remember_parser.add_argument("--id", required=True, dest="finding_id")
+    remember_parser.add_argument("--text-file", type=Path, required=True)
+    remember_parser.add_argument("--source", action="append", required=True, dest="sources")
+
     args = parser.parse_args(argv)
     if args.command == "verify-live":
         return _run_verify_live(args, stdout or sys.stdout, stderr or sys.stderr)
+    if args.command in ("sync", "remember"):
+        from .recurring import remember, sync
+
+        try:
+            if args.command == "remember":
+                if args.text_file.stat().st_size > 32768:
+                    raise ValueError("finding text exceeds32KiB")
+                result = remember(args.state, args.finding_id, args.text_file.read_text(), args.sources)
+            else:
+                result = sync(
+                    args.base_url,
+                    args.state,
+                    urls=args.urls,
+                    sitemap=args.sitemap,
+                    http_only=args.http_only,
+                    max_age=args.max_age,
+                    audit_rate=args.audit_rate,
+                    language=args.language,
+                    max_requests=args.max_requests,
+                    max_bytes=args.max_bytes,
+                )
+            print(json.dumps(result, indent=2), file=stdout or sys.stdout)
+            return 0 if result.get("complete", True) else 2
+        except (OSError, ValueError) as exc:
+            print(f"workflow error: {exc}", file=stderr or sys.stderr)
+            return 1
 
     parser.print_help(stderr or sys.stderr)
     return 1

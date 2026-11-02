@@ -2,6 +2,11 @@
 
 This guide helps publishers avoid false churn in `rev` and `digest` values.
 
+The local [publisher workflow](docs/publisher-workflow.md) combines first setup,
+build-output change review and explicit generation without a hand-maintained page
+catalog. The existing [Astro hook](packages/astro/README.md) remains the direct
+integration for Astro sites.
+
 ## Default pipeline (when digests are enabled)
 
 Generators hash **build output**. Audits hash **served** identity-encoded
