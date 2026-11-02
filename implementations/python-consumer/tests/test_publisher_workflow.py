@@ -20,7 +20,7 @@ class PublisherWorkflowTests(unittest.TestCase):
         cls.generator = Path(os.environ.get("PAGEDIGEST_GENERATOR", str(cls.tool.DEFAULT_GENERATOR))).resolve()
         if not cls.generator.is_file():
             subprocess.run(
-                ["cargo", "build", "--offline", "--locked"],
+                ["cargo", "build", "--locked"],
                 cwd=cls.tool.ROOT / "implementations/rust-generator",
                 check=True,
                 timeout=180,
