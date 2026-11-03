@@ -108,7 +108,7 @@ Do not document planned install paths as available without updating [README.md](
 | Publisher setup and build-output updates | [Publisher workflow](docs/publisher-workflow.md); `tools/publisher_workflow.py` and the existing Astro hook |
 | New manifest fixture | `test-vectors/` + `index.json` + `tools/validate_vectors.py` |
 | Post-deploy digest tooling | `tools/reconcile_served_digests.py`, `tools/verify_over_wire_digests.py` |
-| Dogfood site | `site/`, regenerate manifest via generator, `site-state/` |
+| Dogfood site | `site/`, regenerate manifest via generator, `site-state/`; [visual family](docs/visual-family.md) |
 | Producer case study | [docs/DOGFOOD_TEMPLATE.md](./docs/DOGFOOD_TEMPLATE.md) |
 
 ## License

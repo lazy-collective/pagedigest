@@ -1,22 +1,22 @@
 {
   "version": 1,
-  "generated": "2026-11-03T00:25:07Z",
-  "site_rev": 20,
+  "generated": "2026-11-03T15:21:41Z",
+  "site_rev": 24,
   "coverage": {
     "mode": "complete"
   },
   "entries": {
     "/": {
-      "rev": 17,
-      "digest": "sha256:0884136caa7b93d06b76dea4e925236982b303d2dbd920acd3026425509214ec"
+      "rev": 21,
+      "digest": "sha256:a9802ee0418b7a8651e9b2074fee6c9ae9e66938f2047059bf4371d89e2db6dc"
     },
     "/announcements/v1-rc/": {
-      "rev": 4,
-      "digest": "sha256:84c03c1688efa36e384f8953ca5db7d24e9da2763948b500ab22356aa3b8502f"
+      "rev": 6,
+      "digest": "sha256:3ca56012aad9b10d060203a69809d1397b92239acf99548f18dbc353fdae2eab"
     },
     "/rel/": {
-      "rev": 3,
-      "digest": "sha256:15ccecd4fb806299bc3dd98dca52940e11e5d48b494bdf8de0697860043c017b"
+      "rev": 5,
+      "digest": "sha256:0f21436461e85bbaaac6b7790fe50d05447bfa8953aaf0e954d7c5bea8b609ce"
     }
   }
 }

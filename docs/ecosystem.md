@@ -2,11 +2,13 @@
 
 **Publish what you know. Reuse what still holds. Investigate what changed.**
 
-PageDigest and [DotRepo](https://dotrepo.org) share the Lazy Collective goal:
+PageDigest and [DotRepo](https://dotrepo.org) share the
+[Lazy Collective](https://lazycollective.org/) goal:
 reduce repeated fetching, parsing, investigation and verification for publishers
 and consumers together, while preserving useful results and explicit uncertainty.
-Lazy Collective is the chosen umbrella and local coordination project, not a
-released shared service or runtime. Four roles live in two repositories:
+Lazy Collective is the umbrella and coordination project. Its public home
+explains the shared purpose and current projects; there is no released shared
+service or runtime. Four roles live in two repositories:
 
 - **DotRepo** is the existing repository protocol, tools and public lookup index.
   Declarations can be derived from manifests, CI and documentation; observed
