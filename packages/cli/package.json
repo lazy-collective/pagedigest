@@ -7,7 +7,7 @@
   "homepage": "https://pagedigest.org",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/maxwellsantoro/pagedigest.git",
+    "url": "git+https://github.com/lazy-collective/pagedigest.git",
     "directory": "packages/cli"
   },
   "bin": {

@@ -15,7 +15,7 @@ dependencies = [
 
 [project.urls]
 Homepage = "https://pagedigest.org"
-Repository = "https://github.com/maxwellsantoro/pagedigest"
+Repository = "https://github.com/lazy-collective/pagedigest"
 
 [project.scripts]
 pagedigest = "pagedigest.cli:main"

@@ -74,7 +74,7 @@ sources, required rereading, and which source-bound findings remain usable;
 name. It uses HTTP freshness/validators, optional sitemap discovery and PageDigest
 signals with bounded validation and fallback. See the
 [recurring workflow](docs/recurring-consumer.md). These commands are not in the
-published Python 0.2.0 package. [PR2](https://github.com/maxwellsantoro/pagedigest/pull/2)
+published Python 0.2.0 package. [PR2](https://github.com/lazy-collective/pagedigest/pull/2)
 records implementation and validation history. Source publication, site deployment
 and package releases remain separate events.
 
@@ -108,7 +108,7 @@ pagedigest-generator ./site-dist \
 ```
 
 The same generator is available as `npx pagedigest@0.3.0` and
-[release binaries](https://github.com/maxwellsantoro/pagedigest/releases/tag/generator-v0.3.0).
+[release binaries](https://github.com/lazy-collective/pagedigest/releases/tag/generator-v0.3.0).
 
 Replace `/durable/...` with backed-up storage that survives builds. An evictable
 CI cache is insufficient. Serialize generation, state persistence, deployment,

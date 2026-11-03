@@ -4,8 +4,8 @@ Thin npm launcher for the PageDigest manifest generator.
 
 Version 0.3.0 pins generator 0.3.0, including explicit state initialization and
 recovery. Keep publisher state in durable, backed-up storage between builds.
-See the [publisher quickstart](https://github.com/maxwellsantoro/pagedigest/blob/main/README.md#publish-a-manifest) and
-[state recovery guide](https://github.com/maxwellsantoro/pagedigest/blob/main/CONTENT_HYGIENE.md#durable-publisher-state).
+See the [publisher quickstart](https://github.com/lazy-collective/pagedigest/blob/main/README.md#publish-a-manifest) and
+[state recovery guide](https://github.com/lazy-collective/pagedigest/blob/main/CONTENT_HYGIENE.md#durable-publisher-state).
 
 ```bash
 # First publication only, for an origin without previous history:
@@ -35,7 +35,7 @@ Other architectures (for example `linux-arm64`) fail with a clear error.
 Windows releases ship as `.zip`. The launcher extracts them with the system
 `tar` (`tar.exe` on modern Windows 10/11 and Windows Server 2019+). If `tar`
 is missing from `PATH`, installation fails with an extract error — install a
-recent Windows build or use the [GitHub release binary](https://github.com/maxwellsantoro/pagedigest/releases)
+recent Windows build or use the [GitHub release binary](https://github.com/lazy-collective/pagedigest/releases)
 directly / `cargo install pagedigest` instead.
 
 ## Digests and deploy hygiene
@@ -48,7 +48,7 @@ includes digests, the launcher prints a short reminder. Full pipeline:
 3. From a repository checkout root: `uv run --project implementations/python-consumer --locked python tools/reconcile_served_digests.py … --apply` when the CDN rewrites HTML.
 4. `uv run --project implementations/python-consumer --locked pagedigest verify-live https://example.com` to sample live audits.
 
-See [CONTENT_HYGIENE.md](https://github.com/maxwellsantoro/pagedigest/blob/main/CONTENT_HYGIENE.md).
+See [CONTENT_HYGIENE.md](https://github.com/lazy-collective/pagedigest/blob/main/CONTENT_HYGIENE.md).
 
 ## Generator options
 
@@ -59,7 +59,7 @@ npx pagedigest --help
 Requires Node.js 20 or newer (for global `fetch`). The generator and launcher
 are MIT licensed.
 
-Implementation versions and registry availability: [version matrix](https://github.com/maxwellsantoro/pagedigest/blob/main/README.md#version-matrix).
+Implementation versions and registry availability: [version matrix](https://github.com/lazy-collective/pagedigest/blob/main/README.md#version-matrix).
 The wire format remains version `1`.
 
 Before adopting served hashes, confirm the intended content is live and its bytes
