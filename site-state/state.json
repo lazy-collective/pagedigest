@@ -1,19 +1,19 @@
 {
-  "site_rev": 24,
+  "site_rev": 25,
   "revision_floor": 0,
   "coverage": {
     "mode": "complete"
   },
   "entries": {
     "/": {
-      "rev": 21,
-      "digest": "a9802ee0418b7a8651e9b2074fee6c9ae9e66938f2047059bf4371d89e2db6dc",
-      "modified": "2026-11-03T15:21:41Z"
+      "rev": 22,
+      "digest": "26af3771d97075a8b9c91d755246183565d6adb2734696808d0da4a207c4640e",
+      "modified": "2026-11-03T23:35:07Z"
     },
     "/announcements/v1-rc/": {
-      "rev": 6,
-      "digest": "3ca56012aad9b10d060203a69809d1397b92239acf99548f18dbc353fdae2eab",
-      "modified": "2026-11-03T05:51:37Z"
+      "rev": 7,
+      "digest": "a02d936c9997aab3472ab15e09b5a42557cf09bafc20e03d2430aab9f0cf94e8",
+      "modified": "2026-11-03T23:35:07Z"
     },
     "/rel/": {
       "rev": 5,
