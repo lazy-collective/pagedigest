@@ -1,5 +1,9 @@
 # Well-Known URI Suffix Registration Draft
 
+> **Historical preparation draft.** The [recorded submitted request](well-known-uri-registration-request.md)
+> owns the filed wording. This draft is not current protocol status, a grant of
+> change-control authority, or evidence of IANA approval. See [current status](../../README.md#status).
+
 ## Template Basis
 
 RFC 8615, Well-Known URI Suffix Registry.
@@ -20,7 +24,7 @@ RFC 8615, Well-Known URI Suffix Registry.
 - Manifest publication can reveal covered URL sets; partial coverage is allowed.
 - Consumers should apply resource limits when parsing manifests.
 
-## Open Items Before Filing
+## Recorded submission and follow-up
 
 - Request filed:
   [protocol-registries/well-known-uris#98](https://github.com/protocol-registries/well-known-uris/issues/98).

@@ -96,12 +96,15 @@ that request alone. Correlate Workers Logs or Analytics Engine data first, then
 feed sustained classifications into a short-lived Cloudflare managed list or
 rate-limiting tier:
 
-1. Keep verified cooperative clients on the normal or higher-limit path.
-2. Leave unknown clients on the baseline policy.
-3. Apply a tighter rule only to clients with repeated unchanged-page overfetch
-   or impossible state, and retain the evidence window that caused it.
-4. Expire classifications so repaired clients return to neutral and can earn
-   cooperative treatment.
+1. Apply ordinary traffic policy to observed request cost and available context;
+   a plausible PageDigest header does not verify cooperation or earn access.
+2. Leave unknown clients on the baseline policy. Investigate impossible state;
+   it is an anomaly, not proof that page requests were unnecessary.
+3. Require additional evidence of excess cost before tightening a rule. Account
+   for cache loss, required audits, independent users and representation changes;
+   repeated unchanged-page requests alone do not establish overfetch. Retain the
+   evidence and ordinary policy basis for any reversible classification.
+4. Expire classifications so repaired clients return to neutral.
 
 Do not put Cloudflare API credentials in Worker source or call the Cloudflare
 REST API from the request path. Use bindings and an out-of-band control job.
@@ -163,10 +166,10 @@ Workers logs or Analytics Engine as the evidence source for real enforcement.
 ## Spoofing and limits
 
 A client can copy a state value. That is why the header alone earns nothing.
-A plausible value plus manifest access plus low unchanged-page overfetch is the
-behavior the publisher wanted in the first place; intent is irrelevant. A
-client that copies the value and still hammers unchanged pages supplies the
-publisher with direct counter-evidence.
+A plausible value and manifest access are consistent with an observation, but
+neither low nor high unchanged-page request ratios establish necessity or intent.
+Additional cost/context evidence is needed for ordinary traffic-policy decisions.
+Do not turn these observations into a PageDigest compliance score.
 
 Do not use `PageDigest-State` to authorize content, bypass authentication,
 identify a legal entity, or make irreversible blocking decisions.

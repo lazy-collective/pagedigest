@@ -1,5 +1,9 @@
 # Link Relation Registration Draft
 
+> **Historical preparation draft.** The [recorded submitted request](link-relation-registration-request.md)
+> owns the filed wording. This draft is not current protocol status, a grant of
+> change-control authority, or evidence of IANA approval. See [current status](../../README.md#status).
+
 ## Template Basis
 
 RFC 8288 and IANA Link Relation Types Registry.
@@ -20,7 +24,7 @@ RFC 8288 and IANA Link Relation Types Registry.
 - Clients should treat relation identifiers as semantics labels, not dereference targets.
 - Consumers may fetch the linked manifest and apply protocol rules for site/URL revision comparisons.
 
-## Open Items Before Filing
+## Recorded submission and follow-up
 
 - Request filed:
   [protocol-registries/link-relations#73](https://github.com/protocol-registries/link-relations/issues/73).

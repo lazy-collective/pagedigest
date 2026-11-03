@@ -1,0 +1,129 @@
+{
+  "experiment": "digest-exchange-p1-20261029",
+  "matrix_complete": true,
+  "expected_rows": 2016,
+  "budget_stop": null,
+  "correctness_pass": true,
+  "best_alternative": "http-freshness",
+  "response_byte_reduction": -0.3855474899422775,
+  "economic_gate": "no-go",
+  "limits": [
+    "Fixture producer and logical clock; no production/CDN/adoption claim.",
+    "Publisher response preparation CPU excludes socket writes and is measured separately from consumer thread CPU.",
+    "Body cache I/O is measured in this experimental wrapper; the shipped persistent example remains in the original benchmark.",
+    "No model calls or third-party command execution."
+  ],
+  "totals": {
+    "full": {
+      "requests": 14856,
+      "response_body_wire_bytes": 1052808,
+      "response_header_bytes": 4073160,
+      "publisher_generation_cpu_seconds": 0.0007784199999987668,
+      "publisher_serving_cpu_seconds": 0.410321065,
+      "consumer_cpu_seconds": 7.102635883999959,
+      "cache_read_bytes": 27515688,
+      "cache_write_bytes": 30404832,
+      "violations": 0,
+      "incomplete_cycles": 24,
+      "stale_body_observations_within_deadline": 0,
+      "response_bytes": 5125968
+    },
+    "conditional-http": {
+      "requests": 14856,
+      "response_body_wire_bytes": 220560,
+      "response_header_bytes": 3896400,
+      "publisher_generation_cpu_seconds": 0.0007784199999987668,
+      "publisher_serving_cpu_seconds": 0.278009734,
+      "consumer_cpu_seconds": 5.534012616999992,
+      "cache_read_bytes": 27515688,
+      "cache_write_bytes": 5744952,
+      "violations": 0,
+      "incomplete_cycles": 24,
+      "stale_body_observations_within_deadline": 0,
+      "response_bytes": 4116960
+    },
+    "http-freshness": {
+      "requests": 9576,
+      "response_body_wire_bytes": 220560,
+      "response_header_bytes": 2523600,
+      "publisher_generation_cpu_seconds": 0.0007784199999987668,
+      "publisher_serving_cpu_seconds": 0.190379356,
+      "consumer_cpu_seconds": 3.8594900490000015,
+      "cache_read_bytes": 27515328,
+      "cache_write_bytes": 5744952,
+      "violations": 0,
+      "incomplete_cycles": 24,
+      "stale_body_observations_within_deadline": 24,
+      "response_bytes": 2744160
+    },
+    "sitemap-lastmod": {
+      "requests": 9576,
+      "response_body_wire_bytes": 220560,
+      "response_header_bytes": 2523600,
+      "publisher_generation_cpu_seconds": 0.0007784199999987668,
+      "publisher_serving_cpu_seconds": 0.187123551,
+      "consumer_cpu_seconds": 3.809462628000007,
+      "cache_read_bytes": 27515328,
+      "cache_write_bytes": 5744952,
+      "violations": 0,
+      "incomplete_cycles": 24,
+      "stale_body_observations_within_deadline": 24,
+      "response_bytes": 2744160
+    },
+    "fingerprint-manifest": {
+      "requests": 12216,
+      "response_body_wire_bytes": 374460,
+      "response_header_bytes": 3210060,
+      "publisher_generation_cpu_seconds": 0.006105586000008503,
+      "publisher_serving_cpu_seconds": 0.23924187,
+      "consumer_cpu_seconds": 4.69992280399998,
+      "cache_read_bytes": 27515328,
+      "cache_write_bytes": 5744952,
+      "violations": 0,
+      "incomplete_cycles": 24,
+      "stale_body_observations_within_deadline": 24,
+      "response_bytes": 3584520
+    },
+    "fingerprint-manifest-audited": {
+      "requests": 12216,
+      "response_body_wire_bytes": 475764,
+      "response_header_bytes": 3209724,
+      "publisher_generation_cpu_seconds": 0.006105586000008503,
+      "publisher_serving_cpu_seconds": 0.237812565,
+      "consumer_cpu_seconds": 4.708992877000005,
+      "cache_read_bytes": 27515328,
+      "cache_write_bytes": 5846256,
+      "violations": 0,
+      "incomplete_cycles": 24,
+      "stale_body_observations_within_deadline": 24,
+      "response_bytes": 3685488
+    },
+    "pagedigest": {
+      "requests": 12384,
+      "response_body_wire_bytes": 552984,
+      "response_header_bytes": 3249180,
+      "publisher_generation_cpu_seconds": 0.0057643739999918425,
+      "publisher_serving_cpu_seconds": 0.248306333,
+      "consumer_cpu_seconds": 4.842514243999991,
+      "cache_read_bytes": 27515328,
+      "cache_write_bytes": 5846256,
+      "violations": 0,
+      "incomplete_cycles": 24,
+      "stale_body_observations_within_deadline": 24,
+      "response_bytes": 3802164
+    }
+  },
+  "budget": {
+    "requests": 85680,
+    "response_bytes": 25803420,
+    "wall_seconds": 56.79812637506984
+  },
+  "spec_sha256": "5de914c810beca411ec4eba6c0a8511e230d053f3d0fe4d272f964590764950f",
+  "code_sha256": {
+    "benchmark_freshness.py": "dacc3687977c3efd6c025e1842e2b302ee88a4984858d1ccd47e76413f8b1d78",
+    "benchmark_consumers.py": "48210be4550daf10466d28a51be187abe2a36070c2f0e0178be1cce04b5554c6"
+  },
+  "rawArtifact": "run-003.json.gz",
+  "rowCount": 2016,
+  "eventCount": 85680
+}

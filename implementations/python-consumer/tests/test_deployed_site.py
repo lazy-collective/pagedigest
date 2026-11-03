@@ -1,10 +1,14 @@
 from __future__ import annotations
 
 import hashlib
+import io
 import json
+import tempfile
 import threading
 import unittest
+from contextlib import redirect_stdout
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
 from unittest.mock import patch
 
 from test_core import load_tool
@@ -119,3 +123,39 @@ class DeploymentGateTests(unittest.TestCase):
         with patch.object(self.tool, "MAX_BYTES", len(self.expected)):
             with self.assertRaisesRegex(ValueError, "exceeds"):
                 self.tool.verify(self.origin, self.expected)
+
+
+class ReconcileObservationsTests(unittest.TestCase):
+    def test_first_matching_observation_still_requires_second(self):
+        tool = load_tool("reconcile_served_digests")
+        for second, status in [("sha256:a", "match"), ("sha256:b", "unstable"), (None, "inconclusive")]:
+            with patch.object(
+                tool, "fetch_identity_digest", side_effect=[("sha256:a", "ok"), (second, "test")]
+            ) as fetch:
+                result = tool.reconcile_entry("https://example.com", "/", "sha256:a", 15)
+            self.assertEqual(result.status, status)
+            self.assertEqual(fetch.call_count, 2)
+
+    def test_inconclusive_does_not_partially_apply(self):
+        tool = load_tool("reconcile_served_digests")
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "manifest.json"
+            manifest = {
+                "version": 1,
+                "site_rev": 13,
+                "generated": "2026-11-02T00:00:00Z",
+                "entries": {key: {"rev": 1, "digest": "sha256:" + "a" * 64} for key in ("/", "/two")},
+            }
+            path.write_text(json.dumps(manifest))
+            before = path.read_bytes()
+            outcomes = [
+                tool.Reconciliation("/", "stable-transform", "test", "sha256:" + "b" * 64),
+                tool.Reconciliation("/two", "inconclusive", "HTTP 503"),
+            ]
+            with (
+                patch("sys.argv", ["reconcile", str(path), "--base-url", "https://example.com", "--apply"]),
+                patch.object(tool, "reconcile_entry", side_effect=outcomes),
+                redirect_stdout(io.StringIO()),
+            ):
+                self.assertEqual(tool.main(), 2)
+            self.assertEqual(path.read_bytes(), before)

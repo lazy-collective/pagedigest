@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>pagedigest — check what changed before fetching it again</title>
-<meta name="description" content="pagedigest is a one-file protocol: a JSON manifest at /.well-known/pagedigest.json that tells automated clients which pages changed, so both sides stop wasting bandwidth.">
+<title>PageDigest — check what changed, keep useful work</title>
+<meta name="description" content="Publish change signals from existing site builds. Reuse complete local results, investigate changes, and keep audits and fallback explicit.">
 <link rel="canonical" href="https://pagedigest.org/">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://pagedigest.org/">
-<meta property="og:title" content="pagedigest — check what changed before fetching it again">
-<meta property="og:description" content="A one-file change-detection protocol for publishers and automated consumers.">
+<meta property="og:title" content="PageDigest — check what changed, keep useful work">
+<meta property="og:description" content="Website change manifests and tools for publishers and recurring consumers.">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="pagedigest — check what changed before fetching it again">
-<meta name="twitter:description" content="A JSON manifest that lets crawlers fetch only pages that changed.">
+<meta name="twitter:title" content="PageDigest — check what changed, keep useful work">
+<meta name="twitter:description" content="Check what changed, reuse usable results, and investigate what needs rereading.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='10' y='10' width='44' height='44' rx='8' fill='%23152228'/%3E%3Ctext x='32' y='42' font-family='monospace' font-size='26' fill='%23F2F5F6' text-anchor='middle'%3E%E2%86%91%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -204,7 +204,7 @@
     font-family: var(--mono); font-size: 0.84rem; color: var(--ink-soft);
     display: flex; flex-wrap: wrap; gap: 8px 26px;
   }
-  footer .wrap { display: contents; }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 26px; width: 100%; }
 
   @media (max-width: 720px) {
     header.top { align-items: flex-start; flex-direction: column; gap: 12px; }
@@ -213,7 +213,14 @@
     .argument { grid-template-columns: 1fr; }
     .argument figure.publisher { border-right: 0; border-bottom: 1px solid var(--line); }
     .bargain { grid-template-columns: 1fr; }
-    .comparison { display: block; overflow-x: auto; }
+    .comparison { display: block; }
+    .comparison thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+    .comparison tbody, .comparison tr, .comparison td { display: block; }
+    .comparison tr { padding: 14px 0; border-bottom: 1px solid var(--line); }
+    .comparison td { padding: 5px 0; border: 0; }
+    .comparison td:first-child { font-weight: 600; }
+    .comparison td:nth-child(2)::before { content: "Its job: "; font-weight: 600; }
+    .comparison td:nth-child(3)::before { content: "Tradeoff: "; font-weight: 600; }
     ol.steps li { grid-template-columns: 40px 1fr; }
   }
   @media (max-width: 460px) {
@@ -230,24 +237,49 @@
   <header class="top">
     <a class="wordmark" href="/">pagedigest<span class="dot">.json</span></a>
     <nav class="top-links" aria-label="Page navigation">
-      <a href="#manifest">Manifest</a>
+      <a href="#start">Start here</a>
       <a href="#how">How it works</a>
-      <a href="#different">Why different</a>
-      <a href="#live">Live</a>
+      <a href="#different">Tradeoffs</a>
+      <a href="#live">Evidence</a>
       <a href="#bargain">Safe reuse</a>
       <a href="https://github.com/maxwellsantoro/pagedigest">GitHub</a>
     </nav>
   </header>
 
   <section class="hero">
-    <h1>Check what changed before fetching it again.</h1>
-    <p class="lede">PageDigest is a JSON change manifest for public websites. Publishers list
-    resource revisions; recurring crawlers, indexers, and caches compare them with local state
-    and avoid refetching resources they already have.</p>
-    <p class="lede">Designed for mostly static content and consumers that retain results between
-    runs. Optional SHA-256 digests support spot checks of published representations.</p>
+    <h1>Check what changed.<br>Keep useful work.</h1>
+    <p class="lede">Returning to a website should start with what changed since the last visit.
+    PageDigest gives publishers and recurring consumers a shared change manifest:
+    publish revisions from your site build, compare them with usable local results,
+    and fetch or check what needs attention.</p>
+    <p>Less repeated work for both sides is the goal. Existing HTTP caches remain useful;
+    a manifest adds explicit coverage and revision history. Neither an unchanged
+    revision nor a matching digest proves a previous conclusion is true.</p>
     <p><a href="https://github.com/maxwellsantoro/pagedigest#publish-a-manifest">Publish a manifest</a>
     · <a href="https://github.com/maxwellsantoro/pagedigest#integrate-a-consumer">Integrate a consumer</a></p>
+  </section>
+
+  <section id="start">
+    <h2>Meet in the middle</h2>
+    <div class="bargain">
+      <div class="side publisher">
+        <h3>Publish from your build</h3>
+        <p>Use the Rust generator, npm launcher or Astro hook on final output.
+        Keep one durable revision history, review coverage, and verify the bytes
+        your host actually serves. There is no second page catalog to maintain.</p>
+        <p><a href="https://github.com/maxwellsantoro/pagedigest#publish-a-manifest">Set up first publication and repeat builds</a></p>
+      </div>
+      <div class="side crawler">
+        <h3>Keep a usable local result</h3>
+        <p>Start with HTTP freshness and validators. Use PageDigest when it helps
+        plan a recurring collection check. Retain completed bodies and processing;
+        fetch missing or changed resources, run due audits, and fall back on uncertainty.</p>
+        <p><a href="https://github.com/maxwellsantoro/pagedigest#integrate-a-consumer">Integrate the released consumer</a></p>
+      </div>
+    </div>
+    <p><strong>Experimental source:</strong> a recurring workflow adds change and rereading
+    reports plus findings bound to the exact cached sources you name. It is not in
+    Python 0.2.0. <a href="https://github.com/maxwellsantoro/pagedigest/pull/2">Review the workflow and its delivery status</a>.</p>
   </section>
 
   <section id="manifest">
@@ -291,7 +323,7 @@
           <p>The same integer describes the covered set, not local cache completeness.
           Reuse only results that remain available at their recorded revisions.</p>
         </div></li>
-        <li><div><strong>Fetch only what moved</strong>
+        <li><div><strong>Complete required work</strong>
           <p>Fetch new, changed, missing, or invalid local results. An unchanged revision is
           a publisher assertion; unlisted resources retain ordinary discovery and validation.</p>
         </div></li>
@@ -307,31 +339,40 @@
   <section id="different">
     <div class="wrap" style="padding:0">
       <h2>A small change-manifest format</h2>
-      <p>Batching accurate change information avoids per-resource checks. PageDigest chooses
-      a small JSON format with ordered revisions; maintaining those counters requires durable publisher state.</p>
+      <p>PageDigest adds ordered revisions and explicit coverage to a small JSON manifest.
+      Batching can avoid some per-resource revalidation, but maintaining counters and
+      reading the manifest also cost work. Compare against the caches and sitemaps you already use.</p>
       <table class="comparison">
-        <thead><tr><th>Mechanism</th><th>Its job</th><th>The remaining gap</th></tr></thead>
+        <thead><tr><th>Mechanism</th><th>Its job</th><th>Tradeoff for recurring consumers</th></tr></thead>
         <tbody>
           <tr><td>sitemap + lastmod</td><td>Discovery and incremental refresh timestamps</td><td>No monotonic site-wide fast path or audit model</td></tr>
           <tr><td>ResourceSync</td><td>Lists, changes, hashes, and synchronization discovery</td><td>PageDigest offers a smaller JSON surface with fewer capabilities</td></tr>
           <tr><td>Fingerprint manifest</td><td>Bulk byte comparison and manifest ETags</td><td>Counters add ordering and optional semantic separation, with durable-history cost</td></tr>
-          <tr><td>ETag / 304</td><td>Per-resource validation</td><td>Still one request per URL</td></tr>
+          <tr><td>HTTP freshness</td><td>Reuse an eligible fresh cached response</td><td>No network request while fresh; compare at the same freshness target</td></tr>
+          <tr><td>ETag / 304</td><td>Per-resource validation when needed</td><td>Revalidation needs a request; an unchanged response can reuse cached bytes</td></tr>
           <tr><td>RSS / Atom</td><td>Recent-entry feed</td><td>Cannot establish that older or omitted pages stayed unchanged</td></tr>
           <tr><td>IndexNow</td><td>Publisher push to participating search engines</td><td>Not a pullable manifest for arbitrary consumers</td></tr>
           <tr><td>WebSub</td><td>Hub-mediated push</td><td>Requires subscription and callback state</td></tr>
-          <tr><td>CDN / cache</td><td>Make repeated serving cheaper</td><td>Still serves or validates the read</td></tr>
+          <tr><td>Shared HTTP cache / CDN</td><td>Reuse responses across clients</td><td>Can reduce origin work; downstream parsing and retained findings are separate concerns</td></tr>
         </tbody>
       </table>
-      <p>After checking the manifest, a consumer can make cooperation visible in logs:</p>
+      <p><a href="https://www.rfc-editor.org/rfc/rfc9111.html#section-4.2">HTTP freshness rules</a> are the baseline, not a missing feature. After a manifest check, a consumer can optionally record its observed state:</p>
       <pre class="state-header">PageDigest-State: site_rev=18294</pre>
-      <p>The header is corroborating evidence, not authentication. Publishers compare it with
-      manifest access and unchanged-page overfetch before changing treatment.</p>
+      <p>This is an observation signal, not authentication or proof of efficient use.
+      Audits, missing caches and separate users can all require repeated reads.</p>
     </div>
   </section>
 
   <section id="live">
     <div class="wrap" style="padding:0">
       <h2>Evidence and deployments</h2>
+      <div class="proof" style="margin-bottom:14px">
+        <div class="stamp">Local research update · October 29, 2026</div>
+        <p>A bounded-freshness comparison found PageDigest transferred 38.6% more
+        response bytes than ordinary HTTP freshness caching on the tested workload.
+        It passed the stated freshness controls but failed its savings gate.
+        Batching is available; a general bandwidth or economic advantage is not established.</p>
+      </div>
       <div class="proof">
         <div class="stamp">Controlled comparison · local HTTP</div>
         <p>Seven consumer strategies across six scenarios reproduced the same current resource
@@ -384,6 +425,9 @@
   <section id="status">
     <div class="wrap" style="padding:0">
       <h2>Status</h2>
+      <p>Released packages implement the v1 protocol. Experimental source adds recurring
+      reports, source-bound findings and publisher previews; source availability,
+      package release and live deployment are separate events.</p>
       <div class="status-grid">
         <div class="cell">
           <h3>v1.0</h3>
@@ -423,8 +467,9 @@
 
 <footer>
   <div class="wrap">
-    <span>pagedigest — a change manifest for recurring consumers</span>
-    <span>sibling project: <a href="https://dotrepo.org">dotrepo</a> (what a repository <em>means</em>; pagedigest covers what <em>changed</em>)</span>
+    <span>PageDigest — website change signals and reusable work</span>
+    <span>Sibling project: <a href="https://dotrepo.org">DotRepo</a> — repository facts, sources and age.</span>
+    <span><a href="https://github.com/maxwellsantoro/pagedigest/blob/main/docs/ecosystem.md">Lazy Collective</a> is our local coordination project. DotPage names the publisher role, not a separate product or shared service.</span>
   </div>
 </footer>
 
@@ -440,7 +485,7 @@
         target.textContent = "Observer Worker deployed; bind PAGEDIGEST_OBSERVATIONS KV to persist counters.";
         return;
       }
-      target.textContent = `Observed ${stats.stateValid} valid PageDigest-State request(s) across ${stats.manifestRequests} manifest request(s).`;
+      target.textContent = `Observed ${stats.stateValid} requests carrying syntactically valid PageDigest-State headers, and ${stats.manifestRequests} manifest requests. These separate, approximate counters do not establish independent use or savings.`;
     } catch {
       target.textContent = "Observer endpoint unavailable in this static preview.";
     }

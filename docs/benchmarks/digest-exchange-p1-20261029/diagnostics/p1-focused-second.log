@@ -1,0 +1,8 @@
+test_all_strategies_recover_concealed_change_and_refuse_incomplete_snapshot (test_freshness_benchmark.FreshnessStudyTests.test_all_strategies_recover_concealed_change_and_refuse_incomplete_snapshot) ... ok
+test_budgets_stop_before_network_and_keep_incomplete_denominator (test_freshness_benchmark.FreshnessStudyTests.test_budgets_stop_before_network_and_keep_incomplete_denominator) ... ok
+test_changed_frozen_spec_and_existing_results_are_refused (test_freshness_benchmark.FreshnessStudyTests.test_changed_frozen_spec_and_existing_results_are_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.668s
+
+OK

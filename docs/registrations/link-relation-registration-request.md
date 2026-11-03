@@ -1,5 +1,9 @@
 # Link Relation Registration Request: `pagedigest`
 
+> Recorded submission text, retained unchanged below. Its dates and future-tense
+> wording describe that submission, not current protocol/package status or registry
+> approval. See [current status](../../README.md#status).
+
 Filed as:
 [protocol-registries/link-relations#73](https://github.com/protocol-registries/link-relations/issues/73).
 

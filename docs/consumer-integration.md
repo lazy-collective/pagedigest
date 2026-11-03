@@ -1,8 +1,10 @@
 # Consumer integration guide
 
-This guide is for crawlers, indexers, mirrors, and agents that want to avoid
-re-fetching unchanged pages from publishers that expose
-`/.well-known/pagedigest.json`.
+For crawlers, indexers, mirrors and agents returning to a website, start with
+usable cached results and ordinary HTTP freshness. PageDigest can add batched
+change information from `/.well-known/pagedigest.json`. This guide integrates
+the released consumer; the [recurring findings workflow](recurring-consumer.md)
+is separate experimental source, absent from Python 0.2.0.
 
 The rule of thumb is simple: treat PageDigest as an optimization hint, never as
 an authorization or correctness boundary. If the manifest is missing, invalid,
@@ -14,7 +16,7 @@ your normal crawl behavior.
 1. Fetch the manifest from the origin root.
 2. Validate the wire format.
 3. Compare `site_rev` and per-URL `rev` values with your cached state.
-4. Fetch only new and changed URLs.
+4. Fetch new, changed, missing or unusable local results and complete due audits or pending processing.
 5. Apply coverage removals only when `coverage.mode` is `complete`; this is not proof of an HTTP deletion.
 6. Persist the new manifest state after the fetch cycle succeeds.
 

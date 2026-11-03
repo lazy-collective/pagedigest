@@ -1,11 +1,29 @@
-# Python Consumer (Minimal Reference)
+# PageDigest Python consumer
 
-## Install (from repo)
+Read and validate website change manifests, plan required downloads and audits,
+and reuse usable cached results. Missing bodies and failed processing still need
+work. An unchanged revision is a publisher declaration, not proof of correctness.
+
+## Install the released consumer
+
+```bash
+python -m pip install pagedigest==0.2.0
+pagedigest verify-live https://example.com --sample-size 25
+```
+
+The published 0.2.0 package does not include the experimental `sync` and
+`remember` workflow. Its source implementation and validation are recorded in
+[PR2](https://github.com/maxwellsantoro/pagedigest/pull/2); no source-only command
+below is an instruction to install a nonexistent release.
+
+## Work from a source checkout
+
+Clone [the repository](https://github.com/maxwellsantoro/pagedigest), choose the
+branch you intend to evaluate, then:
 
 ```bash
 cd implementations/python-consumer
-uv sync
-uv pip install -e .
+uv sync --locked
 ```
 
 Requires Python ≥3.9. Runtime dependency: `requests`.
@@ -34,7 +52,7 @@ fetching them.
 ## CLI
 
 ```bash
-pagedigest verify-live https://example.com --sample-size 25
+uv run --locked pagedigest verify-live https://example.com --sample-size 25
 ```
 
 `verify-live` exits `2` on digest mismatches so it can act as a deployment gate.
@@ -68,11 +86,13 @@ headers = {
 ```
 
 This is a corroborating observation signal, not authentication. See
-[SPEC.md §5.4](../../SPEC.md#54-optional-cooperation-request-header).
+[SPEC.md §5.4](https://github.com/maxwellsantoro/pagedigest/blob/python-v0.2.0/SPEC.md#54-optional-cooperation-request-header).
 
 Conformance fixtures: `tests/test_vectors.py` exercises `../../test-vectors/`.
 
 ## Persistent cache example
+
+This example is run from the source checkout above, not fetched from PyPI:
 
 ```bash
 uv run python examples/cache_persistence.py https://example.com ./pagedigest-cache.json

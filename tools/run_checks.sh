@@ -32,11 +32,12 @@ uv run --locked python -m unittest discover -s tests -v
 
 echo "[5/20] checking python CLI"
 uv run --locked pagedigest verify-live --help >/dev/null
+uv run --locked pagedigest sync --help >/dev/null
+uv run --locked pagedigest remember --help >/dev/null
 
 echo "[6/20] checking content hygiene utility"
 cd "${ROOT_DIR}"
 uv run --project "${PYTHON_CONSUMER_DIR}" --locked python "${ROOT_DIR}/tools/check_content_hygiene.py" "${ROOT_DIR}/site" --fail-on warning
-
 node --test "${ROOT_DIR}/tools/test_site_worker.mjs"
 
 echo "[7/20] testing Astro integration"

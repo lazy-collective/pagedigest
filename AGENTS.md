@@ -1,7 +1,7 @@
 # Agent guide
 
 For this site's production deployment, use the strict
-[dogfood response policy](CONTENT_HYGIENE.md#dogfood-response-policy).
+[dogfood deployment policy](CONTENT_HYGIENE.md#dogfood-deployment-policy).
 It preserves HTML bytes and verifies every digest across request profiles;
 generic automatic reconciliation is not the dogfood deployment gate.
 
@@ -16,8 +16,14 @@ Quick orientation for AI agents working in this repo. **Do not duplicate normati
 | Wire format & consumer algorithm | [SPEC.md](./SPEC.md) |
 | Publisher/consumer obligations | [CONTRACT.md](./CONTRACT.md) |
 | Digest churn & post-deploy reconcile | [CONTENT_HYGIENE.md](./CONTENT_HYGIENE.md) |
-| Priorities & v1.0 path | [ROADMAP.md](./ROADMAP.md) |
+| Current priorities and outcome gates | [ROADMAP.md](./ROADMAP.md) |
 | Release gates | [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md) |
+
+Check the actual branch/HEAD and [README status](./README.md#status) before
+choosing work. The recurring consumer and publisher helpers described in this
+checkout are experimental source workflows, not commands in the published Python 0.2.0
+package. Relative guides describe this branch; canonical folder names and old
+release announcements do not establish current capabilities or priorities.
 
 ## Repo map
 
@@ -41,6 +47,8 @@ pagedigest.schema.json            # Validation aid; SPEC is normative boundary
 ./tools/run_checks.sh
 ```
 
+Use `uv` for Python commands in this checkout; package-install instructions for
+external consumers and captured historical commands retain their own scope.
 Requires [uv](https://docs.astral.sh/uv/) and Rust/Cargo. CI runs the same script (`.github/workflows/ci.yml`).
 
 Focused runs:
@@ -55,9 +63,14 @@ cd implementations/rust-generator && cargo test --locked
 
 - **Revisions never decrease.** Rollback content still bumps `rev` / `site_rev` ([SPEC.md](./SPEC.md) §4.1).
 - **URL keys** are byte-exact, pre-redirect, origin-relative (`/about` ≠ `/about/`).
-- **Digests** are over identity-encoded **served** bytes, not necessarily on-disk build artifacts. Generator hashes files; live audits need [CONTENT_HYGIENE.md](./CONTENT_HYGIENE.md) reconcile pipeline.
+- **Digests** are over identity-encoded **served** bytes. Generators hash files;
+  generic publishers deliberately validate/reconcile supported representations.
+  Dogfood preserves HTML bytes and uses the strict [deployment policy](CONTENT_HYGIENE.md#dogfood-deployment-policy), never automatic hash adoption.
 - **Malformed manifests** → consumer fallback, not hard failure ([SPEC.md](./SPEC.md) §5.3).
-- **Partial manifests:** omitted URLs are not implicitly unchanged unless `coverage.mode` is `complete`.
+- **Omitted URLs:** omission never proves unchanged. Under complete coverage,
+  previously listed omitted URLs leave the covered set; under partial or absent
+  coverage they are not described. Coverage removal does not prove HTTP deletion
+  ([SPEC.md](./SPEC.md) §5.1).
 - **Schema ≠ full conformance.** Apply SPEC text in addition to `pagedigest.schema.json`.
 
 When changing protocol behavior: update **SPEC** if normative, add/adjust **test-vectors**, extend **python-consumer** validation/diff tests (`tests/test_vectors.py`).
@@ -71,7 +84,10 @@ When changing protocol behavior: update **SPEC** if normative, add/adjust **test
 | Astro integration (`npm install @pagedigest/astro`) | Additional SSG plugins |
 | Conformance vectors + CI | IANA short-form `rel` (extension URI works today) |
 
-Publisher digests: generate → deploy → `tools/reconcile_served_digests.py --apply` → verify. Version matrix: [README.md](./README.md#version-matrix).
+Publisher digests: generate → deploy → validate supported representations →
+deliberately reconcile when appropriate → verify. Dogfood uses
+`tools/verify_deployed_site.py` and cold/warm controls; mismatches block completion.
+Version matrix: [README.md](./README.md#version-matrix).
 
 Do not document planned install paths as available without updating [README.md](./README.md) and [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md).
 
@@ -88,6 +104,8 @@ Do not document planned install paths as available without updating [README.md](
 |------|------------|
 | Generator behavior / URL keys | `implementations/rust-generator/src/main.rs` |
 | Consumer fetch/diff/audit | `implementations/python-consumer/pagedigest/core.py` |
+| Recurring sync and source-bound findings | [Recurring workflow](docs/recurring-consumer.md); `implementations/python-consumer/pagedigest/recurring.py` and `persistence.py` |
+| Publisher setup and build-output updates | [Publisher workflow](docs/publisher-workflow.md); `tools/publisher_workflow.py` and the existing Astro hook |
 | New manifest fixture | `test-vectors/` + `index.json` + `tools/validate_vectors.py` |
 | Post-deploy digest tooling | `tools/reconcile_served_digests.py`, `tools/verify_over_wire_digests.py` |
 | Dogfood site | `site/`, regenerate manifest via generator, `site-state/` |

@@ -1,0 +1,31 @@
+test_all_strategies_recover_concealed_change_and_refuse_incomplete_snapshot (test_freshness_benchmark.FreshnessStudyTests.test_all_strategies_recover_concealed_change_and_refuse_incomplete_snapshot) ... ERROR
+test_budgets_stop_before_network_and_keep_incomplete_denominator (test_freshness_benchmark.FreshnessStudyTests.test_budgets_stop_before_network_and_keep_incomplete_denominator) ... ok
+test_changed_frozen_spec_and_existing_results_are_refused (test_freshness_benchmark.FreshnessStudyTests.test_changed_frozen_spec_and_existing_results_are_refused) ... ok
+
+======================================================================
+ERROR: test_all_strategies_recover_concealed_change_and_refuse_incomplete_snapshot (test_freshness_benchmark.FreshnessStudyTests.test_all_strategies_recover_concealed_change_and_refuse_incomplete_snapshot)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-29/review-this-plan-and-investigate-the/worktrees/pagedigest/implementations/python-consumer/tests/test_freshness_benchmark.py", line 18, in test_all_strategies_recover_concealed_change_and_refuse_incomplete_snapshot
+    report = study.matrix(spec, sizes=(10,), client_counts=(1,), repeats=1)
+  File "/Users/maxwell/Documents/Codex/2026-10-29/review-this-plan-and-investigate-the/worktrees/pagedigest/tools/benchmark_freshness.py", line 504, in matrix
+    outcome = run_cycle(
+        origin, state, arm, session, cycle
+    )
+  File "/Users/maxwell/Documents/Codex/2026-10-29/review-this-plan-and-investigate-the/worktrees/pagedigest/tools/benchmark_freshness.py", line 350, in run_cycle
+    decision = check_site(
+        origin.url,
+    ...<6 lines>...
+        rng=random.Random(2000 + cycle),
+    )
+  File "/Users/maxwell/Documents/Codex/2026-10-29/review-this-plan-and-investigate-the/worktrees/pagedigest/implementations/python-consumer/pagedigest/core.py", line 776, in check_site
+    decisions = diff(result.manifest, cached_site_rev, cached_revs)
+  File "/Users/maxwell/Documents/Codex/2026-10-29/review-this-plan-and-investigate-the/worktrees/pagedigest/implementations/python-consumer/pagedigest/core.py", line 488, in diff
+    elif rev > prev:
+         ^^^^^^^^^^
+TypeError: '>' not supported between instances of 'int' and 'str'
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.392s
+
+FAILED (errors=1)

@@ -1,0 +1,16 @@
+{
+  "experiment": "digest-exchange-p1-20261029",
+  "base": "f880f813cc0df49603482dbd879ff4ef49b3a519",
+  "hypothesis": "PageDigest reduces measured recurring synchronization work beyond the strongest eligible metadata or HTTP freshness baseline at a common bounded-staleness policy.",
+  "population": "Owned loopback static HTML fixture; 10 and 100 pages, one and three independent clients, three repetitions. No production or adoption claim.",
+  "arms": ["full", "conditional-http", "http-freshness", "sitemap-lastmod", "fingerprint-manifest", "fingerprint-manifest-audited", "pagedigest"],
+  "freshness": {"cycle_seconds": 30, "max_body_validation_age_seconds": 60, "metadata_validation_each_cycle": true, "sample_audit_rate": 0.01, "rule": "Every arm must revalidate a retained body by 60 seconds; unchanged metadata never resets that deadline. Honest changes may be detected earlier by metadata. Origin failure must produce incomplete, never a completed fresh snapshot."},
+  "scenarios": ["cold", "unchanged", "sparse-change", "concealed-change", "deadline-recovery", "add-remove", "body-eviction", "partial-manifest", "variant", "request-no-cache", "origin-failure", "origin-recovery"],
+  "primary_metric": "Total observed HTTP response body plus response header bytes across all assigned cycles and clients, including audits, discovery and fallback. TLS, TCP and request headers excluded.",
+  "economic_gate": {"minimum_reduction_against_best_eligible_alternative": 0.20, "require_correctness": true, "secondary_guard": "Report requests and publisher generation/serving CPU plus consumer CPU separately. A byte win alone does not establish dollar or lifetime cost savings."},
+  "correctness_gate": "No body reused beyond the common deadline, no cross-variant reuse, complete exact resource inventory on completed cycles, no claimed completion when a required fetch fails. Expected within-deadline staleness is retained and reported.",
+  "publisher_measurement": "Measure fixture metadata generation separately from request-serving thread CPU; do not claim production generator cost or CDN behavior.",
+  "negative_outcome": "Any correctness violation, or less than 20 percent measured response-byte reduction against the best correct eligible arm, is no-go for the corresponding claim.",
+  "budgets": {"model_spend_usd": 0, "external_origin_requests": 0, "measured_wall_seconds": 600, "response_and_retained_bytes": 1073741824, "http_requests": 100000},
+  "disclosures": ["Same author implements and evaluates this development experiment; not independently operated.", "The existing persistent-consumer benchmark remains a separate unchanged regression. New freshness orchestration is experimental and uses the reference PageDigest planner.", "Input specification is frozen before implementation and measurements; code hashes are retained with each run."]
+}

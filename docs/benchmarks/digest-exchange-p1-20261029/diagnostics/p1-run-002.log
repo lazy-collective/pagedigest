@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/Users/maxwell/Documents/Codex/2026-10-29/review-this-plan-and-investigate-the/worktrees/pagedigest/tools/benchmark_consumers.py", line 27, in <module>
+    from pagedigest import audit, check_site
+ModuleNotFoundError: No module named 'pagedigest'

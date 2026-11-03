@@ -1,0 +1,9 @@
+{
+  "command": "./tools/run_checks.sh",
+  "result": "all 20 stages passed",
+  "log": "diagnostics/full-checks-final.log.gz",
+  "finalMeasuredCodeMatchesCheckedCode": true,
+  "retainedArtifactHashesVerified": true,
+  "decodedLogSha256": "91cd237120a20781583179c358861d2a9bf23c640d2c930d4d0082c4636c99d2",
+  "logSha256": "8c2517c12ae8f936bb1c60768c31f65322c7068b7304e986f1ca9fceda21035e"
+}

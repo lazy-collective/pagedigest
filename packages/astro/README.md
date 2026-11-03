@@ -19,8 +19,9 @@ export default defineConfig({
 ```
 
 The integration writes `.well-known/pagedigest.json` inside Astro's output
-directory during `astro:build:done`, and stores persistent revision state at
-`.astro/pagedigest-state.json`.
+directory during `astro:build:done`. Persistent revision state uses the explicit
+`state` path above; the default, when no path is supplied, is
+`.astro/pagedigest-state.json`. Keep the chosen path stable and backed up.
 
 Version 0.2.0 introduces explicit initialization and state recovery.
 Install with `npm install @pagedigest/astro@^0.2.0` to use these options.
@@ -33,20 +34,21 @@ Missing state then fails the build. Do not hardcode initialization in recurring 
 
 Digests are over **served** identity-encoded bytes. This integration hashes
 **build output**. After deploy, reconcile so CDN/edge rewrites do not poison
-audits:
+audits. Run the repository reconciliation tool from a PageDigest checkout root,
+using the absolute path to your Astro build when it is elsewhere:
 
 ```bash
 # 1) astro build  (writes dist/ + .well-known/pagedigest.json)
 # 2) Deploy pages + manifest (atomic if possible; else pages first, then manifest)
 # 3) Reconcile digests to live responses
-python tools/reconcile_served_digests.py ./dist/.well-known/pagedigest.json \
+uv run --project implementations/python-consumer --locked python tools/reconcile_served_digests.py ./dist/.well-known/pagedigest.json \
   --base-url https://example.com --apply
 # Redeploy the manifest if it changed.
 # 4) Sample live audits
-pagedigest verify-live https://example.com --sample-size 25
+uv run --project implementations/python-consumer --locked pagedigest verify-live https://example.com --sample-size 25
 ```
 
-Full rationale: [`CONTENT_HYGIENE.md`](../../CONTENT_HYGIENE.md). If you cannot
+Full rationale: [`CONTENT_HYGIENE.md`](https://github.com/maxwellsantoro/pagedigest/blob/main/CONTENT_HYGIENE.md). If you cannot
 reconcile, set `withDigest: false` and rely on `rev` only.
 
 ## Scope vs Rust generator
@@ -71,7 +73,7 @@ file-style index keys (`--index-style file`). CI runs
 `tools/smoke_generator_astro_conformance.py` on the shared HTML subset, including Unicode and escaped filenames so
 the two stay aligned for that matrix.
 
-Keep the state durable and serialize publication. A revision reset can reuse numbers silently; it is not always detectable by a consumer. [Initialization and recovery](../../CONTENT_HYGIENE.md#durable-publisher-state) describe the one-time `initialize` and `recoverFloor` options. Full build-byte comparison drives revisions even with `withDigest: false`.
+Keep the state durable and serialize publication. A revision reset can reuse numbers silently; it is not always detectable by a consumer. [Initialization and recovery](https://github.com/maxwellsantoro/pagedigest/blob/main/CONTENT_HYGIENE.md#durable-publisher-state) describe the one-time `initialize` and `recoverFloor` options. Full build-byte comparison drives revisions even with `withDigest: false`.
 
 ## Options
 
@@ -98,3 +100,8 @@ pagedigest({
 
 - `initialize`: first publication only; refuses existing state or output manifest.
 - `recoverFloor`: known historical upper bound used only to recover missing state.
+
+Before adopting served hashes, confirm the intended content is live and its bytes
+are stable across supported request representations. Repeated reads from one
+client do not establish this. Preserve byte-stable responses or explicitly review
+representation differences; never strip scripts or normalize bodies during audits.

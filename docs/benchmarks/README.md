@@ -1,5 +1,11 @@
 # Controlled consumer benchmark
 
+The later [Digest Exchange bounded-freshness study](digest-exchange-p1-20261029/README.md)
+adds a common 60-second validation deadline, HTTP freshness caching, variants,
+misleading metadata and failure recovery. It records no-go for additional
+PageDigest savings on that fixture. Its policy-qualified results are separate
+from the exact-current-byte experiment below.
+
 This is a **local HTTP experiment**, not an independently operated production
 consumer. The [refined report](./refined-2026-09-16.json) records seven strategies
 across six scenarios on September 16, 2026: **42 consumer/scenario combinations**

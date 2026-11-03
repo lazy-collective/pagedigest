@@ -1,0 +1,36 @@
+{
+  "run-001.json.gz": {
+    "sha256": "febdba6f9561f5de6dd761b1fcff2e7d30c169535c1178fcd2207fdb4745d265",
+    "bytes": 418210,
+    "decodedSha256": "29b9152be4f17ca7c5a8d3c148029beffee59ba9c736698879f2296951412265",
+    "decodedBytes": 26633216
+  },
+  "run-002.json.gz": {
+    "sha256": "d3f70fbb05b6b71e4f209ef3a54379987fd3cb65da1b226a5fb14338508974eb",
+    "bytes": 418194,
+    "decodedSha256": "e9b6f9164c744d1eb6ef17409323396c77c12d7e8a751e797cee34c0be593e39",
+    "decodedBytes": 26632403
+  },
+  "run-003.json.gz": {
+    "sha256": "2729f0601a1db86b8ad0fc3f3d47c3c9a89f7ad794630b002a51ef295b7f6543",
+    "bytes": 418955,
+    "decodedSha256": "98a8ff99394b959855679826fe4792466bb3dfe2b5580ef9dfafd4ff3a08eb18",
+    "decodedBytes": 26687193
+  },
+  "run-001-code/benchmark_consumers.py.gz": {
+    "sha256": "29720b45d59e0c4faa1c9ba6c440fba9a964bb1f59896e4c066f4a63c0bc9010",
+    "decodedSha256": "48210be4550daf10466d28a51be187abe2a36070c2f0e0178be1cce04b5554c6"
+  },
+  "run-001-code/benchmark_freshness.py.gz": {
+    "sha256": "f64420f62ab09180f6cbfe582442cade062d56840e71f38cba02b3a36c8de442",
+    "decodedSha256": "bc7269b8770f532feb1d1baa6407dee5aa8373c4b61dfba119ec4b4ec9ec6b97"
+  },
+  "run-002-code/benchmark_consumers.py.gz": {
+    "sha256": "29720b45d59e0c4faa1c9ba6c440fba9a964bb1f59896e4c066f4a63c0bc9010",
+    "decodedSha256": "48210be4550daf10466d28a51be187abe2a36070c2f0e0178be1cce04b5554c6"
+  },
+  "run-002-code/benchmark_freshness.py.gz": {
+    "sha256": "2945d72a78c5abb369e9d748f3941b12270aea234b6efbf4a93d65c4860eb467",
+    "decodedSha256": "a2a16f11797b5ef535bb705d74e2aa5fae02e280231ef79a538ac04a11751a61"
+  }
+}
