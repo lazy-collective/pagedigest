@@ -2,7 +2,7 @@
 
 **Now:** v1.0 — stable wire format, shipped reference implementations and packages, dogfood on [pagedigest.org](https://pagedigest.org). Gates: [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md).
 
-**Local source milestone (November 2, unreleased):** a recurring consumer reports
+**Source milestone (implemented November 2, not yet packaged):** a recurring consumer reports
 what changed, what needs rereading and which findings retain their source
 bindings. A publisher helper derives the manifest from final build output,
 previews changes and preserves durable state/coverage. These workflows reuse

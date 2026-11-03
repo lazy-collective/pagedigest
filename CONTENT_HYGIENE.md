@@ -193,10 +193,10 @@ at site revision 13. Strict full-body checks passed in the deployment runner and
 independently. All 18 observations in an additional identity/gzip matrix matched;
 no injected beacon appeared, and HTML was served without compression even when
 gzip was requested. These dated results cover the tested representations, not
-every future response or edge location. This checkout's broader workflow and
-messaging changes remain public draft source; its generated site is not the
-deployed revision. See [delivery status](README.md#status). No account, credential
-or access setting was changed by the repair.
+every future response or edge location. That deployment covered the isolated
+repair; later workflow and messaging delivery is separate. See
+[delivery status](README.md#status). No account, credential or access setting
+was changed by the repair.
 
 The deployment gate `tools/verify_deployed_site.py` requires the exact intended
 manifest and every covered identity body, with a digest for each entry, on two

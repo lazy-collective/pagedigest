@@ -19,7 +19,7 @@ claims depend on durable revision history; samples do not prove every skip.
 
 **Experimental:** the [recurring source workflow](docs/recurring-consumer.md)
 reports what changed, what needs rereading and which prior findings retain their
-declared source bindings. It is public draft source, not part of Python 0.2.0.
+declared source bindings. It is experimental source, not part of Python 0.2.0.
 Unchanged dependencies do not establish that a conclusion is true.
 
 With [DotRepo](https://dotrepo.org), PageDigest belongs to **Lazy Collective**,
@@ -66,14 +66,15 @@ Scrapy adapter replays cached responses to preserve traversal. See the
 [migration notes and artifact verification](./docs/releases/consumer-safety.md).
 Independent recurring-consumer evidence remains an open adoption milestone.
 
-**Public draft source (unreleased):** `pagedigest sync` reports changed
+**Experimental source (unreleased):** `pagedigest sync` reports changed
 sources, required rereading, and which source-bound findings remain usable;
 `pagedigest remember` retains a finding against the exact cached sources you
 name. It uses HTTP freshness/validators, optional sitemap discovery and PageDigest
 signals with bounded validation and fallback. See the
 [recurring workflow](docs/recurring-consumer.md). These commands are not in the
-published Python 0.2.0 package. Follow [PR2](https://github.com/maxwellsantoro/pagedigest/pull/2)
-for delivery; local validation and source publication are not deployment.
+published Python 0.2.0 package. [PR2](https://github.com/maxwellsantoro/pagedigest/pull/2)
+records implementation and validation history. Source publication, site deployment
+and package releases remain separate events.
 
 ### Version matrix
 

@@ -4,7 +4,7 @@ For crawlers, indexers, mirrors and agents returning to a website, start with
 usable cached results and ordinary HTTP freshness. PageDigest can add batched
 change information from `/.well-known/pagedigest.json`. This guide integrates
 the released consumer; the [recurring findings workflow](recurring-consumer.md)
-is separate public draft source, absent from Python 0.2.0.
+is separate experimental source, absent from Python 0.2.0.
 
 The rule of thumb is simple: treat PageDigest as an optimization hint, never as
 an authorization or correctness boundary. If the manifest is missing, invalid,

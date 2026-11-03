@@ -21,7 +21,7 @@ Quick orientation for AI agents working in this repo. **Do not duplicate normati
 
 Check the actual branch/HEAD and [README status](./README.md#status) before
 choosing work. The recurring consumer and publisher helpers described in this
-checkout are public draft source workflows, not commands in the published Python 0.2.0
+checkout are experimental source workflows, not commands in the published Python 0.2.0
 package. Relative guides describe this branch; canonical folder names and old
 release announcements do not establish current capabilities or priorities.
 

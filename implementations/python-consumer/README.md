@@ -12,7 +12,7 @@ pagedigest verify-live https://example.com --sample-size 25
 ```
 
 The published 0.2.0 package does not include the experimental `sync` and
-`remember` workflow. That public draft source is tracked in
+`remember` workflow. Its source implementation and validation are recorded in
 [PR2](https://github.com/maxwellsantoro/pagedigest/pull/2); no source-only command
 below is an instruction to install a nonexistent release.
 

@@ -2,7 +2,7 @@
 
 Use final site output as the inventory. There is no second page list to maintain.
 The `tools/publisher_workflow.py` helper wraps the existing Rust generator
-and stages a change report before any write. This is public draft source tooling,
+and stages a change report before any write. This is experimental source tooling,
 not a new PageDigest format or a live-site update.
 
 Build the first-party generator and review a first publication:

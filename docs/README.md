@@ -14,8 +14,8 @@ Agents: [AGENTS.md](../AGENTS.md) (symlinked as `CLAUDE.md`).
 | [case-studies/dotrepo.md](./case-studies/dotrepo.md) | Publishers & consumers | Dated dotrepo export estimates and live audit evidence |
 | [benchmarks/README.md](./benchmarks/README.md) | Consumers & maintainers | Controlled equivalent-result comparison and independent-adoption acceptance criteria |
 | [consumer-integration.md](./consumer-integration.md) | Consumers | Crawler, indexer, mirror, and agent integration guide |
-| [recurring-consumer.md](./recurring-consumer.md) | Recurring users | Public draft sync, rereading and source-bound findings workflow |
-| [publisher-workflow.md](./publisher-workflow.md) | Publishers | Public draft preview/setup/update from final build output |
+| [recurring-consumer.md](./recurring-consumer.md) | Recurring users | Experimental source sync, rereading and source-bound findings workflow |
+| [publisher-workflow.md](./publisher-workflow.md) | Publishers | Source-based preview/setup/update from final build output |
 | [P1 bounded-freshness result](./benchmarks/digest-exchange-p1-20261029/README.md) | Evaluators | Negative savings result against HTTP freshness, preserved independently of new workflow controls |
 | [cooperative-automation.md](./cooperative-automation.md) | Publishers & intermediaries | `PageDigest-State` logging, classification, nginx, and Cloudflare recipes |
 | [announcements/v1-rc.md](./announcements/v1-rc.md) | Adopters & maintainers | Historical v1 RC announcement (protocol is v1.0) |
