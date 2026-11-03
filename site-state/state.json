@@ -1,24 +1,24 @@
 {
-  "site_rev": 20,
+  "site_rev": 23,
   "revision_floor": 0,
   "coverage": {
     "mode": "complete"
   },
   "entries": {
     "/": {
-      "rev": 17,
-      "digest": "0884136caa7b93d06b76dea4e925236982b303d2dbd920acd3026425509214ec",
-      "modified": "2026-11-03T00:23:59Z"
+      "rev": 20,
+      "digest": "2396d41086825bb0ed0fe4975df818482e79a3acfb29f4e72048cb6f1b895d73",
+      "modified": "2026-11-03T05:51:37Z"
     },
     "/announcements/v1-rc/": {
-      "rev": 4,
-      "digest": "84c03c1688efa36e384f8953ca5db7d24e9da2763948b500ab22356aa3b8502f",
-      "modified": "2026-11-02T22:35:38Z"
+      "rev": 6,
+      "digest": "3ca56012aad9b10d060203a69809d1397b92239acf99548f18dbc353fdae2eab",
+      "modified": "2026-11-03T05:51:37Z"
     },
     "/rel/": {
-      "rev": 3,
-      "digest": "15ccecd4fb806299bc3dd98dca52940e11e5d48b494bdf8de0697860043c017b",
-      "modified": "2026-11-02T22:43:53Z"
+      "rev": 5,
+      "digest": "0f21436461e85bbaaac6b7790fe50d05447bfa8953aaf0e954d7c5bea8b609ce",
+      "modified": "2026-11-03T05:51:37Z"
     }
   },
   "retired": {

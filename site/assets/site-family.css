@@ -1,0 +1,52 @@
+/* PageDigest layout; shared tokens and controls are pinned separately at v1. */
+:root {
+  --paper: var(--lc-paper); --paper-deep: var(--lc-paper-deep);
+  --ink: var(--lc-ink); --ink-soft: var(--lc-muted); --line: var(--lc-rule);
+  --publisher: var(--lc-ochre); --publisher-wash: #f5eddc;
+  --crawler: var(--lc-green); --crawler-wash: var(--lc-wash);
+  --display: var(--lc-display); --body: var(--lc-body); --mono: var(--lc-mono);
+}
+html { scroll-behavior: auto; }
+body { background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 1rem; line-height: 1.65; }
+.wrap { max-width: 1180px; padding-inline: 32px; }
+header.top { padding: 28px 0 22px; border-bottom: 2px solid var(--crawler); gap: 24px; align-items: center; font-family: var(--body); }
+.wordmark { font: 700 2.2rem/1.1 var(--display); letter-spacing: -.05em; color: var(--ink); }
+nav.top-links { flex-wrap: wrap; justify-content: flex-end; gap: 4px 18px; }
+nav.top-links a { display: inline-flex; align-items: center; min-height: 44px; color: var(--ink); }
+nav.top-links a:hover { text-decoration: underline; }
+.hero { padding: 66px 0 38px; }
+.hero .lc-eyebrow { margin: 0 0 22px; }
+.hero h1 { font-family: var(--display); font-size: clamp(2.7rem, 5.5vw, 4.6rem); line-height: 1.04; letter-spacing: -.05em; max-width: 24ch; }
+.hero p.lede { font-size: 1.2rem; line-height: 1.5; max-width: 62ch; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+.hero-actions a { text-decoration: none; }
+section { padding-top: 45px; }
+h1, h2, h3 { font-family: var(--display); }
+h2 { font-size: clamp(1.7rem, 3vw, 2.3rem); line-height: 1.15; letter-spacing: -.035em; }
+.bargain { border-radius: 0; border: 0; border-block: 1px solid var(--line); }
+.bargain .side { background: transparent; }
+.bargain .side h3 { font-size: 1.5rem; }
+.proof, .callout, .link-grid .cell { border-radius: 0; box-shadow: none; }
+.manifest, .state-header { border-radius: 8px; }
+.comparison td:first-child { white-space: normal; }
+.comparison { overflow-wrap: anywhere; }
+footer { margin-top: 66px; border-top: 1px solid var(--line); font-family: var(--body); }
+body > main { max-width: 860px; padding: 44px 26px 60px; }
+body > main h1 { font-family: var(--display); font-size: clamp(1.8rem, 4.5vw, 3rem); overflow-wrap: anywhere; }
+.subpage-header { max-width: 860px; margin: 0 auto; padding: 26px; border-bottom: 2px solid var(--crawler); }
+.subpage-header .wordmark { font-size: 1.9rem; }
+.card { background: var(--lc-wash); border-radius: 0; }
+article h1 { font-family: var(--display); }
+@media (max-width: 720px) {
+  .wrap { padding-inline: 18px; }
+  header.top { padding-block: 20px 15px; align-items: flex-start; gap: 12px; flex-direction: column; }
+  .wordmark { font-size: 1.9rem; }
+  nav.top-links { justify-content: flex-start; gap: 0 16px; font-size: .9rem; }
+  .hero { padding-top: 34px; }
+  .hero h1 { font-size: clamp(1.9rem, 8.6vw, 2.6rem); }
+  .hero p.lede { font-size: 1.08rem; }
+  .hero-actions { flex-direction: column; }
+  .comparison th, .comparison td { padding: 10px 7px; font-size: .84rem; }
+  .bargain .side { padding-inline: 0; }
+  .bargain .side + .side { border-left: 0; border-top: 1px solid var(--line); }
+}
