@@ -22,6 +22,6 @@ Keep `_worker.js` and `_headers` no-transform controls; do not adopt a transform
 response hash to make verification pass. Browser QA and `tools/run_checks.sh`
 supplement, rather than replace, repeated exact-byte checks.
 
-The family is prepared locally. Source and local previews do not establish
-delivery. Link the umbrella domain only after ownership and deployment are
-verified; existing product and evidence links work now.
+The [umbrella home](https://lazycollective.org/) is live and linked from the
+product homepage. Source and local previews do not establish child-site delivery;
+verify the current main commit and live manifest before treating a checkout as deployed.
