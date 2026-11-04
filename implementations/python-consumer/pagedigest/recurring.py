@@ -26,6 +26,7 @@ from .core import check_site, manifest_url, resolve_url_key
 from .persistence import load_state, save_state
 
 MAX_URLS = 200
+MAX_SITEMAP_ENTRIES = 10000
 MAX_PREFIXES = 16
 MAX_FINDINGS = 200
 MAX_STATE_BYTES = 4 * 1024 * 1024
@@ -247,7 +248,7 @@ def prune_bodies(state, pages_dir):
             path.unlink()
 
 
-def sitemap_sources(base_url, key, meter, now):
+def sitemap_sources(base_url, key, meter, now, *, prefixes=(), explicit=()):
     """A bounded urlset supplies discovery/change hints, never proof of absence."""
     response = meter.get(resolve_url_key(base_url, key), timeout=15, stream=True, allow_redirects=False)
     try:
@@ -261,7 +262,9 @@ def sitemap_sources(base_url, key, meter, now):
             raise ValueError("only-bounded-sitemap-urlsets-supported")
         origin = urlsplit(manifest_url(base_url))
         result = {}
-        for item in root:
+        for count, item in enumerate(root, 1):
+            if count > MAX_SITEMAP_ENTRIES:
+                raise ValueError("sitemap-input-exceeds10000-entries")
             ns = SITEMAP_NS if item.tag.startswith(SITEMAP_NS) else ""
             location = item.findtext(ns + "loc")
             if not location:
@@ -274,6 +277,10 @@ def sitemap_sources(base_url, key, meter, now):
                 url_key += "?" + url.query
             if resolve_url_key(base_url, url_key) != location:
                 raise ValueError("sitemap-location-normalized")
+            # Validate every entry, including excluded entries, before admitting
+            # only the requested scope. Input bytes/items have independent caps.
+            if prefixes and url_key not in explicit and not any(url_key.startswith(p) for p in prefixes):
+                continue
             result[url_key] = item.findtext(ns + "lastmod")
             if len(result) > MAX_URLS:
                 raise ValueError("sitemap-scope-exceeds200-URLs")
@@ -524,7 +531,7 @@ def _sync(
     lastmods = {}
     if sitemap:
         try:
-            lastmods = sitemap_sources(base_url, sitemap, meter, now)
+            lastmods = sitemap_sources(base_url, sitemap, meter, now, prefixes=prefixes, explicit=explicit)
             scope.update(lastmods)
         except (requests.RequestException, ValueError, ET.ParseError) as exc:
             report["errors"].append({"url": sitemap, "reason": str(exc)})

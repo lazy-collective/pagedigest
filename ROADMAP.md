@@ -1,5 +1,23 @@
 # Roadmap
 
+**November 4 org-review repair (local candidate):** sitemap discovery now applies
+the requested prefixes before its 200-source admission limit, while validating
+all input URL keys and retaining separate 2 MiB / 10,000-entry input bounds.
+Regression controls cover large narrowed sitemaps, persisted scope, explicit URLs,
+overfull selected scope and unsafe excluded entries. Full-gate results and the
+bounded recurring-workflow control are retained in the parent review packet at
+`/Users/maxwell/Documents/Codex/2026-11-04/task/address-org-review/acceptance/`.
+This is source preparation, with no package or website publication.
+
+The [completed-workflow control](docs/benchmarks/recurring-workflow-20261104/README.md)
+compares the real publisher/recurring workflow with the same HTTP cache through
+six bounded local cycles. Both retain useful source bindings and handle loss,
+change, failure and recovery; PageDigest uses 14 requests / 1,199 consumed body
+bytes versus HTTP's 12 / 365. This developer-defined, post-exposure control uses
+supplied finding texts; independent utility, operator effort and all-in economic
+benefit remain open. Preserve P1's negative result and DotRepo's export-time churn
+receipt; no shared runtime, scaling campaign or provider spend follows.
+
 **November 3 review follow-up:** keep the current Pages hosting and use
 descriptive application user agents, per the user's explicit choice after the
 managed-zone BIC limitation was verified. Default source consumer sessions now

@@ -1,0 +1,808 @@
+{
+  "kind": "developer-defined local workflow control",
+  "policy": "Same two source bodies, HTTP cache, 60-second body deadline, forced failure/recovery audits; six cycles, <=5 requests/1 MiB each, no models or external origins.",
+  "outcome": "Both arms complete five cycles, retain source-bound setup/limits notes, invalidate only changed setup notes, report the failed cycle incomplete/unknown, and recover. Every available source matches the fixture's current bytes.",
+  "publisher": [
+    {
+      "elapsedSeconds": 0.0532219170127064,
+      "changes": {
+        "added": [
+          "/docs/limits.html",
+          "/docs/start.html"
+        ],
+        "removed": [],
+        "changed": []
+      },
+      "siteRevision": 1,
+      "durableStateBytes": 455
+    },
+    {
+      "elapsedSeconds": 0.10427487501874566,
+      "changes": {
+        "added": [],
+        "removed": [],
+        "changed": []
+      },
+      "siteRevision": 1,
+      "durableStateBytes": 455
+    },
+    {
+      "elapsedSeconds": 0.17515504197217524,
+      "changes": {
+        "added": [],
+        "removed": [],
+        "changed": [
+          "/docs/start.html"
+        ]
+      },
+      "siteRevision": 2,
+      "durableStateBytes": 455
+    }
+  ],
+  "publisherEffort": "Three existing-helper preparations, each preview plus apply; initial choices: initialize, complete coverage and digests. No second page catalog. Human effort, backup/recovery operations and production deployment are unmeasured.",
+  "totals": {
+    "pagedigest": {
+      "requests": 14,
+      "response_body_bytes": 1199,
+      "clientThreadCpuSeconds": 0.027520707000000005
+    },
+    "http": {
+      "requests": 12,
+      "response_body_bytes": 365,
+      "clientThreadCpuSeconds": 0.024671666000000037
+    }
+  },
+  "cycles": [
+    {
+      "cycle": "cold",
+      "arms": {
+        "pagedigest": {
+          "complete": true,
+          "observed_at": 100,
+          "changed": [],
+          "new": [
+            "/docs/limits.html",
+            "/docs/start.html"
+          ],
+          "reread": [
+            "/docs/limits.html",
+            "/docs/start.html"
+          ],
+          "removed": [],
+          "reused": [],
+          "revalidated": [],
+          "errors": [],
+          "findings": [],
+          "signal": "pagedigest",
+          "manifest_fallback": null,
+          "sitemap": null,
+          "scope": "Explicit URLs and discovered entries only; sitemap omission is not proof of deletion.",
+          "meaning": "Usable means declared source dependencies remain retained under this freshness policy; it does not verify a finding or guarantee immediate change detection.",
+          "prefixes": [],
+          "out_of_scope": [],
+          "requests": 3,
+          "response_body_bytes": 523,
+          "elapsed_seconds": 0.01590104214847088,
+          "http": [
+            {
+              "url": "http://127.0.0.1:65264/.well-known/pagedigest.json",
+              "status": 200,
+              "body_bytes": 417
+            },
+            {
+              "url": "http://127.0.0.1:65264/docs/limits.html",
+              "status": 200,
+              "body_bytes": 47
+            },
+            {
+              "url": "http://127.0.0.1:65264/docs/start.html",
+              "status": 200,
+              "body_bytes": 59
+            }
+          ],
+          "accounting": "Counts every started request and consumed response-body byte, including failures; excludes HTTP headers, TLS, provider and physical disk costs. No model calls.",
+          "clientThreadCpuSeconds": 0.005690416000000004
+        },
+        "http": {
+          "complete": true,
+          "observed_at": 100,
+          "changed": [],
+          "new": [
+            "/docs/limits.html",
+            "/docs/start.html"
+          ],
+          "reread": [
+            "/docs/limits.html",
+            "/docs/start.html"
+          ],
+          "removed": [],
+          "reused": [],
+          "revalidated": [],
+          "errors": [],
+          "findings": [],
+          "signal": "http",
+          "manifest_fallback": "http-only",
+          "sitemap": null,
+          "scope": "Explicit URLs and discovered entries only; sitemap omission is not proof of deletion.",
+          "meaning": "Usable means declared source dependencies remain retained under this freshness policy; it does not verify a finding or guarantee immediate change detection.",
+          "prefixes": [],
+          "out_of_scope": [],
+          "requests": 2,
+          "response_body_bytes": 106,
+          "elapsed_seconds": 0.015206041047349572,
+          "http": [
+            {
+              "url": "http://127.0.0.1:65264/docs/limits.html",
+              "status": 200,
+              "body_bytes": 47
+            },
+            {
+              "url": "http://127.0.0.1:65264/docs/start.html",
+              "status": 200,
+              "body_bytes": 59
+            }
+          ],
+          "accounting": "Counts every started request and consumed response-body byte, including failures; excludes HTTP headers, TLS, provider and physical disk costs. No model calls.",
+          "clientThreadCpuSeconds": 0.0030880419999999853
+        }
+      }
+    },
+    {
+      "cycle": "warm",
+      "arms": {
+        "pagedigest": {
+          "complete": true,
+          "observed_at": 110,
+          "changed": [],
+          "new": [],
+          "reread": [],
+          "removed": [],
+          "reused": [
+            {
+              "url": "/docs/limits.html",
+              "basis": "pagedigest-unchanged"
+            },
+            {
+              "url": "/docs/start.html",
+              "basis": "pagedigest-unchanged"
+            }
+          ],
+          "revalidated": [],
+          "errors": [],
+          "findings": [
+            {
+              "id": "limits",
+              "status": "usable",
+              "sourceStatus": "current",
+              "problems": []
+            },
+            {
+              "id": "setup-v1",
+              "status": "usable",
+              "sourceStatus": "current",
+              "problems": []
+            }
+          ],
+          "signal": "pagedigest",
+          "manifest_fallback": null,
+          "sitemap": null,
+          "scope": "Explicit URLs and discovered entries only; sitemap omission is not proof of deletion.",
+          "meaning": "Usable means declared source dependencies remain retained under this freshness policy; it does not verify a finding or guarantee immediate change detection.",
+          "prefixes": [],
+          "out_of_scope": [],
+          "requests": 1,
+          "response_body_bytes": 0,
+          "elapsed_seconds": 0.012344709131866693,
+          "http": [
+            {
+              "url": "http://127.0.0.1:65264/.well-known/pagedigest.json",
+              "status": 304,
+              "body_bytes": 0
+            }
+          ],
+          "accounting": "Counts every started request and consumed response-body byte, including failures; excludes HTTP headers, TLS, provider and physical disk costs. No model calls.",
+          "clientThreadCpuSeconds": 0.004112541999999997
+        },
+        "http": {
+          "complete": true,
+          "observed_at": 110,
+          "changed": [],
+          "new": [],
+          "reread": [],
+          "removed": [],
+          "reused": [],
+          "revalidated": [
+            "/docs/limits.html",
+            "/docs/start.html"
+          ],
+          "errors": [],
+          "findings": [
+            {
+              "id": "limits",
+              "status": "usable",
+              "sourceStatus": "current",
+              "problems": []
+            },
+            {
+              "id": "setup-v1",
+              "status": "usable",
+              "sourceStatus": "current",
+              "problems": []
+            }
+          ],
+          "signal": "http",
+          "manifest_fallback": "http-only",
+          "sitemap": null,
+          "scope": "Explicit URLs and discovered entries only; sitemap omission is not proof of deletion.",
+          "meaning": "Usable means declared source dependencies remain retained under this freshness policy; it does not verify a finding or guarantee immediate change detection.",
+          "prefixes": [],
+          "out_of_scope": [],
+          "requests": 2,
+          "response_body_bytes": 0,
+          "elapsed_seconds": 0.01660833298228681,
+          "http": [
+            {
+              "url": "http://127.0.0.1:65264/docs/limits.html",
+              "status": 304,
+              "body_bytes": 0
+            },
+            {
+              "url": "http://127.0.0.1:65264/docs/start.html",
+              "status": 304,
+              "body_bytes": 0
+            }
+          ],
+          "accounting": "Counts every started request and consumed response-body byte, including failures; excludes HTTP headers, TLS, provider and physical disk costs. No model calls.",
+          "clientThreadCpuSeconds": 0.003780875000000017
+        }
+      }
+    },
+    {
+      "cycle": "changed",
+      "arms": {
+        "pagedigest": {
+          "complete": true,
+          "observed_at": 120,
+          "changed": [
+            "/docs/start.html"
+          ],
+          "new": [],
+          "reread": [
+            "/docs/start.html"
+          ],
+          "removed": [],
+          "reused": [
+            {
+              "url": "/docs/limits.html",
+              "basis": "pagedigest-unchanged"
+            }
+          ],
+          "revalidated": [],
+          "errors": [],
+          "findings": [
+            {
+              "id": "limits",
+              "status": "usable",
+              "sourceStatus": "current",
+              "problems": []
+            },
+            {
+              "id": "setup-v1",
+              "status": "needs_reread",
+              "sourceStatus": "changed",
+              "problems": [
+                {
+                  "url": "/docs/start.html",
+                  "reason": "source-bytes-changed"
+                }
+              ]
+            }
+          ],
+          "signal": "pagedigest",
+          "manifest_fallback": null,
+          "sitemap": null,
+          "scope": "Explicit URLs and discovered entries only; sitemap omission is not proof of deletion.",
+          "meaning": "Usable means declared source dependencies remain retained under this freshness policy; it does not verify a finding or guarantee immediate change detection.",
+          "prefixes": [],
+          "out_of_scope": [],
+          "requests": 2,
+          "response_body_bytes": 476,
+          "elapsed_seconds": 0.0035073328763246536,
+          "http": [
+            {
+              "url": "http://127.0.0.1:65264/.well-known/pagedigest.json",
+              "status": 200,
+              "body_bytes": 417
+            },
+            {
+              "url": "http://127.0.0.1:65264/docs/start.html",
+              "status": 200,
+              "body_bytes": 59
+            }
+          ],
+          "accounting": "Counts every started request and consumed response-body byte, including failures; excludes HTTP headers, TLS, provider and physical disk costs. No model calls.",
+          "clientThreadCpuSeconds": 0.003966458000000006
+        },
+        "http": {
+          "complete": true,
+          "observed_at": 120,
+          "changed": [
+            "/docs/start.html"
+          ],
+          "new": [],
+          "reread": [
+            "/docs/start.html"
+          ],
+          "removed": [],
+          "reused": [],
+          "revalidated": [
+            "/docs/limits.html"
+          ],
+          "errors": [],
+          "findings": [
+            {
+              "id": "limits",
+              "status": "usable",
+              "sourceStatus": "current",
+              "problems": []
+            },
+            {
+              "id": "setup-v1",
+              "status": "needs_reread",
+              "sourceStatus": "changed",
+              "problems": [
+                {
+                  "url": "/docs/start.html",
+                  "reason": "source-bytes-changed"
+                }
+              ]
+            }
+          ],
+          "signal": "http",
+          "manifest_fallback": "http-only",
+          "sitemap": null,
+          "scope": "Explicit URLs and discovered entries only; sitemap omission is not proof of deletion.",
+          "meaning": "Usable means declared source dependencies remain retained under this freshness policy; it does not verify a finding or guarantee immediate change detection.",
+          "prefixes": [],
+          "out_of_scope": [],
+          "requests": 2,
+          "response_body_bytes": 59,
+          "elapsed_seconds": 0.013538041850551963,
+          "http": [
+            {
+              "url": "http://127.0.0.1:65264/docs/limits.html",
+              "status": 304,
+              "body_bytes": 0
+            },
+            {
+              "url": "http://127.0.0.1:65264/docs/start.html",
+              "status": 200,
+              "body_bytes": 59
+            }
+          ],
+          "accounting": "Counts every started request and consumed response-body byte, including failures; excludes HTTP headers, TLS, provider and physical disk costs. No model calls.",
+          "clientThreadCpuSeconds": 0.005560750000000003
+        }
+      }
+    },
+    {
+      "cycle": "lost-body",
+      "arms": {
+        "pagedigest": {
+          "complete": true,
+          "observed_at": 130,
+          "changed": [],
+          "new": [],
+          "reread": [],
+          "removed": [],
+          "reused": [
+            {
+              "url": "/docs/start.html",
+              "basis": "pagedigest-unchanged"
+            }
+          ],
+          "revalidated": [],
+          "errors": [],
+          "findings": [
+            {
+              "id": "limits",
+              "status": "usable",
+              "sourceStatus": "current",
+              "problems": []
+            },
+            {
+              "id": "setup-v1",
+              "status": "needs_reread",
+              "sourceStatus": "changed",
+              "problems": [
+                {
+                  "url": "/docs/start.html",
+                  "reason": "source-bytes-changed"
+                }
+              ]
+            },
+            {
+              "id": "setup-v2",
+              "status": "usable",
+              "sourceStatus": "current",
+              "problems": []
+            }
+          ],
+          "signal": "pagedigest",
+          "manifest_fallback": null,
+          "sitemap": null,
+          "scope": "Explicit URLs and discovered entries only; sitemap omission is not proof of deletion.",
+          "meaning": "Usable means declared source dependencies remain retained under this freshness policy; it does not verify a finding or guarantee immediate change detection.",
+          "prefixes": [],
+          "out_of_scope": [],
+          "requests": 2,
+          "response_body_bytes": 47,
+          "elapsed_seconds": 0.020383999915793538,
+          "http": [
+            {
+              "url": "http://127.0.0.1:65264/.well-known/pagedigest.json",
+              "status": 304,
+              "body_bytes": 0
+            },
+            {
+              "url": "http://127.0.0.1:65264/docs/limits.html",
+              "status": 200,
+              "body_bytes": 47
+            }
+          ],
+          "accounting": "Counts every started request and consumed response-body byte, including failures; excludes HTTP headers, TLS, provider and physical disk costs. No model calls.",
+          "clientThreadCpuSeconds": 0.0051040829999999815
+        },
+        "http": {
+          "complete": true,
+          "observed_at": 130,
+          "changed": [],
+          "new": [],
+          "reread": [],
+          "removed": [],
+          "reused": [],
+          "revalidated": [
+            "/docs/start.html"
+          ],
+          "errors": [],
+          "findings": [
+            {
+              "id": "limits",
+              "status": "usable",
+              "sourceStatus": "current",
+              "problems": []
+            },
+            {
+              "id": "setup-v1",
+              "status": "needs_reread",
+              "sourceStatus": "changed",
+              "problems": [
+                {
+                  "url": "/docs/start.html",
+                  "reason": "source-bytes-changed"
+                }
+              ]
+            },
+            {
+              "id": "setup-v2",
+              "status": "usable",
+              "sourceStatus": "current",
+              "problems": []
+            }
+          ],
+          "signal": "http",
+          "manifest_fallback": "http-only",
+          "sitemap": null,
+          "scope": "Explicit URLs and discovered entries only; sitemap omission is not proof of deletion.",
+          "meaning": "Usable means declared source dependencies remain retained under this freshness policy; it does not verify a finding or guarantee immediate change detection.",
+          "prefixes": [],
+          "out_of_scope": [],
+          "requests": 2,
+          "response_body_bytes": 47,
+          "elapsed_seconds": 0.02087433310225606,
+          "http": [
+            {
+              "url": "http://127.0.0.1:65264/docs/limits.html",
+              "status": 200,
+              "body_bytes": 47
+            },
+            {
+              "url": "http://127.0.0.1:65264/docs/start.html",
+              "status": 304,
+              "body_bytes": 0
+            }
+          ],
+          "accounting": "Counts every started request and consumed response-body byte, including failures; excludes HTTP headers, TLS, provider and physical disk costs. No model calls.",
+          "clientThreadCpuSeconds": 0.005080541000000022
+        }
+      }
+    },
+    {
+      "cycle": "failure",
+      "arms": {
+        "pagedigest": {
+          "complete": false,
+          "observed_at": 140,
+          "changed": [],
+          "new": [],
+          "reread": [
+            "/docs/start.html"
+          ],
+          "removed": [],
+          "reused": [],
+          "revalidated": [],
+          "errors": [
+            {
+              "url": "/docs/start.html",
+              "reason": "HTTP-503"
+            }
+          ],
+          "findings": [
+            {
+              "id": "limits",
+              "status": "usable",
+              "sourceStatus": "current",
+              "problems": []
+            },
+            {
+              "id": "setup-v1",
+              "status": "unknown",
+              "sourceStatus": "unknown",
+              "problems": [
+                {
+                  "url": "/docs/start.html",
+                  "reason": "source-unavailable-or-not-currently-validated"
+                }
+              ]
+            },
+            {
+              "id": "setup-v2",
+              "status": "unknown",
+              "sourceStatus": "unknown",
+              "problems": [
+                {
+                  "url": "/docs/start.html",
+                  "reason": "source-unavailable-or-not-currently-validated"
+                }
+              ]
+            }
+          ],
+          "signal": "pagedigest",
+          "manifest_fallback": null,
+          "sitemap": null,
+          "scope": "Explicit URLs and discovered entries only; sitemap omission is not proof of deletion.",
+          "meaning": "Usable means declared source dependencies remain retained under this freshness policy; it does not verify a finding or guarantee immediate change detection.",
+          "prefixes": [],
+          "out_of_scope": [],
+          "requests": 3,
+          "response_body_bytes": 47,
+          "elapsed_seconds": 0.020723165944218636,
+          "http": [
+            {
+              "url": "http://127.0.0.1:65264/.well-known/pagedigest.json",
+              "status": 304,
+              "body_bytes": 0
+            },
+            {
+              "url": "http://127.0.0.1:65264/docs/limits.html",
+              "status": 200,
+              "body_bytes": 47
+            },
+            {
+              "url": "http://127.0.0.1:65264/docs/start.html",
+              "status": 503,
+              "body_bytes": 0
+            }
+          ],
+          "accounting": "Counts every started request and consumed response-body byte, including failures; excludes HTTP headers, TLS, provider and physical disk costs. No model calls.",
+          "clientThreadCpuSeconds": 0.004389375000000001
+        },
+        "http": {
+          "complete": false,
+          "observed_at": 140,
+          "changed": [],
+          "new": [],
+          "reread": [
+            "/docs/start.html"
+          ],
+          "removed": [],
+          "reused": [],
+          "revalidated": [],
+          "errors": [
+            {
+              "url": "/docs/start.html",
+              "reason": "HTTP-503"
+            }
+          ],
+          "findings": [
+            {
+              "id": "limits",
+              "status": "usable",
+              "sourceStatus": "current",
+              "problems": []
+            },
+            {
+              "id": "setup-v1",
+              "status": "unknown",
+              "sourceStatus": "unknown",
+              "problems": [
+                {
+                  "url": "/docs/start.html",
+                  "reason": "source-unavailable-or-not-currently-validated"
+                }
+              ]
+            },
+            {
+              "id": "setup-v2",
+              "status": "unknown",
+              "sourceStatus": "unknown",
+              "problems": [
+                {
+                  "url": "/docs/start.html",
+                  "reason": "source-unavailable-or-not-currently-validated"
+                }
+              ]
+            }
+          ],
+          "signal": "http",
+          "manifest_fallback": "http-only",
+          "sitemap": null,
+          "scope": "Explicit URLs and discovered entries only; sitemap omission is not proof of deletion.",
+          "meaning": "Usable means declared source dependencies remain retained under this freshness policy; it does not verify a finding or guarantee immediate change detection.",
+          "prefixes": [],
+          "out_of_scope": [],
+          "requests": 2,
+          "response_body_bytes": 47,
+          "elapsed_seconds": 0.01073566684499383,
+          "http": [
+            {
+              "url": "http://127.0.0.1:65264/docs/limits.html",
+              "status": 200,
+              "body_bytes": 47
+            },
+            {
+              "url": "http://127.0.0.1:65264/docs/start.html",
+              "status": 503,
+              "body_bytes": 0
+            }
+          ],
+          "accounting": "Counts every started request and consumed response-body byte, including failures; excludes HTTP headers, TLS, provider and physical disk costs. No model calls.",
+          "clientThreadCpuSeconds": 0.0032525830000000033
+        }
+      }
+    },
+    {
+      "cycle": "recovery",
+      "arms": {
+        "pagedigest": {
+          "complete": true,
+          "observed_at": 150,
+          "changed": [],
+          "new": [],
+          "reread": [],
+          "removed": [],
+          "reused": [],
+          "revalidated": [],
+          "errors": [],
+          "findings": [
+            {
+              "id": "limits",
+              "status": "usable",
+              "sourceStatus": "current",
+              "problems": []
+            },
+            {
+              "id": "setup-v1",
+              "status": "needs_reread",
+              "sourceStatus": "changed",
+              "problems": [
+                {
+                  "url": "/docs/start.html",
+                  "reason": "source-bytes-changed"
+                }
+              ]
+            },
+            {
+              "id": "setup-v2",
+              "status": "usable",
+              "sourceStatus": "current",
+              "problems": []
+            }
+          ],
+          "signal": "pagedigest",
+          "manifest_fallback": null,
+          "sitemap": null,
+          "scope": "Explicit URLs and discovered entries only; sitemap omission is not proof of deletion.",
+          "meaning": "Usable means declared source dependencies remain retained under this freshness policy; it does not verify a finding or guarantee immediate change detection.",
+          "prefixes": [],
+          "out_of_scope": [],
+          "requests": 3,
+          "response_body_bytes": 106,
+          "elapsed_seconds": 0.015276291873306036,
+          "http": [
+            {
+              "url": "http://127.0.0.1:65264/.well-known/pagedigest.json",
+              "status": 304,
+              "body_bytes": 0
+            },
+            {
+              "url": "http://127.0.0.1:65264/docs/limits.html",
+              "status": 200,
+              "body_bytes": 47
+            },
+            {
+              "url": "http://127.0.0.1:65264/docs/start.html",
+              "status": 200,
+              "body_bytes": 59
+            }
+          ],
+          "accounting": "Counts every started request and consumed response-body byte, including failures; excludes HTTP headers, TLS, provider and physical disk costs. No model calls.",
+          "clientThreadCpuSeconds": 0.004257833000000016
+        },
+        "http": {
+          "complete": true,
+          "observed_at": 150,
+          "changed": [],
+          "new": [],
+          "reread": [],
+          "removed": [],
+          "reused": [],
+          "revalidated": [],
+          "errors": [],
+          "findings": [
+            {
+              "id": "limits",
+              "status": "usable",
+              "sourceStatus": "current",
+              "problems": []
+            },
+            {
+              "id": "setup-v1",
+              "status": "needs_reread",
+              "sourceStatus": "changed",
+              "problems": [
+                {
+                  "url": "/docs/start.html",
+                  "reason": "source-bytes-changed"
+                }
+              ]
+            },
+            {
+              "id": "setup-v2",
+              "status": "usable",
+              "sourceStatus": "current",
+              "problems": []
+            }
+          ],
+          "signal": "http",
+          "manifest_fallback": "http-only",
+          "sitemap": null,
+          "scope": "Explicit URLs and discovered entries only; sitemap omission is not proof of deletion.",
+          "meaning": "Usable means declared source dependencies remain retained under this freshness policy; it does not verify a finding or guarantee immediate change detection.",
+          "prefixes": [],
+          "out_of_scope": [],
+          "requests": 2,
+          "response_body_bytes": 106,
+          "elapsed_seconds": 0.012276292080059648,
+          "http": [
+            {
+              "url": "http://127.0.0.1:65264/docs/limits.html",
+              "status": 200,
+              "body_bytes": 47
+            },
+            {
+              "url": "http://127.0.0.1:65264/docs/start.html",
+              "status": 200,
+              "body_bytes": 59
+            }
+          ],
+          "accounting": "Counts every started request and consumed response-body byte, including failures; excludes HTTP headers, TLS, provider and physical disk costs. No model calls.",
+          "clientThreadCpuSeconds": 0.003908875000000006
+        }
+      }
+    }
+  ],
+  "limits": "No independent tasks/reviewer/operator, task inference, dollar costs, token measurements, scale or general economic claim. Requests/consumed response-body bytes exclude headers/TLS. Fixture conclusions are supplied by this developer-defined control. Retain earlier negative studies.",
+  "harnessSha256": "8ccec3bf936a2622bb453013f043ff4de91dd708f1ca948ee732cd8ce94339f4",
+  "sourceBase": "3a31c46f0d18d2bc2c2ba7bd6eff81c35c58ab46"
+}
