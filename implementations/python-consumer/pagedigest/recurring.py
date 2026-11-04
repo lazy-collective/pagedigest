@@ -461,8 +461,9 @@ def _sync(
             base_url,
             state["site_rev"],
             {k: state["revs"][k] for k in available if k in state["revs"]},
-            etag=state["etag"],
-            last_modified=state["last_modified"],
+            # Older workflow states may pair a replacement manifest with its predecessor's validators.
+            etag=state["etag"] if state.get("manifest_validators_bound") else None,
+            last_modified=state["last_modified"] if state.get("manifest_validators_bound") else None,
             cached_manifest=state["manifest"],
             sample_audit_rate=0,
             session=meter,
@@ -676,8 +677,10 @@ def _sync(
         state.update(
             manifest=manifest,
             site_rev=manifest["site_rev"],
-            etag=decision.get("etag") or state["etag"],
-            last_modified=decision.get("last_modified") or state["last_modified"],
+            etag=decision.get("etag") or (state["etag"] if decision["not_modified"] else None),
+            last_modified=decision.get("last_modified")
+            or (state["last_modified"] if decision["not_modified"] else None),
+            manifest_validators_bound=True,
             distrusted=False,
         )
     report["complete"] = not report["errors"]

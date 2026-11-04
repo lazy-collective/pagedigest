@@ -146,6 +146,11 @@ with urlopen(request, timeout=15) as response:
 
 ### Reuse policy
 
+Manifest validators belong to the particular manifest response that supplied them.
+A full response replaces both validators, including clearing omitted ones. A
+conditional 304 can retain them. The first sync of an older cache requests the
+manifest without its legacy validators to establish that binding.
+
 - HTTP `max-age`/`Expires` freshness can avoid a page request while the response
   is fresh, including with `must-revalidate`; `no-cache` requires validation.
 - An unchanged entry in this cycle's validated manifest whose `digest` equals the

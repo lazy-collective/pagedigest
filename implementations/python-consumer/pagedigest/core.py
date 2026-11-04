@@ -786,6 +786,8 @@ def check_site(
     if result.status_code == 304:
         if not reusable_manifest:
             return {"fallback": True, "error": "not-modified-without-cached-manifest"}
+        if not (etag or last_modified):
+            return {"fallback": True, "error": "not-modified-without-conditional-request"}
         result.manifest = cached_manifest
 
     assert result.manifest is not None

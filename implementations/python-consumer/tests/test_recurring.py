@@ -139,6 +139,50 @@ class RecurringTests(unittest.TestCase):
         self.assertEqual(report["reused"], [])
         self.assertEqual(read_state(self.state)["body_hashes"]["/a"], digest(b"one"))
 
+    def test_manifest_rollback_after_validatorless_replacement(self):
+        manifest_key = "/.well-known/pagedigest.json"
+        validators = {"ETag": '"A"', "Last-Modified": "Wed, 04 Nov 2026 12:00:00 GMT"}
+        self.origin.page("/a", b"A", cache="no-cache")
+        self.origin.manifest({"/a": entry(1, b"A")})
+        body_a = self.origin.routes[manifest_key]({}).body
+        self.origin.routes[manifest_key] = (200, body_a, validators)
+        self.cycle()
+        self.origin.routes[manifest_key] = (304, b"", {})
+        self.cycle(now=101)
+        self.assertEqual(read_state(self.state)["last_modified"], validators["Last-Modified"])
+
+        self.origin.page("/a", b"B", cache="no-cache")
+        self.origin.manifest({"/a": entry(2, b"B")}, rev=2)
+        body_b = self.origin.routes[manifest_key]({}).body
+        self.origin.routes[manifest_key] = (200, body_b, {})
+        self.cycle(now=102)
+        remember(self.state, "B-note", "Body B", ["/a"], now=102)
+        self.origin.page("/a", b"A", cache="no-cache")
+
+        def serve_rollback(headers):
+            if headers.get("If-None-Match") or headers.get("If-Modified-Since"):
+                return Response(304)
+            return Response(200, body_a, validators)
+
+        self.origin.routes[manifest_key] = serve_rollback
+        report = self.cycle(now=103)
+        self.assertEqual(report["manifest_fallback"], "site-rev-decrease")
+        self.assertEqual(report["changed"], ["/a"])
+        self.assertEqual(report["findings"][0]["status"], "needs_reread")
+
+    def test_legacy_manifest_validator_cannot_validate_a_different_cached_manifest(self):
+        self.origin.page("/a", b"A", cache="no-cache")
+        self.origin.manifest({"/a": entry(1, b"A")}, conditional=True)
+        self.cycle()
+        state = read_state(self.state)
+        state.pop("manifest_validators_bound", None)
+        state["etag"] = "older-manifest"
+        self.state.write_text(json.dumps(state))
+        self.origin.routes["/.well-known/pagedigest.json"] = (304, b"")
+        second = self.cycle(now=101)
+        self.assertEqual(second["manifest_fallback"], "not-modified-without-conditional-request")
+        self.assertNotIn("If-None-Match", self.origin.calls[-2][1]["headers"])
+
     def test_explicit_scope_does_not_expand_to_whole_large_site(self):
         self.origin.manifest({f"/doc/{index}": {"rev": 1} for index in range(400)})
         self.origin.page("/doc/7", b"selected")
