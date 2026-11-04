@@ -112,6 +112,35 @@ adoption or economic savings.
 
 ## Freshness and failure rules
 
+### HTTP client identity on Cloudflare Pages
+
+Use a descriptive application `User-Agent`, such as `ResearchReader/1.0`.
+The reference Python consumer now identifies its own default sessions as
+`PageDigest-Python (+https://pagedigest.org/)`; supplied sessions retain their
+configured headers, and the recurring workflow already identifies itself.
+This source change is not a new package release.
+
+Cloudflare Pages applies Browser Integrity Check in a Cloudflare-managed zone,
+including on custom domains. A site's own skip/configuration rule cannot
+exempt that layer. Its default Python `urllib` user agent can therefore receive
+error 1010 even when the manifest is public. Cloudflare recommends identifying
+the application, rather than pretending to be a browser; see its
+[error 1010 guidance](https://developers.cloudflare.com/support/troubleshooting/http-status-codes/cloudflare-1xxx-errors/error-1010/).
+For a bare urllib client:
+
+```python
+from urllib.request import Request, urlopen
+
+request = Request(
+    "https://pagedigest.org/.well-known/pagedigest.json",
+    headers={"User-Agent": "ResearchReader/1.0"},
+)
+with urlopen(request, timeout=15) as response:
+    manifest_bytes = response.read()
+```
+
+### Reuse policy
+
 - HTTP `max-age`/`Expires` freshness can avoid a page request while the response
   is fresh, including with `must-revalidate`; `no-cache` requires validation.
 - An unchanged entry in this cycle's validated manifest is the origin's validation

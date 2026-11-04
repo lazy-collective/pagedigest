@@ -1,5 +1,13 @@
 # Roadmap
 
+**November 3 review follow-up:** keep the current Pages hosting and use
+descriptive application user agents, per the user's explicit choice after the
+managed-zone BIC limitation was verified. Default source consumer sessions now
+identify PageDigest; custom sessions retain their own identity. This is source
+delivery, not a new package release. The recurring guide records the urllib
+example and the remaining Pages platform constraint. Shared acceptance evidence
+is retained in the parent November 3 `task/not-done` packet.
+
 **Now:** v1.0 — stable wire format, shipped reference implementations and packages, dogfood on [pagedigest.org](https://pagedigest.org). Gates: [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md).
 
 **Source milestone (implemented November 2, not yet packaged):** a recurring consumer reports
