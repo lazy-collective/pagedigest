@@ -436,6 +436,39 @@ class RecurringTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.cycle(now=201, prefixes=["api/"])
 
+    def test_prefix_limits_sitemap_scope_and_preserves_explicit_urls(self):
+        locations = [f"https://example.com/other/{index}" for index in range(400)]
+        locations += ["https://example.com/docs/kept", "https://example.com/explicit"]
+        self.origin.routes["/sitemap.xml"] = (
+            200,
+            ("<urlset>" + "".join(f"<url><loc>{url}</loc></url>" for url in locations) + "</urlset>").encode(),
+        )
+        self.origin.page("/docs/kept", b"selected")
+        self.origin.page("/explicit", b"explicit")
+        first = self.cycle(sitemap="/sitemap.xml", prefixes=["/docs/"], urls=["/explicit"], http_only=True)
+        self.assertTrue(first["complete"], first["errors"])
+        self.assertEqual(first["new"], ["/docs/kept", "/explicit"])
+        self.assertEqual(first["requests"], 3)
+        repeated = self.cycle(now=101, http_only=True)
+        self.assertTrue(repeated["complete"])
+        self.assertEqual(repeated["requests"], 1)
+        self.assertEqual(len(repeated["reused"]), 2)
+
+    def test_sitemap_prefix_keeps_scope_and_input_safety_bounds(self):
+        for locations, reason in (
+            ([f"https://example.com/docs/{index}" for index in range(201)], "sitemap-scope-exceeds200-URLs"),
+            (["https://foreign.example/other"], "sitemap-cross-origin-or-fragment"),
+            (["https://example.com/other"] * 10001, "sitemap-input-exceeds10000-entries"),
+        ):
+            with self.subTest(reason=reason):
+                self.origin.routes["/sitemap.xml"] = (
+                    200,
+                    ("<urlset>" + "".join(f"<url><loc>{url}</loc></url>" for url in locations) + "</urlset>").encode(),
+                )
+                result = self.cycle(sitemap="/sitemap.xml", prefixes=["/docs/"], http_only=True)
+                self.assertFalse(result["complete"])
+                self.assertEqual(result["errors"][0]["reason"], reason)
+
     def test_real_http_cycle_and_cli_reuses_derived_result(self):
         class Handler(BaseHTTPRequestHandler):
             def log_message(self, *_args):

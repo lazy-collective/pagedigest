@@ -42,6 +42,11 @@ uv run --project implementations/python-consumer --locked python -m pagedigest.c
   https://dotrepo.org ./research/dotrepo.json --prefix /v0/repos/github.com/astral-sh/
 ```
 
+Sitemap prefix selection happens before the 200-source admission limit; explicit
+URLs remain selected. The entire input is still checked for unsafe URL keys and
+cross-origin entries, including excluded entries. Sitemap input is separately
+bounded to 2 MiB and 10,000 entries.
+
 Only bounded, same-origin sitemap `urlset` files are supported. Sitemap indexes,
 external entities and cross-origin entries are refused. `lastmod` changes cause
 inspection; unchanged or missing `lastmod` does not prove unchanged content.
