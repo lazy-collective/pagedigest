@@ -280,6 +280,37 @@ crawlers must replay cached responses or retain a complete discovery frontier so
 unchanged parent cannot hide changed descendants. Partial manifests do not replace normal
 discovery or deletion reconciliation outside their described set.
 
+### 5.1.2 Interaction with HTTP caching
+
+By listing a URL, the publisher states the revision of that URL's current representation.
+When a consumer holds a usable stored response for a covered URL and a manifest validated
+in the current cycle (a `200` response, or a `304` for the consumer's stored manifest)
+lists that URL at the consumer's completed `rev`, the manifest is the origin's validation
+of the stored response. Consumers MAY treat it as equivalent to a successful conditional
+request for that URL ([RFC 9111 §4.3](https://www.rfc-editor.org/rfc/rfc9111#section-4.3)).
+This applies even when the stored response carried `no-cache`, `must-revalidate`, or an
+expired freshness lifetime.
+
+- Manifest validation does not permit storing responses that HTTP forbids a consumer to
+  retain (for example `no-store`, or `private` for shared consumers), and does not
+  validate a representation the consumer cannot reproduce (for example an unsupported
+  `Vary` dimension, a different language, or a different content coding).
+- A stored manifest that was not validated in the current cycle validates nothing.
+  An unchanged `site_rev` validates only covered URLs whose local results are complete.
+- The manifest's own HTTP freshness bounds how stale this validation can be: a
+  manifest served from a cache within its `max-age` may predate the latest
+  deployment. Publishers relying on manifest validation for frequently changing
+  resources SHOULD keep the manifest's freshness lifetime short (§2).
+- Consumers MAY be stricter and ignore manifest validation for responses that
+  carry HTTP caching directives.
+- `must-revalidate` constrains only stale responses
+  ([RFC 9111 §5.2.2.2](https://www.rfc-editor.org/rfc/rfc9111#section-5.2.2.2)).
+  Consumers can reuse a fresh response under ordinary HTTP rules without a manifest.
+- Consumers MAY apply stricter local policies, such as a maximum time since the last
+  body request, and audits (§5.2) remain applicable to manifest-validated reuse.
+- A publisher that requires per-request validation of a resource SHOULD omit it from
+  the covered set (§3.1 `coverage`) rather than rely on response headers.
+
 ### 5.2 Auditing
 
 A consumer MAY periodically audit `digest` values to verify publisher honesty. The recommended audit procedure is:

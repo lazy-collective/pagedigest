@@ -241,26 +241,37 @@
       <a href="#how">How it works</a>
       <a href="#different">Tradeoffs</a>
       <a href="#live">Evidence</a>
-      <a href="#bargain">Safe reuse</a>
       <a href="https://github.com/lazy-collective/pagedigest">GitHub</a>
     </nav>
   </header>
 
   <main id="main" tabindex="-1">
-  <section class="hero">
+  <section class="hero hero--split">
+    <div>
     <p class="lc-eyebrow">Website change. Useful work retained.</p>
     <h1>Check what changed.<br>Keep useful work.</h1>
-    <p class="lede">Publish change signals from your site build. Consumers compare them
-    with usable local results, then fetch or check what needs attention.</p>
+    <p class="lede">Your site build publishes one small manifest of page revisions.
+    Readers who come back on a schedule fetch it first, then download only what changed.</p>
     <div class="hero-actions"><a class="lc-button" href="https://github.com/lazy-collective/pagedigest#publish-a-manifest">Publish a manifest</a>
     <a class="lc-button lc-button--plain" href="https://github.com/lazy-collective/pagedigest#integrate-a-consumer">Integrate a consumer</a></div>
+    </div>
+    <aside class="fit" aria-labelledby="fit-title">
+      <h2 id="fit-title">Who it helps</h2>
+      <ul>
+        <li><strong>Publishers</strong> of mostly static sites, docs and data exports that are
+        read again and again by crawlers, mirrors, indexers and agents.</li>
+        <li><strong>Recurring readers</strong> that keep results between runs: one request tells
+        them which covered pages they can skip.</li>
+      </ul>
+      <p class="fit-not">Not for one-off fetches or personalized pages. Ordinary HTTP caching
+      still comes first.</p>
+    </aside>
   </section>
 
   <section id="start">
     <h2>Meet in the middle</h2>
-    <p>Less repeated work for both sides is the goal. Existing HTTP caches remain useful;
-    a manifest adds explicit coverage and revision history. Neither an unchanged
-    revision nor a matching digest proves a previous conclusion is true.</p>
+    <p>Less repeated work for both sides is the goal. A manifest adds what HTTP caches
+    lack: one statement of which pages changed across the whole covered set.</p>
 
     <div class="bargain">
       <div class="side publisher">
@@ -271,16 +282,16 @@
         <p><a href="https://github.com/lazy-collective/pagedigest#publish-a-manifest">Set up first publication and repeat builds</a></p>
       </div>
       <div class="side crawler">
-        <h3>Keep a usable local result</h3>
-        <p>Start with HTTP freshness and validators. Use PageDigest when it helps
-        plan a recurring collection check. Retain completed bodies and processing;
-        fetch missing or changed resources, run due audits, and fall back on uncertainty.</p>
+        <h3>Keep what you already have</h3>
+        <p>Keep the pages and results from your last run. Fetch only new, changed or
+        missing pages, audit a small sample, and fall back to ordinary crawling when
+        anything looks wrong.</p>
         <p><a href="https://github.com/lazy-collective/pagedigest#integrate-a-consumer">Integrate the released consumer</a></p>
       </div>
     </div>
-    <p><strong>Experimental source:</strong> a recurring workflow adds change and rereading
-    reports plus findings bound to the exact cached sources you name. It is not in
-    Python 0.2.0. <a href="https://github.com/lazy-collective/pagedigest/pull/2">Review the workflow and its delivery status</a>.</p>
+    <p><strong>Experimental:</strong> a recurring workflow reports what changed and what to
+    reread, and remembers notes tied to the exact pages they came from. It is in the source
+    repository, not yet in Python 0.2.0. <a href="https://github.com/lazy-collective/pagedigest/blob/main/docs/recurring-consumer.md">Read the workflow guide</a>.</p>
   </section>
 
   <section id="manifest">
@@ -325,8 +336,11 @@
           Reuse only results that remain available at their recorded revisions.</p>
         </div></li>
         <li><div><strong>Complete required work</strong>
-          <p>Fetch new, changed, missing, or invalid local results. An unchanged revision is
-          a publisher assertion; unlisted resources retain ordinary discovery and validation.</p>
+          <p>Fetch new, changed, missing, or invalid local results. An unchanged entry is the
+          publisher&rsquo;s revalidation of that page, like a 304
+          (<a href="https://github.com/lazy-collective/pagedigest/blob/main/SPEC.md#512-interaction-with-http-caching">SPEC §5.1.2</a>).
+          Unlisted pages keep ordinary discovery and validation. Skipping a download must not
+          hide missing content or links to changed pages.</p>
         </div></li>
         <li><div><strong>Audit occasionally</strong>
           <p>Hash a sampled page and compare it to the manifest&rsquo;s <code>digest</code>.
@@ -372,6 +386,8 @@
         <p>A bounded-freshness comparison found PageDigest transferred 38.6% more
         response bytes than ordinary HTTP freshness caching on the tested workload.
         It passed the stated freshness controls but failed its savings gate.
+        Its PageDigest arm already planned from the manifest, so the SPEC §5.1.2 rule
+        below does not change this result.
         Batching is available; a general bandwidth or economic advantage is not established.</p>
       </div>
       <div class="proof">
@@ -395,40 +411,28 @@
         <pre>curl -s https://dotrepo.org/.well-known/pagedigest.json | jq .site_rev</pre>
       </div>
       <div class="proof" style="margin-top:14px">
+        <div class="stamp">Live warm cycle · November 3, 2026</div>
+        <p>On 16 live dotrepo.org records served <code>no-cache</code>, a warm cycle of the
+        experimental recurring consumer made 17 requests and re-downloaded 42.7 KB before
+        SPEC §5.1.2, and one manifest request with no body downloads after it.
+        This is one observed cycle, not a savings result against HTTP freshness caching.</p>
+      </div>
+      <div class="proof" style="margin-top:14px">
         <div class="stamp">This site, too</div>
         <p>pagedigest.org publishes its own manifest at
         <a href="/.well-known/pagedigest.json"><code style="font-family:var(--mono);font-size:0.9em">/.well-known/pagedigest.json</code></a>,
-        generated by the reference generator at build time.</p>
+        generated by the reference generator at build time. Its Worker counts incoming
+        <code>PageDigest-State</code> headers at <a href="/__pagedigest/cooperation.json"><code style="font-family:var(--mono);font-size:0.9em">/__pagedigest/cooperation.json</code></a>.</p>
+        <p id="cooperation-observer" class="muted">Observer counts load with JavaScript.</p>
       </div>
-      <div class="proof" style="margin-top:14px">
-        <div class="stamp">Observable cooperation</div>
-        <p>The deployed Cloudflare Pages Worker logs incoming
-        <code>PageDigest-State</code> values and exposes a tiny same-origin
-        counter at <a href="/__pagedigest/cooperation.json"><code style="font-family:var(--mono);font-size:0.9em">/__pagedigest/cooperation.json</code></a>.</p>
-        <p id="cooperation-observer" class="muted">Checking observer status…</p>
-      </div>
-    </div>
-  </section>
-
-  <section id="bargain">
-    <div class="wrap" style="padding:0">
-      <h2>Safe reuse</h2>
-      <p>Publishers preserve revision history; consumers preserve usable results. A skipped
-      download must not hide missing content, interrupted processing, or links to changed pages.</p>
-      <p>The reference generators compare full build bytes. Semantic revisions require a publisher
-      integration supplying that signal. Digest sampling checks representations, not every historical claim.</p>
-      <p><a href="https://github.com/lazy-collective/pagedigest/blob/main/docs/benchmarks/README.md">Controlled benchmark and limitations</a>:
-      equivalent results are checked before counting requests. Independent recurring-consumer evidence
-      remains the next adoption milestone.</p>
     </div>
   </section>
 
   <section id="status">
     <div class="wrap" style="padding:0">
       <h2>Status</h2>
-      <p>Released packages implement the v1 protocol. Experimental source adds recurring
-      reports, source-bound findings and publisher previews; source availability,
-      package release and live deployment are separate events.</p>
+      <p>Released packages implement the v1 protocol. The recurring workflow and publisher
+      preview are experimental and not yet packaged.</p>
       <div class="status-grid">
         <div class="cell">
           <h3>v1.0</h3>
@@ -471,7 +475,7 @@
   <div class="wrap">
     <span>PageDigest — website change signals and reusable work</span>
     <span>Sibling project: <a href="https://dotrepo.org">DotRepo</a> — repository facts, sources and age.</span>
-    <span><a href="https://lazycollective.org/">Lazy Collective</a> connects this family around conservation through cooperation. DotPage names the publisher role, not a separate product or shared service. <a href="https://github.com/lazy-collective/pagedigest/blob/main/docs/ecosystem.md">Roles and evidence</a>.</span>
+    <span>A <a href="https://lazycollective.org/">Lazy Collective</a> project: conservation through cooperation. <a href="https://github.com/lazy-collective/pagedigest/blob/main/docs/ecosystem.md">How the projects relate</a>.</span>
   </div>
 </footer>
 

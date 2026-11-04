@@ -338,6 +338,70 @@ class RecurringTests(unittest.TestCase):
         self.assertEqual(code, 0, err.getvalue())
         self.assertEqual(json.loads(out.getvalue())["status"], "retained")
 
+    def test_must_revalidate_does_not_block_reuse_while_fresh(self):
+        self.origin.page("/a", b"one", etag='"a1"', cache="max-age=30, must-revalidate")
+        self.assertTrue(self.cycle(urls=["/a"], http_only=True)["complete"])
+        warm = self.cycle(now=110, http_only=True)
+        self.assertEqual(warm["requests"], 0)
+        self.assertEqual(warm["reused"], [{"url": "/a", "basis": "http-freshness"}])
+        stale = self.cycle(now=140, http_only=True)
+        self.assertEqual(stale["requests"], 1)
+        self.assertEqual(stale["revalidated"], ["/a"])
+
+    def test_http_only_no_cache_revalidates_every_cycle(self):
+        self.origin.page("/a", b"one", etag='"a1"', cache="no-cache")
+        self.cycle(urls=["/a"], http_only=True)
+        warm = self.cycle(now=101, http_only=True)
+        self.assertEqual(warm["requests"], 1)
+        self.assertEqual(warm["revalidated"], ["/a"])
+
+    def test_unchanged_manifest_entry_is_origin_validation(self):
+        # SPEC 5.1.2: an unchanged covered entry in a validated manifest is the
+        # origin's validation, even for no-cache or expired must-revalidate pages.
+        self.origin.page("/a", b"one", etag='"a1"', cache="no-cache")
+        self.origin.page("/b", b"two", cache="max-age=30, must-revalidate")
+        self.origin.manifest({"/a": {"rev": 1}, "/b": {"rev": 1}}, conditional=True)
+        cold = self.cycle()
+        self.assertTrue(cold["complete"])
+        self.assertEqual(cold["requests"], 3)
+        remember(self.state, "a-note", "A conclusion", ["/a"], now=100)
+        warm = self.cycle(now=200)
+        self.assertTrue(warm["complete"])
+        self.assertEqual(warm["requests"], 1)
+        self.assertEqual(
+            warm["reused"],
+            [{"url": "/a", "basis": "pagedigest-unchanged"}, {"url": "/b", "basis": "pagedigest-unchanged"}],
+        )
+        self.assertEqual(warm["findings"][0]["status"], "usable")
+        self.origin.page("/a", b"changed", etag='"a2"', cache="no-cache")
+        self.origin.manifest({"/a": {"rev": 2}, "/b": {"rev": 1}}, rev=2, conditional=True)
+        changed = self.cycle(now=210)
+        self.assertEqual(changed["changed"], ["/a"])
+        self.assertEqual(changed["reused"], [{"url": "/b", "basis": "pagedigest-unchanged"}])
+        self.assertEqual(changed["findings"][0]["status"], "needs_reread")
+        self.assertEqual(changed["requests"], 2)
+
+    def test_prefix_limits_discovery_from_a_large_manifest(self):
+        entries = {f"/doc/{index}": {"rev": 1} for index in range(400)}
+        entries.update({f"/api/{index}": {"rev": 1} for index in range(3)})
+        self.origin.manifest(entries)
+        for index in range(3):
+            self.origin.page(f"/api/{index}", f"api {index}".encode())
+        refused = self.cycle()
+        self.assertFalse(refused["complete"])
+        self.assertIn("--prefix", refused["errors"][0]["reason"])
+        first = self.cycle(now=101, prefixes=["/api/"])
+        self.assertTrue(first["complete"])
+        self.assertEqual(first["new"], ["/api/0", "/api/1", "/api/2"])
+        self.assertEqual(first["requests"], 4)
+        repeated = self.cycle(now=200)
+        self.assertTrue(repeated["complete"])
+        self.assertEqual(repeated["prefixes"], ["/api/"])
+        self.assertEqual(repeated["requests"], 1)
+        self.assertEqual(len(repeated["reused"]), 3)
+        with self.assertRaises(ValueError):
+            self.cycle(now=201, prefixes=["api/"])
+
     def test_real_http_cycle_and_cli_reuses_derived_result(self):
         class Handler(BaseHTTPRequestHandler):
             def log_message(self, *_args):

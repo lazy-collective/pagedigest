@@ -739,6 +739,11 @@ def check_site(
     cached_revs must describe results still available to the caller, not merely
     observed publisher revisions. This function plans audits; it does not run them.
 
+    ``unchanged`` follows SPEC 5.1.2: an unchanged entry in this validated
+    manifest is the origin's validation of the stored response, equivalent to a
+    304, regardless of that response's ``no-cache``/``must-revalidate``. Callers
+    remain responsible for not retaining responses HTTP forbids them to store.
+
     Any anomaly — a ``site_rev`` decrease or even a single per-URL ``rev``
     decrease — triggers a whole-site fallback. This is deliberately stricter
     than SPEC §5.2.2, which scopes an isolated per-URL decrease to that URL;

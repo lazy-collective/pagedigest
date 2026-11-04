@@ -138,7 +138,10 @@ revisions; legacy stores without bodies refetch once. Cache-body integrity and
 any current manifest digest must agree before reuse. `PAGEDIGEST_MAX_CACHE_BYTES`
 limits stored responses (default 10 MiB); oversized bodies are fetched normally.
 Authenticated/cookie/range requests, non-200 representations, Set-Cookie, and
-unsupported Vary responses are not reused. Explicit request Cache-Control,
+unsupported Vary responses are not reused. The adapter is stricter than
+[SPEC §5.1.2](../../SPEC.md#512-interaction-with-http-caching): responses that carry
+`Cache-Control` freshness or validation directives are never replayed, even when the
+manifest marks them unchanged. Explicit request Cache-Control,
 Pragma, conditional headers, and Scrapy's `dont_cache` flag bypass replay.
 These bypasses revoke the previous replay body before downloading, including
 when redirect/retry middleware consumes the response. A subsequent ordinary

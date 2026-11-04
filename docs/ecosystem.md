@@ -8,18 +8,19 @@ reduce repeated fetching, parsing, investigation and verification for publishers
 and consumers together, while preserving useful results and explicit uncertainty.
 Lazy Collective is the umbrella and coordination project. Its public home
 explains the shared purpose and current projects; there is no released shared
-service or runtime. Four roles live in two repositories:
+service or runtime. There are two products, each with a publisher side and a
+consumer side:
 
-- **DotRepo** is the existing repository protocol, tools and public lookup index.
-  Declarations can be derived from manifests, CI and documentation; observed
-  overlays retain their separate provenance and authority.
-- **RepoDigest** is DotRepo's experimental discovery, requirement-assessment and
-  reuse workflow. A lead, a source-supported preliminary choice and successful
-  runtime execution establish different things.
-- **PageDigest** is the existing website manifest protocol and publisher/consumer
-  toolchain. Its recurring source workflow adds reports and retained findings.
-- **DotPage** names the publisher role in existing site/build workflows, not a
-  separately shipped product. It does not rename the v1 protocol or packages.
+| | Publisher side | Consumer side |
+| --- | --- | --- |
+| **DotRepo** (repositories) | Native `.repo` derived from existing manifests, CI and docs; observed overlays keep separate provenance | Lookup over HTTP/MCP; experimental decision workflow (discovery, requirement assessment, reusable findings) |
+| **PageDigest** (websites) | Manifest generated from the existing site build | Change planning; experimental recurring workflow (what changed, what to reread, reusable findings) |
+
+Earlier documents used "DotPage" for PageDigest's publisher side and
+"RepoDigest" for DotRepo's experimental decision workflow. Those are not
+separate products; command and module names such as `repodigest.shortlist` are
+unchanged. Both projects' retained findings follow the shared
+[finding-record vocabulary](#shared-finding-vocabulary).
 
 Declarations can avoid repeated work when needed local results remain complete,
 available and fresh enough for the task. Missing bodies, failed processing,
@@ -28,10 +29,33 @@ correctness and freshness answer different questions. Publishers should derive
 metadata from existing sources and clarify genuine ambiguity; consumers should
 benefit from ordinary HTTP/source caches even without publisher participation.
 
+## Shared finding vocabulary
+
+Both experimental workflows retain findings bound to the exact bytes they used,
+in their own storage. The shared vocabulary gives source status one meaning:
+
+| Shared status | Meaning | PageDigest `sync` |
+| --- | --- | --- |
+| `current` | Every declared source still has the bound bytes | `usable` |
+| `changed` | A declared source now has different bytes | `needs_reread` |
+| `unknown` | A source is missing, failed, out of scope or a different representation | `unknown` |
+
+DotRepo's decision workflow does not yet report a per-finding source status: an
+assessment is simply unavailable once its record binding no longer matches.
+Reporting the shared status there is tracked in DotRepo's workflow status.
+
+Source status says nothing about whether the conclusion is true. DotRepo's
+requirement outcomes (`supported`, `contradicted`, `unknown`) are claim
+assessments, a separate axis. DotRepo's
+[workflow status](https://github.com/lazy-collective/dotrepo/blob/main/docs/workflow-status.md#shared-direction)
+carries the same definition; change both together.
+
 ## Existing integration and evidence
 
 DotRepo's public exporter already emits `/.well-known/pagedigest.json` alongside
-its snapshot and per-file manifests. The [July 3 case study](case-studies/dotrepo.md)
+its snapshot and per-file manifests. Its records are served `no-cache`; under
+[SPEC §5.1.2](../SPEC.md#512-interaction-with-http-caching) an unchanged manifest
+entry is the origin's validation, so a warm consumer can skip them. The [July 3 case study](case-studies/dotrepo.md)
 records that implementation and estimates a cycle against naive full covered-file
 fetching. It is operator dogfood and a dated export estimate, not independently
 measured consumer savings, adoption or proof of current deployment freshness.

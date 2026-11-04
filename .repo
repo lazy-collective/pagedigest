@@ -1,0 +1,40 @@
+schema = "dotrepo/v0.1"
+
+[record]
+mode = "native"
+status = "draft"
+
+[record.trust]
+confidence = "medium"
+provenance = ["imported", "declared"]
+notes = "Drafted by an agent from the DotRepo importer output plus the README's documented check command; pending maintainer review. Promote to canonical on acceptance. ./tools/run_checks.sh requires uv, Rust/Cargo and npm."
+
+[repo]
+name = "PageDigest"
+description = "Open JSON change-manifest protocol with publisher and consumer tools: check what changed, keep useful work."
+homepage = "https://pagedigest.org/"
+license = "MIT"
+status = "active"
+visibility = "public"
+languages = ["python", "rust", "javascript"]
+test = "./tools/run_checks.sh"
+topics = ["web-crawling", "http-caching", "change-detection", "protocol", "static-sites"]
+
+[repo.toolchain]
+min = "3.9"
+ecosystem = "Python"
+
+[owners]
+maintainers = ["@maxwellsantoro"]
+team = "lazy-collective"
+
+[docs]
+root = "docs/"
+getting_started = "README.md"
+architecture = "SPEC.md"
+
+[compat.github]
+codeowners = "skip"
+security = "skip"
+contributing = "skip"
+pull_request_template = "skip"

@@ -25,9 +25,8 @@ Unchanged dependencies do not establish that a conclusion is true.
 With [DotRepo](https://dotrepo.org), PageDigest belongs to
 [**Lazy Collective**](https://lazycollective.org/): conservation through cooperation,
 reducing repeated fetch, parse, investigation and verification work. Its public
-home connects the projects and their shared purpose; there is no shared deployed
-service. **DotPage** names PageDigest's publisher role; it is not
-a separate shipped product. [Roles, delivery and evidence](docs/ecosystem.md).
+home connects the two projects; there is no shared deployed service.
+[How the projects relate](docs/ecosystem.md).
 
 For a warm consumer covering 10,000 pages with 20 changes per cycle, the ideal
 request count is one manifest plus 20 page fetches. A 1% audit of skipped pages

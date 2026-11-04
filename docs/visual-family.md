@@ -3,7 +3,6 @@
 PageDigest shares Lazy Collective's warm paper, evergreen, serif headings,
 system body fonts and visible keyboard focus. Existing URLs, protocol,
 publisher/consumer entrypoints and historical article body remain owned here.
-DotPage remains the publisher role, not another shipped application.
 
 `site/assets/lazy-collective/v1/family.css` is a self-hosted copy of Lazy
 Collective's `design/v1/family.css`; `UPSTREAM.json` pins version 1.0.0 and SHA-256.

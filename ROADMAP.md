@@ -6,7 +6,7 @@
 what changed, what needs rereading and which findings retain their source
 bindings. A publisher helper derives the manifest from final build output,
 previews changes and preserves durable state/coverage. These workflows reuse
-the current protocol and generator rather than adding a separate DotPage service.
+the current protocol and generator rather than adding a separate publisher service.
 See [recurring consumption](docs/recurring-consumer.md) and
 [publisher setup/update](docs/publisher-workflow.md).
 

@@ -26,6 +26,7 @@ from .core import check_site, manifest_url, resolve_url_key
 from .persistence import load_state, save_state
 
 MAX_URLS = 200
+MAX_PREFIXES = 16
 MAX_FINDINGS = 200
 MAX_STATE_BYTES = 4 * 1024 * 1024
 MAX_PAGE_BYTES = 2 * 1024 * 1024
@@ -143,7 +144,9 @@ def response_policy(headers, now):
     if headers.get("Content-Encoding", "identity").lower() not in ("", "identity"):
         raise ValueError("origin-did-not-serve-identity-encoding")
     # Unsupported or malformed caching instructions only make reuse stricter.
-    revalidate = bool(policy.keys() & {"no-cache", "must-understand", "must-revalidate", "proxy-revalidate"})
+    # must-revalidate/proxy-revalidate constrain only stale responses (RFC 9111
+    # 5.2.2.2); a stale response is never reused here without validation anyway.
+    revalidate = bool(policy.keys() & {"no-cache", "must-understand"})
     age = 0
     try:
         age = max(0, int(headers.get("Age", "0")))
@@ -159,7 +162,8 @@ def response_policy(headers, now):
     return {
         "fresh_until": fresh_until,
         "revalidate": revalidate,
-        # Explicit HTTP freshness always takes priority over a publisher hint.
+        # Informational: an unchanged entry in a validated manifest is origin
+        # revalidation (SPEC 5.1.2) whether or not the page declares a lifetime.
         "http_lifetime": "max-age" in policy or bool(headers.get("Expires")),
     }
 
@@ -321,6 +325,7 @@ def sync(
     *,
     urls=None,
     sitemap=None,
+    prefixes=None,
     http_only=False,
     max_age=3600,
     audit_rate=0.01,
@@ -362,6 +367,7 @@ def sync(
                 state_path,
                 urls,
                 sitemap,
+                prefixes,
                 http_only,
                 max_age,
                 audit_rate,
@@ -377,7 +383,19 @@ def sync(
 
 
 def _sync(
-    base_url, state_path, urls, sitemap, http_only, max_age, audit_rate, language, max_requests, max_bytes, client, now
+    base_url,
+    state_path,
+    urls,
+    sitemap,
+    prefixes,
+    http_only,
+    max_age,
+    audit_rate,
+    language,
+    max_requests,
+    max_bytes,
+    client,
+    now,
 ):
     state = read_state(state_path)
     origin = manifest_url(base_url)
@@ -443,9 +461,16 @@ def _sync(
     explicit = sorted(set(explicit))
     for key in explicit:
         resolve_url_key(base_url, key)
+    prefixes = prefixes if prefixes is not None else state.get("prefixes", [])
+    if not isinstance(prefixes, list) or len(prefixes) > MAX_PREFIXES:
+        raise ValueError("provide-at-most16-discovery-prefixes")
+    if any(not isinstance(p, str) or not p.startswith("/") or len(p) > 2048 for p in prefixes):
+        raise ValueError("discovery-prefixes-must-be-origin-relative-paths")
+    prefixes = sorted(set(prefixes))
+    report["prefixes"] = prefixes
     sitemap = sitemap if sitemap is not None else state.get("sitemap")
     report["sitemap"] = sitemap
-    fixed_scope = bool(explicit) and not sitemap
+    fixed_scope = bool(explicit) and not sitemap and not prefixes
     scope = set(explicit)
     # Keep earlier discovered URLs until exact 404/410 or complete PageDigest
     # omission. Explicit source selection instead limits what we observe.
@@ -474,10 +499,18 @@ def _sync(
             scope.update(lastmods)
         except (requests.RequestException, ValueError, ET.ParseError) as exc:
             report["errors"].append({"url": sitemap, "reason": str(exc)})
+    if prefixes:
+        # Discovery prefixes narrow manifest/sitemap discovery; explicit URLs
+        # remain in scope. Excluded earlier sources are out of scope, not removed.
+        scope = {k for k in scope if k in explicit or any(k.startswith(p) for p in prefixes)}
+        report["out_of_scope"] = sorted(set(resources) - scope)
+        for key in report["out_of_scope"]:
+            for mapping in (resources, state["pages"], state["body_hashes"], state["revs"]):
+                mapping.pop(key, None)
     if not scope and manifest is None and not sitemap:
         report["errors"].append({"url": None, "reason": "no-source-scope-provide-urls-or-sitemap"})
     if len(scope) > MAX_URLS:
-        report["errors"].append({"url": None, "reason": "scope-exceeds200-URLs-narrow-it-before-sync"})
+        report["errors"].append({"url": None, "reason": "scope-exceeds200-URLs-narrow-it-with---url-or---prefix"})
         scope = set()
     current = set()
     removed = set()
@@ -502,21 +535,23 @@ def _sync(
         changed_hint = (manifest and entry and key not in decision["unchanged"]) or (
             key in lastmods and lastmods[key] != previous.get("sitemap_lastmod")
         )
-        http_fresh = now < policy.get("fresh_until", 0)
+        # HTTP freshness reuses a fresh response unless it requires validation on
+        # every use. An unchanged entry in this cycle's validated manifest is the
+        # origin's validation of the stored representation (SPEC 5.1.2), so it
+        # also satisfies no-cache/must-revalidate. Retention limits (no-store,
+        # private, Set-Cookie, Vary) were enforced when the body was stored.
+        http_fresh = now < policy.get("fresh_until", 0) and not policy.get("revalidate")
         can_skip = (
             valid_body
             and key not in suspect
             and within_deadline
             and not audit_now
             and not changed_hint
-            and not policy.get("revalidate")
-            and (http_fresh or (unchanged_hint and not policy.get("http_lifetime")))
+            and (http_fresh or unchanged_hint)
         )
         if can_skip:
             current.add(key)
-            report["reused"].append(
-                {"url": key, "basis": "http-freshness" if http_fresh else "pagedigest-within-deadline"}
-            )
+            report["reused"].append({"url": key, "basis": "http-freshness" if http_fresh else "pagedigest-unchanged"})
             continue
         request_headers = {}
         if valid_body and key not in suspect and not audit_now and not changed_hint and not state.get("distrusted"):
@@ -609,6 +644,7 @@ def _sync(
     )
     state.update(
         explicit_urls=explicit,
+        prefixes=prefixes,
         sitemap=sitemap,
         scope=sorted(scope - removed),
         suspect=sorted(suspect - removed),

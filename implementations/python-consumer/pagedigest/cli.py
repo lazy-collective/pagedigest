@@ -108,6 +108,12 @@ def main(argv: Sequence[str] | None = None, stdout: TextIO | None = None, stderr
     sync_parser.add_argument("state", type=Path)
     sync_parser.add_argument("--url", action="append", dest="urls", help="Origin-relative source URL; repeat as needed")
     sync_parser.add_argument("--sitemap", help="Origin-relative urlset for discovery, e.g. /sitemap.xml")
+    sync_parser.add_argument(
+        "--prefix",
+        action="append",
+        dest="prefixes",
+        help="Limit manifest/sitemap discovery to this origin-relative path prefix; repeat as needed",
+    )
     sync_parser.add_argument("--http-only", action="store_true", help="Use HTTP without requesting PageDigest")
     sync_parser.add_argument("--max-age", type=float, default=3600, help="Maximum seconds since body validation")
     sync_parser.add_argument("--audit-rate", type=float, default=0.01)
@@ -138,6 +144,7 @@ def main(argv: Sequence[str] | None = None, stdout: TextIO | None = None, stderr
                     args.state,
                     urls=args.urls,
                     sitemap=args.sitemap,
+                    prefixes=args.prefixes,
                     http_only=args.http_only,
                     max_age=args.max_age,
                     audit_rate=args.audit_rate,
