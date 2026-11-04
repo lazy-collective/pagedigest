@@ -165,6 +165,12 @@
     text-transform: uppercase; color: var(--crawler); margin-bottom: 10px;
   }
   .proof p { margin: 0 0 14px; max-width: 62ch; }
+  .bargain pre {
+    background: var(--paper-deep); border-radius: 8px;
+    padding: 12px 16px; overflow-x: auto; max-width: 100%;
+    font-family: var(--mono); font-size: 0.8rem; line-height: 1.5; margin: 0 0 14px;
+  }
+  .bargain .side { min-width: 0; }
   .proof pre {
     background: var(--paper-deep); border-radius: 8px;
     padding: 12px 16px; overflow-x: auto;
@@ -252,8 +258,8 @@
     <h1>Check what changed.<br>Keep useful work.</h1>
     <p class="lede">Your site build publishes one small manifest of page revisions.
     Readers who come back on a schedule fetch it first, then download only what changed.</p>
-    <div class="hero-actions"><a class="lc-button" href="https://github.com/lazy-collective/pagedigest#publish-a-manifest">Publish a manifest</a>
-    <a class="lc-button lc-button--plain" href="https://github.com/lazy-collective/pagedigest#integrate-a-consumer">Integrate a consumer</a></div>
+    <div class="hero-actions"><a class="lc-button" href="#publish">Publish a manifest</a>
+    <a class="lc-button lc-button--plain" href="#consume">Integrate a consumer</a></div>
     </div>
     <aside class="fit" aria-labelledby="fit-title">
       <h2 id="fit-title">Who it helps</h2>
@@ -274,19 +280,36 @@
     lack: one statement of which pages changed across the whole covered set.</p>
 
     <div class="bargain">
-      <div class="side publisher">
+      <div class="side publisher" id="publish">
         <h3>Publish from your build</h3>
-        <p>Use the Rust generator, npm launcher or Astro hook on final output.
-        Keep one durable revision history, review coverage, and verify the bytes
-        your host actually serves. There is no second page catalog to maintain.</p>
-        <p><a href="https://github.com/lazy-collective/pagedigest#publish-a-manifest">Set up first publication and repeat builds</a></p>
+        <p>Run the generator on your final build output. Its state file is your durable
+        revision history: keep it in backed-up storage, not an evictable CI cache.
+        There is no second page catalog to maintain.</p>
+<pre><code>cargo install pagedigest --version 0.3.0 --locked
+# once, for an origin that has never published:
+pagedigest-generator ./dist --state /durable/state.json --init --with-digest
+# every later build:
+pagedigest-generator ./dist --state /durable/state.json --with-digest</code></pre>
+        <p>Also available as <code>npx pagedigest@0.3.0</code> and an Astro hook. Deploy pages
+        before or with the manifest, then check the bytes your host actually serves.
+        <a href="https://github.com/lazy-collective/pagedigest#publish-a-manifest">Full publisher guide</a></p>
       </div>
-      <div class="side crawler">
+      <div class="side crawler" id="consume">
         <h3>Keep what you already have</h3>
         <p>Keep the pages and results from your last run. Fetch only new, changed or
         missing pages, audit a small sample, and fall back to ordinary crawling when
         anything looks wrong.</p>
-        <p><a href="https://github.com/lazy-collective/pagedigest#integrate-a-consumer">Integrate the released consumer</a></p>
+<pre><code>pip install pagedigest==0.2.0
+
+from pagedigest import check_site
+plan = check_site("https://example.com", last_site_rev, completed_revs,
+                  cached_manifest=last_manifest, sample_audit_rate=0.01)
+if plan["fallback"]:
+    ...  # crawl normally
+else:
+    fetch(plan["new"] + plan["changed"]); audit(plan["audit_candidates"])</code></pre>
+        <p>Record a revision only after its download and processing succeed.
+        <a href="https://github.com/lazy-collective/pagedigest#integrate-a-consumer">Full consumer guide</a></p>
       </div>
     </div>
     <p><strong>Experimental:</strong> a recurring workflow reports what changed and what to
@@ -336,8 +359,9 @@
           Reuse only results that remain available at their recorded revisions.</p>
         </div></li>
         <li><div><strong>Complete required work</strong>
-          <p>Fetch new, changed, missing, or invalid local results. An unchanged entry is the
-          publisher&rsquo;s revalidation of that page, like a 304
+          <p>Fetch new, changed, missing, or invalid local results. An unchanged entry whose
+          digest matches your stored copy is the publisher&rsquo;s revalidation of that page,
+          like a 304
           (<a href="https://github.com/lazy-collective/pagedigest/blob/main/SPEC.md#512-interaction-with-http-caching">SPEC §5.1.2</a>).
           Unlisted pages keep ordinary discovery and validation. Skipping a download must not
           hide missing content or links to changed pages.</p>
@@ -474,7 +498,7 @@
 <footer>
   <div class="wrap">
     <span>PageDigest — website change signals and reusable work</span>
-    <span>Sibling project: <a href="https://dotrepo.org">DotRepo</a> — repository facts, sources and age.</span>
+    <span>Sister project: <a href="https://dotrepo.org">DotRepo</a> — repository facts, sources and age.</span>
     <span>A <a href="https://lazycollective.org/">Lazy Collective</a> project: conservation through cooperation. <a href="https://github.com/lazy-collective/pagedigest/blob/main/docs/ecosystem.md">How the projects relate</a>.</span>
   </div>
 </footer>

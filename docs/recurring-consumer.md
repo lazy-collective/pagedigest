@@ -143,11 +143,13 @@ with urlopen(request, timeout=15) as response:
 
 - HTTP `max-age`/`Expires` freshness can avoid a page request while the response
   is fresh, including with `must-revalidate`; `no-cache` requires validation.
-- An unchanged entry in this cycle's validated manifest is the origin's validation
-  of the stored body ([SPEC §5.1.2](../SPEC.md#512-interaction-with-http-caching)),
-  equivalent to a 304, so it also covers `no-cache` and expired pages. The report
-  labels that reuse `pagedigest-unchanged`. Otherwise the workflow revalidates with
-  ETag/Last-Modified when a usable body exists. Manifest validation never permits
+- An unchanged entry in this cycle's validated manifest whose `digest` equals the
+  stored body's SHA-256 is the origin's validation of that body
+  ([SPEC §5.1.2](../SPEC.md#512-interaction-with-http-caching)), equivalent to a
+  304, so it also covers `no-cache` and expired pages. The report labels that
+  reuse `pagedigest-unchanged`. Findings bind exact bytes, so an entry without a
+  digest, or with a different digest at the same `rev`, validates nothing here.
+  Otherwise the workflow revalidates with ETag/Last-Modified when a usable body exists. Manifest validation never permits
   retaining `no-store`, `private`, `Set-Cookie` or unsupported `Vary` responses.
 - `--max-age` bounds time since body validation, even when a manifest repeatedly
   returns 304. Default: one hour. No metadata poll resets that deadline.

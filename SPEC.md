@@ -282,14 +282,27 @@ discovery or deletion reconciliation outside their described set.
 
 ### 5.1.2 Interaction with HTTP caching
 
-By listing a URL, the publisher states the revision of that URL's current representation.
-When a consumer holds a usable stored response for a covered URL and a manifest validated
-in the current cycle (a `200` response, or a `304` for the consumer's stored manifest)
-lists that URL at the consumer's completed `rev`, the manifest is the origin's validation
-of the stored response. Consumers MAY treat it as equivalent to a successful conditional
-request for that URL ([RFC 9111 §4.3](https://www.rfc-editor.org/rfc/rfc9111#section-4.3)).
-This applies even when the stored response carried `no-cache`, `must-revalidate`, or an
-expired freshness lifetime.
+By listing a URL, the publisher states the revision of that URL's current content
+(§3.2.1). Two strengths of reuse follow, and consumers MUST NOT confuse them:
+
+- **Result reuse.** An unchanged `rev` means the publisher reports no material content
+  change. Consumers MAY reuse their completed local results for that URL (§5.1 step 3).
+  This does not establish that stored response bytes match the bytes now served: a
+  semantic revision may deliberately ignore incidental byte changes (§4).
+- **Representation validation.** When the covered entry also carries a `digest` equal to
+  the SHA-256 of the consumer's stored identity-encoded response body, the manifest is
+  the origin's validation of that stored response. Consumers MAY treat it as equivalent
+  to a successful conditional request for that URL
+  ([RFC 9111 §4.3](https://www.rfc-editor.org/rfc/rfc9111#section-4.3)). This applies
+  even when the stored response carried `no-cache`, `must-revalidate`, or an expired
+  freshness lifetime.
+
+An entry without a `digest`, or whose `digest` differs from the stored body, validates
+no stored bytes. Consumers that need the exact served bytes (mirrors, caches that re-serve
+responses, findings bound to body hashes) retain ordinary HTTP validation for it.
+Either form of reuse requires a manifest validated in the current cycle (a `200`
+response, or a `304` for the consumer's stored manifest) that lists the URL at the
+consumer's completed `rev`.
 
 - Manifest validation does not permit storing responses that HTTP forbids a consumer to
   retain (for example `no-store`, or `private` for shared consumers), and does not
@@ -310,6 +323,9 @@ expired freshness lifetime.
   body request, and audits (§5.2) remain applicable to manifest-validated reuse.
 - A publisher that requires per-request validation of a resource SHOULD omit it from
   the covered set (§3.1 `coverage`) rather than rely on response headers.
+
+This section was added after v1.0 was finalized; see Appendix C. It introduces no wire
+change and no new publisher obligation.
 
 ### 5.2 Auditing
 
@@ -577,3 +593,14 @@ A manifest covering only a subset of a site — the publisher has opted to descr
 URLs outside `/blog/` on this site are not covered by the manifest and receive default crawler behavior.
 
 ResourceSync primary reference: [ANSI/NISO Z39.99-2017 framework](https://www.openarchives.org/rs/1.1/resourcesync_highlighted).
+
+## Appendix C: Changes since v1.0 finalization
+
+The v1 wire format is unchanged. Clarifications that affect conforming behavior are listed
+here so implementers can tell which text they built against.
+
+| Date | Section | Change | Effect on existing implementations |
+|---|---|---|---|
+| 2026-11-03 | §5.1.2 | Added: an unchanged covered entry in a manifest validated this cycle may count as the origin's revalidation of a stored response, including for `no-cache` and `must-revalidate` | Consumer permission (MAY) only; publishers unchanged |
+| 2026-11-03 | §5.1.2 | Narrowed the same day: representation validation requires the entry's `digest` to equal the stored body's SHA-256. Without a matching digest, an unchanged `rev` permits result reuse (§5.1) but validates no stored bytes, consistent with §3.2.1 and §4 | Consumers that applied the earlier wording to digest-less entries should keep HTTP validation for them; publishers unchanged |
+

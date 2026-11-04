@@ -141,7 +141,7 @@ Authenticated/cookie/range requests, non-200 representations, Set-Cookie, and
 unsupported Vary responses are not reused. The adapter is stricter than
 [SPEC §5.1.2](../../SPEC.md#512-interaction-with-http-caching): responses that carry
 `Cache-Control` freshness or validation directives are never replayed, even when the
-manifest marks them unchanged. Explicit request Cache-Control,
+manifest marks them unchanged with a matching digest. Explicit request Cache-Control,
 Pragma, conditional headers, and Scrapy's `dont_cache` flag bypass replay.
 These bypasses revoke the previous replay body before downloading, including
 when redirect/retry middleware consumes the response. A subsequent ordinary

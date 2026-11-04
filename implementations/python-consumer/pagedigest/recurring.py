@@ -36,6 +36,30 @@ MAX_CACHE_BYTES = 128 * 1024 * 1024
 SITEMAP_NS = "{http://www.sitemaps.org/schemas/sitemap/0.9}"
 
 
+# Shared Lazy Collective finding vocabulary (docs/ecosystem.md#shared-finding-vocabulary).
+# `sync` keeps its original labels; `sourceStatus` carries the shared value.
+SYNC_STATUS = {"current": "usable", "changed": "needs_reread", "unknown": "unknown"}
+
+
+def source_state(bound, observed, bound_body_retained=True):
+    """One declared source: unknown if unobserved, changed if bytes differ."""
+    if observed is None:
+        return "unknown"
+    if observed != bound:
+        return "changed"
+    return "current" if bound_body_retained else "unknown"
+
+
+def source_status(source_states):
+    """Combine per-source states: any changed wins, then unknown, else current."""
+    states = list(source_states)
+    if not states:
+        return "unknown"
+    if "changed" in states:
+        return "changed"
+    return "unknown" if "unknown" in states else "current"
+
+
 def digest(body):
     return "sha256:" + hashlib.sha256(body).hexdigest()
 
@@ -162,8 +186,8 @@ def response_policy(headers, now):
     return {
         "fresh_until": fresh_until,
         "revalidate": revalidate,
-        # Informational: an unchanged entry in a validated manifest is origin
-        # revalidation (SPEC 5.1.2) whether or not the page declares a lifetime.
+        # Informational: an unchanged entry whose digest matches the stored body
+        # is origin revalidation (SPEC 5.1.2) whether or not the page declares a lifetime.
         "http_lifetime": "max-age" in policy or bool(headers.get("Expires")),
     }
 
@@ -261,16 +285,21 @@ def sitemap_sources(base_url, key, meter, now):
 def findings_report(state, pages_dir, available, now):
     result = []
     for name, finding in sorted(state.get("findings", {}).items()):
-        problems = []
+        problems, states = [], []
         for key, expected in finding["sources"].items():
+            observed = None
             if finding["representation"] != state.get("representation"):
                 problems.append({"url": key, "reason": "representation-changed"})
             elif key not in available or retained_body(state, key, pages_dir) is None:
                 problems.append({"url": key, "reason": "source-unavailable-or-not-currently-validated"})
-            elif state["body_hashes"].get(key) != expected:
-                problems.append({"url": key, "reason": "source-bytes-changed"})
-        status = "needs_reread" if any(p["reason"] == "source-bytes-changed" for p in problems) else "unknown"
-        result.append({"id": name, "status": status if problems else "usable", "problems": problems})
+            else:
+                observed = state["body_hashes"].get(key)
+                if observed != expected:
+                    problems.append({"url": key, "reason": "source-bytes-changed"})
+            # prune_bodies keeps every finding-cited body, so the bound body is retained.
+            states.append(source_state(expected, observed))
+        shared = source_status(states)
+        result.append({"id": name, "status": SYNC_STATUS[shared], "sourceStatus": shared, "problems": problems})
     return result
 
 
@@ -531,15 +560,26 @@ def _sync(
         within_deadline = 0 <= age < max_age
         policy = previous.get("policy", {})
         audit_now = valid_body and audit_rate > 0 and random.random() < audit_rate
-        unchanged_hint = manifest and key in decision["unchanged"] and not language and not state.get("distrusted")
+        # SPEC 5.1.2: only an unchanged entry whose digest equals the stored body
+        # validates those bytes. A digest-less or differing entry may still mean
+        # "no material change", but findings here bind exact bytes, so HTTP decides.
+        unchanged_hint = (
+            manifest
+            and key in decision["unchanged"]
+            and not language
+            and not state.get("distrusted")
+            and bool(entry)
+            and entry.get("digest") is not None
+            and entry.get("digest") == old_hash
+        )
         changed_hint = (manifest and entry and key not in decision["unchanged"]) or (
             key in lastmods and lastmods[key] != previous.get("sitemap_lastmod")
         )
         # HTTP freshness reuses a fresh response unless it requires validation on
-        # every use. An unchanged entry in this cycle's validated manifest is the
-        # origin's validation of the stored representation (SPEC 5.1.2), so it
-        # also satisfies no-cache/must-revalidate. Retention limits (no-store,
-        # private, Set-Cookie, Vary) were enforced when the body was stored.
+        # every use. An unchanged, digest-matching entry in this cycle's validated
+        # manifest is the origin's validation of the stored representation (SPEC
+        # 5.1.2), so it also satisfies no-cache/must-revalidate. Retention limits
+        # (no-store, private, Set-Cookie, Vary) were enforced when the body was stored.
         http_fresh = now < policy.get("fresh_until", 0) and not policy.get("revalidate")
         can_skip = (
             valid_body

@@ -32,30 +32,35 @@ benefit from ordinary HTTP/source caches even without publisher participation.
 ## Shared finding vocabulary
 
 Both experimental workflows retain findings bound to the exact bytes they used,
-in their own storage. The shared vocabulary gives source status one meaning:
+in their own storage. The shared vocabulary gives source status one meaning, and
+both report it as `sourceStatus`:
 
-| Shared status | Meaning | PageDigest `sync` |
+| `sourceStatus` | Meaning | PageDigest `sync` label (`status`) |
 | --- | --- | --- |
 | `current` | Every declared source still has the bound bytes | `usable` |
 | `changed` | A declared source now has different bytes | `needs_reread` |
-| `unknown` | A source is missing, failed, out of scope or a different representation | `unknown` |
+| `unknown` | A source is missing, failed, out of scope, a different representation, or its bound body is no longer retained | `unknown` |
 
-DotRepo's decision workflow does not yet report a per-finding source status: an
-assessment is simply unavailable once its record binding no longer matches.
-Reporting the shared status there is tracked in DotRepo's workflow status.
+Per finding, `changed` wins over `unknown`, which wins over `current`; a finding
+with no declared sources is `unknown`. The rules are executable:
+[`test-vectors/source-status/vectors.json`](../test-vectors/source-status/vectors.json)
+is the single definition. PageDigest's consumer tests and DotRepo's decision-workflow
+tests both run it; DotRepo vendors an identical copy, and the Lazy Collective parent
+checks that the copies match. Change the vectors, then both implementations.
 
 Source status says nothing about whether the conclusion is true. DotRepo's
 requirement outcomes (`supported`, `contradicted`, `unknown`) are claim
-assessments, a separate axis. DotRepo's
-[workflow status](https://github.com/lazy-collective/dotrepo/blob/main/docs/workflow-status.md#shared-direction)
-carries the same definition; change both together.
+assessments, a separate axis. DotRepo also rolls several assessments of one
+requirement into a requirement-level status; that aggregation is documented in its
+[workflow status](https://github.com/lazy-collective/dotrepo/blob/main/docs/workflow-status.md#shared-direction).
 
 ## Existing integration and evidence
 
 DotRepo's public exporter already emits `/.well-known/pagedigest.json` alongside
 its snapshot and per-file manifests. Its records are served `no-cache`; under
 [SPEC §5.1.2](../SPEC.md#512-interaction-with-http-caching) an unchanged manifest
-entry is the origin's validation, so a warm consumer can skip them. The [July 3 case study](case-studies/dotrepo.md)
+entry whose digest matches the stored record is the origin's validation, so a warm
+consumer can skip them. Every dotrepo.org entry carries a digest. The [July 3 case study](case-studies/dotrepo.md)
 records that implementation and estimates a cycle against naive full covered-file
 fetching. It is operator dogfood and a dated export estimate, not independently
 measured consumer savings, adoption or proof of current deployment freshness.

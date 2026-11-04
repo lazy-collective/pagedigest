@@ -17,6 +17,11 @@ from pagedigest import cli
 from pagedigest.recurring import digest, read_state, remember, sync
 
 
+def entry(rev, body):
+    """A manifest entry whose digest validates stored bytes (SPEC 5.1.2)."""
+    return {"rev": rev, "digest": digest(body)}
+
+
 class Response:
     def __init__(self, status=200, body=b"", headers=None):
         self.status_code, self.body = status, body
@@ -160,7 +165,7 @@ class RecurringTests(unittest.TestCase):
 
     def test_deadline_revalidates_even_with_unchanged_manifest(self):
         self.origin.page("/a", b"one", etag="a", cache="")
-        self.origin.manifest({"/a": {"rev": 1}}, conditional=True)
+        self.origin.manifest({"/a": entry(1, b"one")}, conditional=True)
         self.cycle(max_age=60)
         warm = self.cycle(now=120, max_age=60)
         self.assertEqual(warm["requests"], 1)
@@ -171,7 +176,7 @@ class RecurringTests(unittest.TestCase):
     def test_audit_failure_marks_affected_findings_unknown_and_recovers(self):
         self.origin.page("/a", b"one", cache="")
         self.origin.page("/b", b"two", cache="")
-        self.origin.manifest({"/a": {"rev": 1}, "/b": {"rev": 1}}, conditional=True)
+        self.origin.manifest({"/a": entry(1, b"one"), "/b": entry(1, b"two")}, conditional=True)
         self.cycle()
         remember(self.state, "a-note", "One", ["/a"], now=100)
         remember(self.state, "b-note", "Two", ["/b"], now=100)
@@ -181,7 +186,7 @@ class RecurringTests(unittest.TestCase):
         self.assertEqual([f["status"] for f in failed["findings"]], ["unknown", "usable"])
         self.assertTrue(read_state(self.state)["distrusted"])
         self.assertEqual(read_state(self.state)["body_hashes"]["/a"], digest(b"one"))
-        self.origin.manifest({"/a": {"rev": 2}, "/b": {"rev": 1}}, rev=2)
+        self.origin.manifest({"/a": entry(2, b"concealed change"), "/b": entry(1, b"two")}, rev=2)
         recovered = self.cycle(now=102)
         self.assertTrue(recovered["complete"])
         self.assertEqual(recovered["changed"], ["/a"])
@@ -199,7 +204,7 @@ class RecurringTests(unittest.TestCase):
 
     def test_failed_audit_cannot_restore_old_http_fresh_bytes_as_usable(self):
         self.origin.page("/a", b"one", cache="max-age=3600")
-        self.origin.manifest({"/a": {"rev": 1}}, conditional=True)
+        self.origin.manifest({"/a": entry(1, b"one")}, conditional=True)
         self.cycle()
         remember(self.state, "note", "From old bytes", ["/a"], now=100)
         self.origin.page("/a", b"changed", cache="max-age=3600")
@@ -356,11 +361,12 @@ class RecurringTests(unittest.TestCase):
         self.assertEqual(warm["revalidated"], ["/a"])
 
     def test_unchanged_manifest_entry_is_origin_validation(self):
-        # SPEC 5.1.2: an unchanged covered entry in a validated manifest is the
-        # origin's validation, even for no-cache or expired must-revalidate pages.
+        # SPEC 5.1.2: an unchanged covered entry whose digest matches the stored
+        # body is the origin's validation, even for no-cache or expired
+        # must-revalidate pages.
         self.origin.page("/a", b"one", etag='"a1"', cache="no-cache")
         self.origin.page("/b", b"two", cache="max-age=30, must-revalidate")
-        self.origin.manifest({"/a": {"rev": 1}, "/b": {"rev": 1}}, conditional=True)
+        self.origin.manifest({"/a": entry(1, b"one"), "/b": entry(1, b"two")}, conditional=True)
         cold = self.cycle()
         self.assertTrue(cold["complete"])
         self.assertEqual(cold["requests"], 3)
@@ -374,16 +380,44 @@ class RecurringTests(unittest.TestCase):
         )
         self.assertEqual(warm["findings"][0]["status"], "usable")
         self.origin.page("/a", b"changed", etag='"a2"', cache="no-cache")
-        self.origin.manifest({"/a": {"rev": 2}, "/b": {"rev": 1}}, rev=2, conditional=True)
+        self.origin.manifest({"/a": entry(2, b"changed"), "/b": entry(1, b"two")}, rev=2, conditional=True)
         changed = self.cycle(now=210)
         self.assertEqual(changed["changed"], ["/a"])
         self.assertEqual(changed["reused"], [{"url": "/b", "basis": "pagedigest-unchanged"}])
         self.assertEqual(changed["findings"][0]["status"], "needs_reread")
         self.assertEqual(changed["requests"], 2)
 
+    def test_digest_less_unchanged_entry_keeps_http_validation(self):
+        # SPEC 5.1.2: without a digest, an unchanged rev reports no material
+        # change but validates no stored bytes, so no-cache still revalidates.
+        self.origin.page("/a", b"one", etag='"a1"', cache="no-cache")
+        self.origin.manifest({"/a": {"rev": 1}}, conditional=True)
+        self.assertTrue(self.cycle()["complete"])
+        warm = self.cycle(now=200)
+        self.assertTrue(warm["complete"])
+        self.assertEqual(warm["requests"], 2)
+        self.assertEqual(warm["revalidated"], ["/a"])
+        self.assertEqual(warm["reused"], [])
+
+    def test_unchanged_rev_with_new_digest_refetches_without_distrust(self):
+        # A semantic rev may ignore incidental byte changes (SPEC 3.2.1, 4); a
+        # differing digest then validates nothing and the new bytes are fetched.
+        self.origin.page("/a", b"one", cache="no-cache")
+        self.origin.manifest({"/a": entry(1, b"one")}, conditional=True)
+        self.cycle()
+        remember(self.state, "note", "From the first bytes", ["/a"], now=100)
+        self.origin.page("/a", b"one, restyled", cache="no-cache")
+        self.origin.manifest({"/a": entry(1, b"one, restyled")}, rev=2, conditional=True)
+        churn = self.cycle(now=200)
+        self.assertTrue(churn["complete"])
+        self.assertEqual(churn["changed"], ["/a"])
+        self.assertEqual(churn["findings"][0]["status"], "needs_reread")
+        self.assertEqual(churn["findings"][0]["sourceStatus"], "changed")
+        self.assertFalse(read_state(self.state)["distrusted"])
+
     def test_prefix_limits_discovery_from_a_large_manifest(self):
         entries = {f"/doc/{index}": {"rev": 1} for index in range(400)}
-        entries.update({f"/api/{index}": {"rev": 1} for index in range(3)})
+        entries.update({f"/api/{index}": entry(1, f"api {index}".encode()) for index in range(3)})
         self.origin.manifest(entries)
         for index in range(3):
             self.origin.page(f"/api/{index}", f"api {index}".encode())
