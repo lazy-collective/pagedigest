@@ -15,7 +15,7 @@ Use ordinary HTTP caching first; add a manifest where its coverage and revision
 semantics help. Optional SHA-256 digests support representation checks. Publisher
 claims depend on durable revision history; samples do not prove every skip.
 
-**[Publish a manifest](#publish-a-manifest)** · **[Integrate a consumer](#integrate-a-consumer)**
+**[Try three visits](#try-three-visits)** · **[Publish a manifest](#publish-a-manifest)** · **[Integrate a consumer](#integrate-a-consumer)**
 
 **Experimental:** the [recurring source workflow](docs/recurring-consumer.md)
 reports what changed, what needs rereading and which prior findings retain their
@@ -27,6 +27,32 @@ With [DotRepo](https://dotrepo.org), PageDigest belongs to
 reducing repeated fetch, parse, investigation and verification work. Its public
 home connects the two projects; there is no shared deployed service.
 [How the projects relate](docs/ecosystem.md).
+
+## Try three visits
+
+From this source checkout, run a complete local example:
+
+```bash
+uv run --project implementations/python-consumer --locked python implementations/python-consumer/examples/three_visits.py
+```
+
+It starts a loopback website and temporary cache, runs the persistent consumer,
+and checks the saved bodies after each visit. No external website or credentials
+are needed. Expected output:
+
+```text
+First read: 1 manifest + 2 page requests; fetched /about, /guide; reused none
+Nothing changed: 1 manifest + 0 page requests; fetched none; reused /about, /guide
+Guide updated: 1 manifest + 1 page requests; fetched /guide; reused /about
+```
+
+Random audits are disabled only for this deterministic demonstration. Real
+consumers also incur audits, local integrity checks and fallback. These request
+counts demonstrate behavior, not savings against HTTP caching. The
+[complete example](implementations/python-consumer/examples/three_visits.py)
+reuses the [persistent consumer](implementations/python-consumer/examples/cache_persistence.py).
+
+## How the manifest helps
 
 For a warm consumer covering 10,000 pages with 20 changes per cycle, the ideal
 request count is one manifest plus 20 page fetches. A 1% audit of skipped pages

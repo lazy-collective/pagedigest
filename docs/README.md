@@ -4,6 +4,7 @@ Agents: [AGENTS.md](../AGENTS.md) (symlinked as `CLAUDE.md`).
 
 | Document | Audience | Purpose |
 |----------|----------|---------|
+| [Three visits](../README.md#try-three-visits) | New readers | Run a complete local read, unchanged revisit and changed-page fetch |
 | [SPEC.md](../SPEC.md) | Implementers | Normative wire format and consumer algorithm |
 | [CONTRACT.md](../CONTRACT.md) | Publishers & crawlers | Publisher claims, consumer responsibilities, and optional operational policies |
 | [CONTENT_HYGIENE.md](../CONTENT_HYGIENE.md) | Publishers | Avoid false `rev`/`digest` churn; post-deploy reconcile |

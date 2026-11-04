@@ -13,6 +13,10 @@ your normal crawl behavior.
 
 ## Minimal loop
 
+For a first run, use the [three-visit demonstration](../README.md#try-three-visits).
+It supplies the local website and persistent cache, checks actual downloaded bodies,
+and shows an unchanged revisit followed by a one-page update.
+
 1. Fetch the manifest from the origin root.
 2. Validate the wire format.
 3. Compare `site_rev` and per-URL `rev` values with your cached state.
