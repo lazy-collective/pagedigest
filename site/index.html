@@ -137,6 +137,7 @@
   .comparison th, .comparison td { text-align: left; vertical-align: top; padding: 12px 14px; border-top: 1px solid var(--line); }
   .comparison th { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.05em; text-transform: uppercase; }
   .comparison td:first-child { font-family: var(--mono); white-space: nowrap; }
+  .comparison.visits td:first-child { font-family: var(--body); white-space: normal; }
   .state-header { background: var(--ink); color: #DDE7EA; border-radius: 10px; padding: 13px 16px; overflow-x: auto; font-family: var(--mono); font-size: 0.86rem; }
 
   /* Steps — a real sequence */
@@ -166,7 +167,7 @@
   }
   .proof p { margin: 0 0 14px; max-width: 62ch; }
   p a code { overflow-wrap: anywhere; }
-  .bargain pre {
+  .bargain pre, .example-command {
     background: var(--paper-deep); border-radius: 8px;
     padding: 12px 16px; overflow-x: auto; max-width: 100%;
     font-family: var(--mono); font-size: 0.8rem; line-height: 1.5; margin: 0 0 14px;
@@ -225,6 +226,8 @@
     .comparison td:first-child { font-weight: 600; }
     .comparison td:nth-child(2)::before { content: "Its job: "; font-weight: 600; }
     .comparison td:nth-child(3)::before { content: "Tradeoff: "; font-weight: 600; }
+    .comparison.visits td:nth-child(2)::before { content: "Reader: "; }
+    .comparison.visits td:nth-child(3)::before { content: "Requests: "; }
     ol.steps li { grid-template-columns: 40px 1fr; }
   }
   @media (max-width: 460px) {
@@ -280,7 +283,7 @@
     <h2 id="try-title">One website, three visits</h2>
     <p>Try a local two-page site with the persistent consumer. The example downloads
     and checks real bodies, keeps them between visits, then changes one page.</p>
-    <table>
+    <table class="comparison visits">
       <thead><tr><th scope="col">Visit</th><th scope="col">What the reader does</th><th scope="col">Requests</th></tr></thead>
       <tbody>
         <tr><td data-label="Visit">1. First read</td><td data-label="What the reader does">Fetch <code>/guide</code> and <code>/about</code>; save both.</td><td data-label="Requests">1 manifest + 2 pages</td></tr>
@@ -289,7 +292,8 @@
       </tbody>
     </table>
     <p>From a source checkout, run:</p>
-<pre><code>uv run --project implementations/python-consumer --locked python implementations/python-consumer/examples/three_visits.py</code></pre>
+<pre class="example-command"><code>uv run --project implementations/python-consumer --locked \
+  python implementations/python-consumer/examples/three_visits.py</code></pre>
     <p>The script starts its own loopback server and temporary cache; it needs no
     website or credentials. <a href="https://github.com/lazy-collective/pagedigest/blob/main/implementations/python-consumer/examples/three_visits.py">Read the complete example</a>.</p>
     <p>This controlled example disables random audits to make each step reproducible.
