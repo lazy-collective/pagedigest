@@ -1,14 +1,14 @@
 {
   "version": 1,
-  "generated": "2026-11-04T01:22:05Z",
-  "site_rev": 27,
+  "generated": "2026-11-04T05:12:33Z",
+  "site_rev": 29,
   "coverage": {
     "mode": "complete"
   },
   "entries": {
     "/": {
-      "rev": 24,
-      "digest": "sha256:7f398bd25bbcbfa58f1b79e352f01de71e89695f0db657be29be20da9826f7a0"
+      "rev": 26,
+      "digest": "sha256:e853bc7fdccbdb92882cbf36da46b6424b42009846897aeaa939609f2f87a91d"
     },
     "/announcements/v1-rc/": {
       "rev": 7,
