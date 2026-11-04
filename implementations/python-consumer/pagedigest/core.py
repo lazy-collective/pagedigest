@@ -21,6 +21,14 @@ STATE_HEADER_PATTERN = re.compile(r'^site_rev=(0|[1-9]\d*)(?:; manifest="([^"\\\
 UNRESERVED = set("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~")
 
 
+def _http_session(session: requests.Session | None) -> requests.Session:
+    if session is not None:
+        return session
+    client = requests.Session()
+    client.headers["User-Agent"] = "PageDigest-Python (+https://pagedigest.org/)"
+    return client
+
+
 @dataclass
 class FetchResult:
     ok: bool
@@ -300,7 +308,7 @@ def fetch(
     Redirects are not followed. A redirected manifest is treated as unusable so a
     cross-origin or unexpected hop cannot silently supply another origin's JSON.
     """
-    s = session or requests.Session()
+    s = _http_session(session)
     headers: dict[str, str] = {}
     if etag:
         headers["If-None-Match"] = etag
@@ -383,7 +391,7 @@ def fetch_manifest_url(
     if parsed.scheme.lower() not in {"http", "https"} or not parsed.netloc:
         return FetchResult(False, None, None, None, None, "invalid-manifest-url")
 
-    s = session or requests.Session()
+    s = _http_session(session)
     try:
         r = s.get(url, timeout=timeout, stream=True, allow_redirects=False)
     except requests.RequestException as exc:
@@ -522,7 +530,7 @@ def audit(
     The response body is streamed and capped at ``max_bytes`` so a publisher
     cannot exhaust auditor memory with an oversized page.
     """
-    s = session or requests.Session()
+    s = _http_session(session)
     try:
         url = resolve_url_key(base_url, url_key)
     except ValueError as exc:
