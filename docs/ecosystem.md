@@ -43,7 +43,7 @@ caching on its workload. That negative result remains intact. Neither batching
 nor fewer modeled requests establishes lower total work or model-token cost.
 
 This checkout includes the experimental source introduced in
-[PR2](https://github.com/maxwellsantoro/pagedigest/pull/2): an unreleased [recurring consumer workflow](recurring-consumer.md), which
+[PR2](https://github.com/lazy-collective/pagedigest/pull/2): an unreleased [recurring consumer workflow](recurring-consumer.md), which
 reports changes, required rereading and source-bound findings using HTTP,
 sitemap and PageDigest signals as available. The [publisher workflow](publisher-workflow.md)
 uses existing builds, generator state and Astro integration. Local controls
@@ -53,7 +53,7 @@ The [roadmap](../ROADMAP.md) owns the next bounded outcomes. Compare useful
 completed results at equal quality/freshness, including publisher maintenance,
 consumer reads/parsing, verification, fallback and unfinished attempts. Link
 owning evidence instead of maintaining another catalog or shared runtime.
-DotRepo's [workflow status](https://github.com/maxwellsantoro/dotrepo/blob/main/docs/workflow-status.md)
+DotRepo's [workflow status](https://github.com/lazy-collective/dotrepo/blob/main/docs/workflow-status.md)
 owns repository-side delivery and its negative or incomplete consumer studies.
 
 ## Design note: third-party observed-revision manifests

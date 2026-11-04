@@ -13,12 +13,12 @@ pagedigest verify-live https://example.com --sample-size 25
 
 The published 0.2.0 package does not include the experimental `sync` and
 `remember` workflow. Its source implementation and validation are recorded in
-[PR2](https://github.com/maxwellsantoro/pagedigest/pull/2); no source-only command
+[PR2](https://github.com/lazy-collective/pagedigest/pull/2); no source-only command
 below is an instruction to install a nonexistent release.
 
 ## Work from a source checkout
 
-Clone [the repository](https://github.com/maxwellsantoro/pagedigest), choose the
+Clone [the repository](https://github.com/lazy-collective/pagedigest), choose the
 branch you intend to evaluate, then:
 
 ```bash
@@ -86,7 +86,7 @@ headers = {
 ```
 
 This is a corroborating observation signal, not authentication. See
-[SPEC.md §5.4](https://github.com/maxwellsantoro/pagedigest/blob/python-v0.2.0/SPEC.md#54-optional-cooperation-request-header).
+[SPEC.md §5.4](https://github.com/lazy-collective/pagedigest/blob/python-v0.2.0/SPEC.md#54-optional-cooperation-request-header).
 
 Conformance fixtures: `tests/test_vectors.py` exercises `../../test-vectors/`.
 

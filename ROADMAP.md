@@ -49,7 +49,7 @@ The cross-project execution order that got us here was trust hygiene first, then
 |------|--------|
 | Pre-public docs/tests polish | done |
 | Tag `v1.0.0-rc.1` | done — released 2026-07-02 |
-| Adopter feedback channel (Issues/Discussions) | done — [v1 RC feedback issue](https://github.com/maxwellsantoro/pagedigest/issues/1) |
+| Adopter feedback channel (Issues/Discussions) | done — [v1 RC feedback issue](https://github.com/lazy-collective/pagedigest/issues/1) |
 | RC announcement | done — [docs/announcements/v1-rc.md](./docs/announcements/v1-rc.md) published on site at [/announcements/v1-rc/](https://pagedigest.org/announcements/v1-rc/) |
 | Prior-art comparison on README/site/spec | done |
 | Reserve optional `PageDigest-State` + vectors | done |

@@ -187,7 +187,7 @@ to [Cloudflare's analytics documentation](https://developers.cloudflare.com/web-
 it prevents automatic analytics-beacon injection and can affect compression.
 The separate cooperation observation endpoint is unchanged.
 
-[Repair PR3](https://github.com/maxwellsantoro/pagedigest/pull/3) deployed this policy
+[Repair PR3](https://github.com/lazy-collective/pagedigest/pull/3) deployed this policy
 on November 2, 2026 while preserving the original HTML, manifest and durable state
 at site revision 13. Strict full-body checks passed in the deployment runner and
 independently. All 18 observations in an additional identity/gzip matrix matched;

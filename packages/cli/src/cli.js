@@ -9,7 +9,7 @@ import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 export const GENERATOR_VERSION = "0.3.0";
-const RELEASE_ROOT = `https://github.com/maxwellsantoro/pagedigest/releases/download/generator-v${GENERATOR_VERSION}`;
+const RELEASE_ROOT = `https://github.com/lazy-collective/pagedigest/releases/download/generator-v${GENERATOR_VERSION}`;
 export const MAX_ARCHIVE_BYTES = 10 * 1024 * 1024;
 
 export const ASSETS = Object.freeze({
