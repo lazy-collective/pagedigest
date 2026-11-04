@@ -33,6 +33,15 @@ uv run --project implementations/python-consumer --locked python -m pagedigest.c
   --sitemap /sitemap.xml --http-only
 ```
 
+A large manifest or sitemap can exceed the 200-source cycle bound. Narrow
+discovery with one or more `--prefix` options (persisted like explicit URLs);
+explicit `--url` sources stay in scope regardless:
+
+```sh
+uv run --project implementations/python-consumer --locked python -m pagedigest.cli sync \
+  https://dotrepo.org ./research/dotrepo.json --prefix /v0/repos/github.com/astral-sh/
+```
+
 Only bounded, same-origin sitemap `urlset` files are supported. Sitemap indexes,
 external entities and cross-origin entries are refused. `lastmod` changes cause
 inspection; unchanged or missing `lastmod` does not prove unchanged content.
@@ -103,9 +112,14 @@ adoption or economic savings.
 
 ## Freshness and failure rules
 
-- HTTP `max-age`/`Expires` freshness can avoid a page request. After expiry the
-  workflow revalidates with ETag/Last-Modified when a usable body exists. It does
-  not override explicit HTTP cache restrictions with PageDigest.
+- HTTP `max-age`/`Expires` freshness can avoid a page request while the response
+  is fresh, including with `must-revalidate`; `no-cache` requires validation.
+- An unchanged entry in this cycle's validated manifest is the origin's validation
+  of the stored body ([SPEC §5.1.2](../SPEC.md#512-interaction-with-http-caching)),
+  equivalent to a 304, so it also covers `no-cache` and expired pages. The report
+  labels that reuse `pagedigest-unchanged`. Otherwise the workflow revalidates with
+  ETag/Last-Modified when a usable body exists. Manifest validation never permits
+  retaining `no-store`, `private`, `Set-Cookie` or unsupported `Vary` responses.
 - `--max-age` bounds time since body validation, even when a manifest repeatedly
   returns 304. Default: one hour. No metadata poll resets that deadline.
 - Default audit probability is 0.01 per cached source per cycle. `--audit-rate 1`
