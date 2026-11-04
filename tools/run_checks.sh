@@ -34,6 +34,7 @@ echo "[5/20] checking python CLI"
 uv run --locked pagedigest verify-live --help >/dev/null
 uv run --locked pagedigest sync --help >/dev/null
 uv run --locked pagedigest remember --help >/dev/null
+uv run --locked python examples/three_visits.py
 
 echo "[6/20] checking content hygiene utility"
 cd "${ROOT_DIR}"

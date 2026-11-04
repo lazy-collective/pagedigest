@@ -1,5 +1,42 @@
 # Roadmap
 
+**Now:** v1.0 — stable wire format, shipped reference implementations and packages, dogfood on [pagedigest.org](https://pagedigest.org). Gates: [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md).
+
+## Active outcome priorities — November 4, 2026
+
+The next product outcome is a returning reader completing useful work, retaining
+its source dependencies and revisiting the right material after a change. The
+stable protocol and generators already exist; the experimental `sync`/`remember`
+workflow supplies most of the next path. The ordered packets here own new work.
+The dated notes and Phase 1–6 tables below preserve delivery history.
+
+| Order | Packet and concrete deliverable | Acceptance and decision |
+| --- | --- | --- |
+| 1 | **PD1 — A reproducible recurring-reader entrypoint.** Extend the three-visit demonstration into a maintained source-install path for `sync` and `remember`, with an inspectable saved finding and restart/recovery instructions. Build a versioned local wheel candidate from the existing implementation. | A fresh environment reads a small site, saves a real answer with its declared sources, exits, then returns and reports what needs rereading. Exercise old-cache migration and missing-body recovery. A package release is a later explicit delivery step; Python 0.2.0 still lacks these commands. |
+| 2 | **PD2 — Useful work over six cycles.** Freeze three recurring questions against a small mostly static corpus before running them. Include initial read, unchanged revisit, relevant change, irrelevant change, cache loss and failed-deployment recovery. | Evaluate the resulting answers and omissions as well as source-status labels. Compare the same HTTP cache and discovery opportunities, with equal freshness and audit policy. Count all attempts, local integrity reads, parsing, requests/bytes and unfinished work. The reader must revisit affected evidence and preserve unrelated usable work. Fix the largest observed gap before expanding the workload. |
+| 3 | **PD3 — A durable publisher path people can maintain.** Use two representative existing builds, including one Astro site, through initial setup and two updates. Exercise state restoration and served-byte verification without a hand-maintained page catalog. | Record operator time, interventions, unexpected revision churn and recovery steps. Ordinary builds derive their inventories automatically; lost state never silently restarts history. PD3 can run once PD1's path is stable. Use its costs in PD2/PD5 instead of treating publication as free. |
+| 4 | **PD4 — A finding handed to a second reader.** After PD2 yields a useful retained answer, prototype an explicit export/import between two isolated stores, coordinated with DotRepo D4. Carry claim text, scope, source references/hashes, assumptions and original observation time. | The recipient applies its own checks and can distinguish unchanged sources from a correct conclusion. Include relevant change, missing source and conflicting interpretation. Compare against sharing the same cached source alone. Start with files; a shared network service and v1.1 changes require a demonstrated unmet need. |
+| 5 | **PD5 — A bounded independent recurring use case.** After PD1–PD3, prepare a pinned candidate and operating guide for one independent publisher/consumer pair. PD4 is required only if findings cross readers. | Freeze useful outputs, freshness, a finite run count and spending ceiling first. Compare total publisher + intermediary + consumer work against competent HTTP/sitemap/fingerprint alternatives, including setup, audits, fallback and maintenance. Report favorable and unfavorable workload regions separately. Seek permission for outreach, paid activity or package release; these roadmap items do not authorize them. |
+
+**Next implementable packet: PD1.** Today's local three-visit example demonstrates
+real cache behavior, with audits disabled for reproducibility. It is not yet a
+complete recurring research task or independent evidence. PD2 must use actual
+questions and evaluated answers rather than supplied finding text alone.
+
+**Go/no-go rule:** completion, freshness and correct invalidation come first;
+economic benefit is then measured with publisher work included. The retained
+38.6% byte overhead and six-cycle 14-request/1,199-byte result remain negative
+evidence. If a matched workload still loses, simplify the integration, narrow
+its intended use or prefer ordinary HTTP caching. Do not manufacture a positive
+result by dropping audits, missing results or failed attempts.
+
+**Deferred:** more SSG plugins, broad crawler distribution, manifest sharding,
+new hash/discovery mechanisms, observation-counter polish and a shared-memory
+backend. Reopen an item when a named workflow encounters its specific limit.
+Protocol stability and the existing deployment/recovery checks remain obligations.
+
+## Delivery history and retained evidence
+
 **November 4 org-review repair (local candidate):** sitemap discovery now applies
 the requested prefixes before its 200-source admission limit, while validating
 all input URL keys and retaining separate 2 MiB / 10,000-entry input bounds.
@@ -26,7 +63,6 @@ delivery, not a new package release. The recurring guide records the urllib
 example and the remaining Pages platform constraint. Shared acceptance evidence
 is retained in the parent November 3 `task/not-done` packet.
 
-**Now:** v1.0 — stable wire format, shipped reference implementations and packages, dogfood on [pagedigest.org](https://pagedigest.org). Gates: [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md).
 
 **Source milestone (implemented November 2, not yet packaged):** a recurring consumer reports
 what changed, what needs rereading and which findings retain their source
@@ -67,7 +103,8 @@ conservative Scrapy HTTP replay policy, complete live synchronization checks, an
 matched-audit/persistent-consumer benchmark measurements. The adapter remains
 experimental, and independent operation is still the next adoption gate.
 
-The cross-project execution order that got us here was trust hygiene first, then the v1 spec clarifications (`PageDigest-State`, prior-art, and audit economics), measured dotrepo dogfood, agent consumption, and then broad distribution.
+The historical protocol sequence below records completed implementation and
+reserved extensions. Use the active outcome priorities above to choose new work.
 
 ## Phase 1 — Public RC
 
@@ -144,7 +181,7 @@ discovery, and additional hash algorithms remain reserved; see [SPEC.md](./SPEC.
 
 | Item | Disposition |
 |------|-------------|
-| Hugo / Eleventy / Jekyll plugins | P2 publisher path; reuse Astro conformance pattern |
+| Hugo / Eleventy / Jekyll plugins | Deferred until an active publisher workflow needs one; reuse Astro conformance pattern |
 | Scrapy middleware on PyPI | Graduate from experimental when a maintainer is ready |
 | Short-form IANA `rel` examples | Flip docs when the token is assigned |
 | mypy/pyright in CI | Optional polish; consumer is annotated and unit-tested |
@@ -153,4 +190,6 @@ discovery, and additional hash algorithms remain reserved; see [SPEC.md](./SPEC.
 
 ## Contribute
 
-Open an issue referencing a phase. Highest leverage now: **independently operated recurring consumers** and **equivalent-result benchmarks**.
+Open an issue referencing an active packet. Start with **PD1's reproducible
+recurring-reader path**, then **PD2's evaluated repeat work** and **PD3's publisher
+upkeep**. Independent operation follows a usable candidate.

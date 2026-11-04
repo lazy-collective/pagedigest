@@ -18,8 +18,9 @@ consumer side:
 
 Earlier documents used "DotPage" for PageDigest's publisher side and
 "RepoDigest" for DotRepo's experimental decision workflow. Those are not
-separate products; command and module names such as `repodigest.shortlist` are
-unchanged. Both projects' retained findings follow the shared
+separate products. DotRepo's experimental MCP tools use `dotrepo.decision.*`;
+legacy `repodigest.*` aliases and internal module names remain for compatibility.
+Both projects' retained findings follow the shared
 [finding-record vocabulary](#shared-finding-vocabulary).
 
 Declarations can avoid repeated work when needed local results remain complete,
