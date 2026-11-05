@@ -91,17 +91,10 @@ transformed hashes. This does not change the protocol's digest semantics.
 
 ## Practical pipeline pattern
 
-Copy-paste default path (also on the [README](./README.md#publish-a-manifest)):
-
-1. Render site to final deployable artifacts.
-2. Optional: `uv run --project implementations/python-consumer --locked python tools/check_content_hygiene.py ./site-dist --fail-on warning`.
-3. Generate `pagedigest` from rendered output (`--with-digest` when you want audits).
-4. Deploy pages and manifest atomically (or pages first, then manifest).
-5. Reconcile against served bytes
-   (`tools/reconcile_served_digests.py <manifest> --base-url <origin> --apply`)
-   and redeploy the manifest if it changed — this absorbs CDN/edge rewrites
-   without disabling any host feature.
-6. Sample live audits: `uv run --project implementations/python-consumer --locked pagedigest verify-live <origin>`.
+Follow the [default publisher pipeline](#default-pipeline-when-digests-are-enabled) and its
+representation checks above. The [README quick start](README.md#publish-a-manifest)
+links the same workflow. The dogfood site instead uses its strict deployment
+policy; this section does not authorize adopting transformed hashes there.
 
 ### Digest-only reconcile and `site_rev`
 

@@ -41,23 +41,20 @@ docs/                             # Ecosystem, templates, IANA drafts, archive
 pagedigest.schema.json            # Validation aid; SPEC is normative boundary
 ```
 
-## Before finishing any change
+## Work and validation
 
-```bash
-./tools/run_checks.sh
-```
+Use the [roadmap graph](ROADMAP.md) and [execution guide](docs/agent-execution.md)
+for a coordinator with concurrent workers. Reserve shared contracts/integration,
+assign disjoint files and unique environments/outputs, and accept outcomes only
+at their declared joins. This checkout's [coordination skill](.agents/skills/roadmap-coordination/SKILL.md)
+routes that workflow without adding another plan. Carry the parent's shared goal
+and current task authorization when working across projects.
 
-Use `uv` for Python commands in this checkout; package-install instructions for
-external consumers and captured historical commands retain their own scope.
-Requires [uv](https://docs.astral.sh/uv/) and Rust/Cargo. CI runs the same script (`.github/workflows/ci.yml`).
-
-Focused runs:
-
-```bash
-uv run --project implementations/python-consumer --extra dev --locked python tools/validate_vectors.py
-cd implementations/python-consumer && uv run --locked python -m unittest discover -s tests -v
-cd implementations/rust-generator && cargo test --locked
-```
+Use `uv` for Python. Workers run focused checks against their exposing cases;
+the coordinator runs the appropriate integrated gate on the joined tree. Follow
+[validation and CI](docs/validation.md) for the narrow prose-only path and full
+checks. Full gate: `./tools/run_checks.sh` (uv, Rust/Cargo and Node required).
+Do not turn a focused receipt into a claim that later or integrated changes passed.
 
 ## Implementation notes (easy to get wrong)
 
@@ -75,26 +72,25 @@ cd implementations/rust-generator && cargo test --locked
 
 When changing protocol behavior: update **SPEC** if normative, add/adjust **test-vectors**, extend **python-consumer** validation/diff tests (`tests/test_vectors.py`).
 
-## Shipped vs planned
+## Delivery boundaries
 
-| Shipped in repo | Planned ([ROADMAP.md](./ROADMAP.md)) |
-|-----------------|--------------------------------------|
-| Rust generator (`cargo install pagedigest`, `npx pagedigest`, and release binaries) | |
-| Python consumer (`pip install pagedigest`) | |
-| Astro integration (`npm install @pagedigest/astro`) | Additional SSG plugins |
-| Conformance vectors + CI | IANA short-form `rel` (extension URI works today) |
+The [version matrix](README.md#version-matrix) owns published versions; the
+[status](README.md#status) distinguishes source workflows from released packages.
+Do not document a planned install path as available without updating the README
+and [release checklist](RELEASE_CHECKLIST.md). Tests and local demonstrations are
+implementation evidence, not adoption, utility or economic savings.
 
 Publisher digests: generate → deploy → validate supported representations →
 deliberately reconcile when appropriate → verify. Dogfood uses
 `tools/verify_deployed_site.py` and cold/warm controls; mismatches block completion.
-Version matrix: [README.md](./README.md#version-matrix).
-
-Do not document planned install paths as available without updating [README.md](./README.md) and [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md).
+Do not regenerate or publish dogfood state as a side effect of unrelated work.
+Publication, outreach, paid activity and access changes require task-specific
+scope; the roadmap grants no such authorization.
 
 ## Editing conventions
 
 - **Stay focused.** Match existing style; no drive-by refactors.
-- **Keep docs DRY.** README = front door; SPEC = normative; hygiene/ops = CONTENT_HYGIENE; gates = RELEASE_CHECKLIST; phases = ROADMAP. Link instead of copy.
+- **Keep docs DRY.** README = front door; SPEC = normative; hygiene/ops = CONTENT_HYGIENE; gates = RELEASE_CHECKLIST; current graph = ROADMAP. Preserve dated archives and original evidence paths. Link instead of copy.
 - **Avoid new top-level markdown** unless necessary; prefer `docs/` for supplementary material.
 - **Generator binary:** `pagedigest-generator`; the npm launcher command is `pagedigest`.
 

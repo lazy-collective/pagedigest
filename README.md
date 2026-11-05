@@ -242,9 +242,11 @@ Checks cover conformance, failed and incomplete syncs, generator state progressi
 Astro parity, real Scrapy traversal, clean wheel/tarball installation, and equivalent
 benchmark outcomes. Protocol and package versions remain separate.
 
-Next priority: an independently operated recurring consumer measuring equivalent
-results and freshness, including audit, discovery, fallback, and processing costs.
-See [ROADMAP.md](./ROADMAP.md), [release gates](./RELEASE_CHECKLIST.md), and
+Start with PD1’s reproducible recurring reader while preparing PD2’s questions
+and baseline and PD3’s publisher path in parallel. Independent use follows useful
+evaluated work and publisher readiness. The [validation guide](docs/validation.md)
+explains focused checks, the narrow prose-only PR gate and coordinated integration.
+See the [roadmap graph](./ROADMAP.md), [release gates](./RELEASE_CHECKLIST.md), and
 [the documentation index](./docs/README.md). Cooperation and optional operational
 policies are discussed in [CONTRACT.md](./CONTRACT.md).
 

@@ -8,7 +8,9 @@ Agents: [AGENTS.md](../AGENTS.md) (symlinked as `CLAUDE.md`).
 | [SPEC.md](../SPEC.md) | Implementers | Normative wire format and consumer algorithm |
 | [CONTRACT.md](../CONTRACT.md) | Publishers & crawlers | Publisher claims, consumer responsibilities, and optional operational policies |
 | [CONTENT_HYGIENE.md](../CONTENT_HYGIENE.md) | Publishers | Avoid false `rev`/`digest` churn; post-deploy reconcile |
-| [ROADMAP.md](../ROADMAP.md) | Maintainers | Phases through v1.0 (complete) and Post-1.0 |
+| [ROADMAP.md](../ROADMAP.md) | Maintainers | Ready lanes, dependencies and acceptance for PD1–PD5 |
+| [agent-execution.md](./agent-execution.md) | Coordinator & workers | File ownership, parallel preparation and integration joins |
+| [validation.md](./validation.md) | Contributors | Focused checks, full gate, conservative PR routing and deployment |
 | [RELEASE_CHECKLIST.md](../RELEASE_CHECKLIST.md) | Maintainers | RC and 1.0 gates (v1.0 hard gates checked) |
 | [ecosystem.md](./ecosystem.md) | Both | Shared roles, evidence and relationship with [DotRepo](https://dotrepo.org) |
 | [DOGFOOD_TEMPLATE.md](./DOGFOOD_TEMPLATE.md) | Publishers | Template for deployment case studies |
@@ -29,3 +31,14 @@ Implementation guides: [rust-generator](../implementations/rust-generator/README
 Experimental integrations: [Scrapy consumer middleware](../integrations/scrapy/).
 
 Conformance fixtures: [test-vectors/](../test-vectors/).
+
+Current package/adapter guides: [Astro](../packages/astro/README.md),
+[npm launcher](../packages/cli/README.md), [durable dogfood state](../site-state/README.md)
+and [visual maintenance](visual-family.md).
+
+Historical evidence is not the dispatch queue: the [roadmap snapshot](archive/roadmap-through-20261104.md),
+[review guide](archive/REVIEW_GUIDE.md), [visual QA receipt](../design-qa.md),
+announcements, releases, case studies and frozen benchmark reports keep their
+original status and limitations. The [recurring control](benchmarks/recurring-workflow-20261104/README.md)
+uses supplied finding text and does not establish independent utility. Do not
+rewrite captured source or archived instructions to match today's implementation.

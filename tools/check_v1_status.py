@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Structural gate: protocol docs present as v1.0 with hard 1.0 gates closed.
 
-Drives the real checked-in files (ROADMAP, README, SPEC, RELEASE_CHECKLIST).
+Drives current status files and the preserved completed-phase roadmap snapshot.
 Fails if primary status regresses to RC-only or a hard 1.0 checkbox is reopened.
 """
 
@@ -25,10 +25,13 @@ def main() -> None:
         fail("ROADMAP.md **Now:** must state v1.0")
     if re.search(r"^\*\*Now:\*\*\s+v1 RC\b", roadmap, re.MULTILINE):
         fail("ROADMAP.md **Now:** still says v1 RC")
-    # Phase 1–6 must not leave bare unfinished work as P2/draft in the phase tables.
+    # Relocated Phase 1–6 still cannot claim completion with unfinished rows.
+    phase_history = (ROOT / "docs/archive/roadmap-through-20261104.md").read_text(
+        encoding="utf-8"
+    )
     phase_blocks = re.findall(
         r"## Phase [1-6].*?(?=## |\Z)",
-        roadmap,
+        phase_history,
         re.DOTALL,
     )
     if len(phase_blocks) < 6:

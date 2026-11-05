@@ -83,8 +83,9 @@ Priority `585` places it just before Scrapy's `HttpCompressionMiddleware` (590)
 so audit requests keep `Accept-Encoding: identity` intact.
 
 It only helps **stateful** crawls: point `PAGEDIGEST_STORE` at a durable path and
-reuse it across runs. The savings appear on the *second and later* crawls — the
-first establishes the baseline.
+reuse it across runs. The first crawl establishes the baseline; later crawls can
+reuse eligible responses. That does not establish total savings: include manifest
+traffic, audits, discovery and replay/parsing work in a matched comparison.
 
 ## See it work
 

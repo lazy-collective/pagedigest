@@ -136,10 +136,10 @@ headers = {
 }
 ```
 
-This is a corroborating signal for the publisher. It lets the publisher see
-that the client knows a manifest revision and should be skipping unchanged
-covered pages. It is not authentication and should not be used for access
-control. See [cooperative automation](./cooperative-automation.md) for
+This reports an observed manifest revision. It does not establish completed
+work, correct conclusions or permission to skip a fetch. Audits, cache loss and
+different representations can legitimately require unchanged pages. It is not
+authentication or an access-control signal; see the [contract](../CONTRACT.md). See [cooperative automation](./cooperative-automation.md) for
 publisher-side logging and classification patterns.
 
 ## Integration checklist
