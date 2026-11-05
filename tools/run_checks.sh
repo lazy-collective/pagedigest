@@ -3,6 +3,16 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PYTHON_CONSUMER_DIR="${ROOT_DIR}/implementations/python-consumer"
+CHECK_TMP="$(mktemp -d "${TMPDIR:-/tmp}/pagedigest-checks.XXXXXX")"
+finish() {
+  check_exit=$?
+  if [ "$check_exit" -eq 0 ]; then
+    rm -rf "$CHECK_TMP"
+  else
+    echo "failed-check output retained at $CHECK_TMP" >&2
+  fi
+}
+trap finish EXIT
 
 if ! command -v uv >/dev/null 2>&1; then
   echo "missing uv; install it from https://docs.astral.sh/uv/ and rerun." >&2
@@ -81,6 +91,8 @@ uv run --project "${PYTHON_CONSUMER_DIR}" --locked python "${ROOT_DIR}/tools/che
 
 echo "[15/20] checking v1.0 status disposition"
 uv run --project "${PYTHON_CONSUMER_DIR}" --locked python "${ROOT_DIR}/tools/check_v1_status.py"
+uv run --no-project python "${ROOT_DIR}/tools/check_docs.py"
+uv run --no-project python -m unittest discover -s "${ROOT_DIR}/tools" -p 'test_*.py' -v
 
 echo "[16/20] testing real Scrapy traversal"
 uv run --project "${ROOT_DIR}/integrations/scrapy" --with 'Scrapy>=2.11' \
@@ -88,7 +100,7 @@ uv run --project "${ROOT_DIR}/integrations/scrapy" --with 'Scrapy>=2.11' \
 echo "[17/20] checking clean artifact installs"
 uv run --project "${PYTHON_CONSUMER_DIR}" --locked python "${ROOT_DIR}/tools/check_install_artifacts.py"
 echo "[18/20] checking equivalent benchmark outcomes"
-uv run --project "${PYTHON_CONSUMER_DIR}" --locked python "${ROOT_DIR}/tools/benchmark_consumers.py" --pages 20 --output /tmp/pagedigest-benchmark-check.json
+uv run --project "${PYTHON_CONSUMER_DIR}" --locked python "${ROOT_DIR}/tools/benchmark_consumers.py" --pages 20 --output "${CHECK_TMP}/benchmark.json"
 echo "[19/20] testing real Scrapy cache policy transitions"
 uv run --project "${ROOT_DIR}/integrations/scrapy" --with 'Scrapy>=2.11' \
   --with-editable "${PYTHON_CONSUMER_DIR}" python "${ROOT_DIR}/integrations/scrapy/tests/test_cache_policy.py"

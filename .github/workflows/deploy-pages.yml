@@ -1,10 +1,19 @@
 name: Deploy Pages
 
 on:
-  push:
-    branches:
-      - main
+  workflow_call:
+    inputs:
+      checked_sha:
+        description: Exact main commit whose full repository checks passed in CI
+        type: string
+        required: true
+    secrets:
+      CLOUDFLARE_API_TOKEN:
+        required: true
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 concurrency:
   group: pagedigest-production
@@ -12,34 +21,59 @@ concurrency:
 
 jobs:
   deploy:
-    if: github.ref == 'refs/heads/main'
+    if: >-
+      github.ref == 'refs/heads/main'
+      && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.checked_sha || github.sha }}
+
+      - name: Bind deployment to this workflow's exact main revision
+        env:
+          CHECKED_SHA: ${{ inputs.checked_sha }}
+        run: bash tools/check_deploy_revision.sh
 
       - name: Set up uv
-        uses: astral-sh/setup-uv@v8.2.0
+        uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
+        with:
+          enable-cache: true
 
       - name: Set up Python
         run: uv python install 3.12
 
-      - name: Set up Rust
-        uses: dtolnay/rust-toolchain@stable
+      - name: Set up Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: |
+            packages/astro/package-lock.json
+            packages/cli/package-lock.json
+
+      - name: Set up Rust
+        if: github.event_name == 'workflow_dispatch'
+        uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
+        with:
+          toolchain: stable
           components: rustfmt, clippy
 
       - name: Run repository checks
+        # Automatic calls are downstream of CI's full20 on this exact main SHA.
+        # A manual deployment has no such receipt and must run the suite itself.
+        if: github.event_name == 'workflow_dispatch'
         run: ./tools/run_checks.sh
 
       - name: Deploy site to Cloudflare Pages
         # A serialized job can still be an old queued/manual run. Refuse rollback.
         run: |
-          current_main="$(git ls-remote origin refs/heads/main | cut -f1)"
-          test "$current_main" = "$GITHUB_SHA" || { echo "Refusing stale main deployment" >&2; exit 1; }
+          bash tools/check_deploy_revision.sh --before-upload
           npx --yes wrangler@latest pages deploy site --project-name pagedigest --branch main --commit-dirty=true
         env:
+          CHECKED_SHA: ${{ inputs.checked_sha }}
           CLOUDFLARE_ACCOUNT_ID: ff06334131c2a4195d4b68a96dc5ee6a
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
