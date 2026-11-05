@@ -15,6 +15,16 @@ worker lanes. Preparation can overlap; acceptance still needs the specified
 inputs. [Execution guide](docs/agent-execution.md) owns dispatch and joins;
 [validation guide](docs/validation.md) owns check selection.
 
+**November 4 local batch checkpoint:** This branch implements PD1's source
+install and local `0.3.0.dev1` wheel candidate with read-only saved-answer/source
+inspection and restart, legacy-cache and missing-body recovery controls. See
+[the recurring guide](docs/recurring-consumer.md) and
+[local acceptance artifacts](/Users/maxwell/Documents/Codex/2026-11-04/task/next-team-batch/acceptance/).
+The [PD2 preparation](docs/evaluations/next-team-batch-20261104/README.md) freezes
+three questions and six cycles, including failure/recovery, with a same-cache
+baseline and separate oracle. Outcome runs, PD3 publisher costs and independent
+operation remain open. The local wheel is not a package release.
+
 ```mermaid
 flowchart LR
   PD1[PD1: recurring reader] --> PD2[PD2: evaluated six cycles]

@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "generated": "2026-11-05T01:00:00Z",
+  "site_rev": 102,
+  "coverage": {
+    "mode": "complete"
+  },
+  "entries": {
+    "/": {
+      "rev": 101,
+      "digest": "sha256:f7e24c0debf3190614bb00619087bcd4194f911921c401a58168d9fdc3e79c2a"
+    },
+    "/rel/": {
+      "rev": 100,
+      "digest": "sha256:0f21436461e85bbaaac6b7790fe50d05447bfa8953aaf0e954d7c5bea8b609ce"
+    },
+    "/announcements/v1-rc/": {
+      "rev": 101,
+      "digest": "sha256:105ada7dfcd8076e96602121bd13d3cf72918edf5c7893c86311e4afdfdfef82"
+    }
+  }
+}

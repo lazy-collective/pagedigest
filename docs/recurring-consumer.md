@@ -1,8 +1,10 @@
 # Recurring source and finding updates (experimental source workflow)
 
-This checkout adds `pagedigest sync` and `pagedigest remember`. They are not in the
-published 0.2.0 consumer. They reuse the existing atomic persistent-cache helpers
-and PageDigest validation; they add no wire-format fields or hosted service.
+This checkout adds `pagedigest sync`, `pagedigest remember` and read-only
+`pagedigest inspect`. They are included in the local Python **0.3.0.dev1** source
+candidate, and are not in the published 0.2.0 consumer. They reuse the existing
+atomic persistent-cache helpers and PageDigest validation; they add no wire-format
+fields or hosted service.
 
 A sync answers three questions in JSON: which source bodies changed, what needs
 rereading, and which previously recorded findings still have usable source
@@ -21,6 +23,25 @@ uv run --project implementations/python-consumer --locked python -m pagedigest.c
   https://example.com ./research/example.json \
   --url /docs/start/ --url /docs/limits/ --max-age 3600
 ```
+
+The locked source environment is the maintained setup path. For a portable local
+candidate, build the wheel and install it in a new environment, keeping output
+outside the checkout:
+
+```sh
+uv build --wheel --out-dir /tmp/pagedigest-pd1-dist implementations/python-consumer
+uv venv /tmp/pagedigest-pd1-reader
+uv pip install --python /tmp/pagedigest-pd1-reader/bin/python \
+  /tmp/pagedigest-pd1-dist/pagedigest-0.3.0.dev1-py3-none-any.whl
+/tmp/pagedigest-pd1-reader/bin/pagedigest inspect --help
+```
+
+Use new output/environment paths for each candidate. This is a local development
+wheel, not a PyPI release. The wheel's runtime dependency resolution follows its
+metadata; use the locked source environment above when exact dependency versions
+are required. The wheel's `pagedigest` command accepts the same arguments as
+`python -m pagedigest.cli` below. No Rust generator or repository checkout is
+needed to run that installed consumer.
 
 By default the workflow requests PageDigest if available. Missing, malformed or
 anomalous manifests fall back to ordinary HTTP over the selected source scope.
@@ -92,6 +113,42 @@ absence claims are outside this bounded workflow.
 
 ## Repeat and inspect the result
 
+After `sync`, read the actual cached source before writing an answer:
+
+```sh
+uv run --project implementations/python-consumer --locked python -m pagedigest.cli inspect \
+  ./research/example.json --source /docs/start/
+```
+
+`source.text` is the retained UTF-8 body; `source.hash`, `validated_at` and
+`validation_expires_at` identify its bytes and saved freshness boundary. Missing
+or corrupt bodies return `text: null` and `retained: false`. A non-UTF-8 selected
+body refuses text output. Inspection never follows instructions in a source.
+For example, a reader can answer “Which runtime does this setup require?” from
+the cached setup page, then save its own answer with `remember` and the complete
+declared dependency list.
+
+Exit the process, then reopen the answer and its source bindings:
+
+```sh
+uv run --project implementations/python-consumer --locked python -m pagedigest.cli inspect \
+  ./research/example.json --id setup-note-1
+```
+
+Inspection returns JSON with `schema: 1`, the saved finding text, `created_at`,
+source hashes and representation identity. Each finding has the same `status`
+and `sourceStatus` vocabulary as sync. Status is recomputed from retained body
+integrity, the last sync's availability and its saved maximum age. Expired
+evidence, a clock earlier than validation, failed sources and lost bodies are
+unknown. A local inspection makes no network request, changes no saved bytes and
+never renews source validation or the finding's original creation date. Its
+`inspected_at` is only the inspection time. `local_integrity_reads` and
+`local_integrity_bytes` count completed body-file reads and bytes consumed during
+inspection; they exclude state reads, filesystem metadata and physical I/O.
+Run with no concurrent writer; an existing writer lock refuses inspection.
+
+To observe changes, run another sync with the intended policy:
+
 ```sh
 uv run --project implementations/python-consumer --locked python -m pagedigest.cli sync \
   https://example.com ./research/example.json --max-age 3600 > ./research/latest.json
@@ -114,6 +171,36 @@ for invalid configuration/state or inability to persist the workflow. Keep every
 cycle's report when evaluating recurring cost; do not discard failures. This
 checkout's tests exercise controlled HTTP cycles and failure cases, not independent
 adoption or economic savings.
+
+## Restart and recovery
+
+Keep the state file and its adjacent `.json.pages` directory together. The state
+contains user-authored findings; body filenames bind exact source hashes. A
+restart needs the same state path and origin. Policy options such as `--max-age`
+and `--audit-rate` must be repeated on later syncs; inspection uses the last
+saved policy and performs no migration.
+
+- **Older persistent cache:** back up its JSON and body directory, then run
+  `sync` on that path and origin with an explicit URL scope. Legacy metadata is
+  validated by the ordinary loader; the first recurring sync establishes the
+  representation and fetches missing evidence. It does not invent old findings
+  or reuse unbound legacy validators. `inspect` asks for this sync first.
+- **Lost or corrupted body:** keep the state and findings, then sync again.
+  The affected source is fetched unconditionally instead of accepting a 304
+  without intact bytes. Inspection reports it unknown until recovery succeeds.
+  Sources whose bytes changed make old findings need rereading; create a new
+  finding ID for a revised answer.
+- **Invalid JSON/state:** commands fail with `workflow error` and leave it
+  untouched. Restore a known-good state and its bodies from backup, or choose a
+  new state path and explicitly recreate findings after reading their sources.
+  Do not replace a broken state with an empty file and call that recovery.
+- **Interrupted writer:** inspect the `.lock` path and confirm no process is
+  writing before removing a stale lock. Preserve the state, bodies and failure
+  report first. Use one writer; a lock is not a distributed coordination service.
+
+The local restart and wheel-install checks use controlled site questions and
+user-supplied answers. They establish reproducibility and recovery behavior;
+independent useful-work evaluation remains the PD2 outcome gate.
 
 ## Freshness and failure rules
 

@@ -1,0 +1,61 @@
+{
+  "six_cycles": [
+    {
+      "id": "initial",
+      "snapshot": "initial",
+      "cache_action": "start empty; acquire same bodies",
+      "audit": "full initial reads"
+    },
+    {
+      "id": "unchanged",
+      "snapshot": "unchanged",
+      "cache_action": "retain all",
+      "audit_url": "/"
+    },
+    {
+      "id": "relevant-change",
+      "snapshot": "relevant-change",
+      "changed_url": "/",
+      "cache_action": "retain all",
+      "audit_url": "/announcements/v1-rc/"
+    },
+    {
+      "id": "irrelevant-change",
+      "snapshot": "irrelevant-change",
+      "changed_url": "/announcements/v1-rc/",
+      "cache_action": "retain all",
+      "audit_url": "/rel/"
+    },
+    {
+      "id": "cache-loss",
+      "snapshot": "cache-loss",
+      "cache_action": "delete cached /rel/ body from both stores, preserve metadata/notes",
+      "audit_url": "/"
+    },
+    {
+      "id": "failed-deployment-recovery",
+      "failure_snapshot": "failed-deployment",
+      "recovery_snapshot": "recovered-deployment",
+      "cache_action": "retain all; failure then one bounded recovery attempt under new source revision",
+      "audit_url": "/announcements/v1-rc/",
+      "note": "One scheduled cycle with two preserved phases/attempts, not seven favorable independent cycles."
+    }
+  ],
+  "tasks_each_cycle": [
+    "PD01",
+    "PD02",
+    "PD03"
+  ],
+  "http_policy": {
+    "method": "GET only, including conditional GET",
+    "content_encoding": "identity",
+    "body_encoding": "exact UTF-8 bytes from snapshot, no transformation",
+    "etag": "quoted SHA256 of actually served bytes for each URL, not advertised manifest digest; conditional matching returns304",
+    "cache_control": "max-age=0, must-revalidate",
+    "link": "</.well-known/pagedigest.json>; rel=\"https://pagedigest.org/rel\" on ordinary responses",
+    "manifest_discovery": "Both arms may use same manifest/fingerprint; no relation-identifier dereference needed",
+    "not_found": "all unlisted local paths404; no redirects/external follow",
+    "response_headers": "record exact harness-generated headers/bytes; include MIME and ETag; do not treat local response cost as free"
+  },
+  "synthetic_provenance": "All scenario manifests use isolated fixture revs100..104, never production state. Relevant body edits and deployment failure/recovery are evaluator-authored local facts only. Raw source directory remains exact committed bytes."
+}

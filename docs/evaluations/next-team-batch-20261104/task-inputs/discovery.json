@@ -1,0 +1,19 @@
+{
+  "origin": "http://127.0.0.1:<runner-port>",
+  "entry_url": "/",
+  "permitted_discovery": [
+    "ordinary response Link header",
+    "/robots.txt",
+    "/sitemap.xml",
+    "/.well-known/pagedigest.json",
+    "linked HTML pages"
+  ],
+  "network": "loopback fixture only",
+  "cache_policy": "initial empty, then identical acquisition/revalidation/audit opportunities and isolated notes/stores; use protocol.md",
+  "body_urls": [
+    "/",
+    "/rel/",
+    "/announcements/v1-rc/"
+  ],
+  "source_semantics": "locally served snapshots of retained pages, with later synthetic edits; do not infer live public state"
+}

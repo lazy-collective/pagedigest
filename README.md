@@ -19,7 +19,9 @@ claims depend on durable revision history; samples do not prove every skip.
 
 **Experimental:** the [recurring source workflow](docs/recurring-consumer.md)
 reports what changed, what needs rereading and which prior findings retain their
-declared source bindings. It is experimental source, not part of Python 0.2.0.
+declared source bindings. `pagedigest inspect` reads saved findings and retained
+source text after restart. The local wheel candidate is `0.3.0.dev1`; these
+commands are not part of the published Python 0.2.0 package.
 Unchanged dependencies do not establish that a conclusion is true.
 
 With [DotRepo](https://dotrepo.org), PageDigest belongs to
@@ -96,10 +98,15 @@ Independent recurring-consumer evidence remains an open adoption milestone.
 **Experimental source (unreleased):** `pagedigest sync` reports changed
 sources, required rereading, and which source-bound findings remain usable;
 `pagedigest remember` retains a finding against the exact cached sources you
-name. It uses HTTP freshness/validators, optional sitemap discovery and PageDigest
+name. `pagedigest inspect` reads that saved work without a request or renewed
+source age. It uses HTTP freshness/validators, optional sitemap discovery and PageDigest
 signals with bounded validation and fallback. See the
 [recurring workflow](docs/recurring-consumer.md). These commands are not in the
-published Python 0.2.0 package. [PR2](https://github.com/lazy-collective/pagedigest/pull/2)
+published Python 0.2.0 package. The maintained source-install and local
+`0.3.0.dev1` wheel paths are in the recurring guide. The
+[frozen PD2 preparation](docs/evaluations/next-team-batch-20261104/README.md)
+has questions and scoring for a later six-cycle comparison; no useful-work or
+cost outcome is established by preparing it. [PR2](https://github.com/lazy-collective/pagedigest/pull/2)
 records implementation and validation history. Source publication, site deployment
 and package releases remain separate events.
 
@@ -111,6 +118,7 @@ and package releases remain separate events.
 | Protocol status | Final v1 specification on main; no `v1.0.0` tag published | Package releases use their own versioned tags |
 | `pagedigest-generator` / `npx pagedigest` / crates.io `pagedigest` | `0.3.0` | Publisher CLI; explicit initialization and recovery |
 | Python consumer (PyPI `pagedigest`) | `0.2.0` | Validated-manifest conditional requests and per-URL cache checks |
+| Python source / local wheel candidate | `0.3.0.dev1` | Unreleased recurring sync, remember and read-only inspect; local installation only |
 | `@pagedigest/astro` | `0.2.0` | Static HTML subset; explicit initialization and recovery |
 | Scrapy middleware | experimental in-tree | Depends on consumer `>=0.1.0`; not on PyPI |
 
