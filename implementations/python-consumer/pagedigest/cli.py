@@ -127,14 +127,23 @@ def main(argv: Sequence[str] | None = None, stdout: TextIO | None = None, stderr
     remember_parser.add_argument("--text-file", type=Path, required=True)
     remember_parser.add_argument("--source", action="append", required=True, dest="sources")
 
+    inspect_parser = subcommands.add_parser(
+        "inspect", help="Read saved findings and source bindings without network access"
+    )
+    inspect_parser.add_argument("state", type=Path)
+    inspect_parser.add_argument("--id", dest="finding_id", help="Return one saved finding")
+    inspect_parser.add_argument("--source", help="Include one retained UTF-8 source body by origin-relative URL")
+
     args = parser.parse_args(argv)
     if args.command == "verify-live":
         return _run_verify_live(args, stdout or sys.stdout, stderr or sys.stderr)
-    if args.command in ("sync", "remember"):
-        from .recurring import remember, sync
+    if args.command in ("sync", "remember", "inspect"):
+        from .recurring import inspect_state, remember, sync
 
         try:
-            if args.command == "remember":
+            if args.command == "inspect":
+                result = inspect_state(args.state, finding_id=args.finding_id, source=args.source)
+            elif args.command == "remember":
                 if args.text_file.stat().st_size > 32768:
                     raise ValueError("finding text exceeds32KiB")
                 result = remember(args.state, args.finding_id, args.text_file.read_text(), args.sources)

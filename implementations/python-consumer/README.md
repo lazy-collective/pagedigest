@@ -11,8 +11,8 @@ python -m pip install pagedigest==0.2.0
 pagedigest verify-live https://example.com --sample-size 25
 ```
 
-The published 0.2.0 package does not include the experimental `sync` and
-`remember` workflow. Its source implementation and validation are recorded in
+The published 0.2.0 package does not include the experimental `sync`,
+`remember` and `inspect` workflow. Its earlier source implementation and validation are recorded in
 [PR2](https://github.com/lazy-collective/pagedigest/pull/2); no source-only command
 below is an instruction to install a nonexistent release.
 
@@ -27,6 +27,16 @@ uv sync --locked
 ```
 
 Requires Python ≥3.9. Runtime dependency: `requests`.
+
+The current source candidate is **0.3.0.dev1**, a local development version.
+It adds a recurring reader: `sync` observes a bounded source scope, `remember`
+stores a user-authored answer bound to exact source bodies, and read-only
+`inspect STATE [--id ID] [--source URL]` reopens saved text and freshness status
+after restart. Inspection does not fetch or renew evidence age. Follow the
+[recurring workflow guide](../../docs/recurring-consumer.md) for complete setup,
+local wheel installation, source reading, persistence and recovery. These commands
+are available from this source/wheel candidate; installing PyPI 0.2.0 still gives
+the separately released consumer above.
 
 ## API
 

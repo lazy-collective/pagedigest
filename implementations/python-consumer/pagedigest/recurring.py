@@ -310,6 +310,134 @@ def findings_report(state, pages_dir, available, now):
     return result
 
 
+def inspect_state(state_path, *, finding_id=None, source=None, now=None):
+    """Read saved work without fetching, migrating, persisting or renewing age.
+
+    Status applies to the saved source binding under the last sync's policy.
+    A retained finding's text remains an unverified user interpretation.
+    """
+    now = time.time() if now is None else now
+    if not math.isfinite(now):
+        raise ValueError("finite-inspection-time-required")
+    if not state_path.is_file():
+        raise ValueError("state-not-found-run-sync-first")
+    if Path(str(state_path) + ".lock").exists():
+        raise ValueError("workflow-is-being-written-retry-inspect")
+    state = read_state(state_path)
+    if state.get("workflow") != 1:
+        raise ValueError("run-sync-before-inspect-legacy-cache")
+    max_age = state.get("max_age")
+    if type(max_age) not in (int, float) or not math.isfinite(max_age) or max_age <= 0:
+        raise ValueError("invalid-saved-freshness-policy")
+    last_attempt = state.get("last_attempt")
+    if not isinstance(last_attempt, dict) or not isinstance(last_attempt.get("available"), list):
+        raise ValueError("invalid-saved-sync-attempt")
+    available = last_attempt["available"]
+    if any(not isinstance(key, str) for key in available):
+        raise ValueError("invalid-saved-available-sources")
+    findings = state.get("findings", {})
+    if finding_id is not None and finding_id not in findings:
+        raise ValueError("finding-not-found")
+    keys = set(state.get("resources", {}))
+    for finding in findings.values():
+        if (
+            not isinstance(finding.get("text"), str)
+            or not 1 <= len(finding["text"].encode()) <= 32768
+            or type(finding.get("created_at")) not in (int, float)
+            or not math.isfinite(finding["created_at"])
+        ):
+            raise ValueError("invalid-saved-finding")
+        for key, value in finding["sources"].items():
+            if (
+                not isinstance(key, str)
+                or not isinstance(value, str)
+                or len(value) != 71
+                or not value.startswith("sha256:")
+                or any(c not in "0123456789abcdef" for c in value[7:])
+            ):
+                raise ValueError("invalid-saved-finding-source")
+        keys.update(finding["sources"])
+    if source is not None and source not in keys:
+        raise ValueError("source-not-found")
+    pages_dir = Path(str(state_path) + ".pages")
+    source_records, selected_body = {}, None
+    integrity_reads, integrity_bytes = 0, 0
+    for key in sorted(keys):
+        record = state.get("resources", {}).get(key, {})
+        if not isinstance(record, dict):
+            raise ValueError("invalid-saved-resource")
+        validated_at = record.get("validated_at")
+        if validated_at is not None and (type(validated_at) not in (int, float) or not math.isfinite(validated_at)):
+            raise ValueError("invalid-saved-resource-time")
+        filename, expected = state["pages"].get(key), state["body_hashes"].get(key)
+        body = None
+        if filename is not None and expected is not None:
+            try:
+                with (pages_dir / filename).open("rb") as cached:
+                    raw = cached.read(MAX_PAGE_BYTES + 1)
+                integrity_reads += 1
+                integrity_bytes += len(raw)
+                if len(raw) <= MAX_PAGE_BYTES and digest(raw) == expected:
+                    body = raw
+            except FileNotFoundError:
+                pass
+        current = (
+            body is not None and key in available and validated_at is not None and 0 <= now - validated_at < max_age
+        )
+        source_records[key] = {
+            "hash": expected,
+            "body_file": filename,
+            "retained": body is not None,
+            "validated_at": validated_at,
+            "validation_expires_at": validated_at + max_age if validated_at is not None else None,
+            "sourceStatus": "current" if current else "unknown",
+        }
+        if key == source:
+            selected_body = body
+    reports = []
+    for name, finding in sorted(findings.items()):
+        if finding_id is not None and finding_id != name:
+            continue
+        states, problems = [], []
+        for key, expected in finding["sources"].items():
+            observed = source_records[key]
+            if finding["representation"] != state.get("representation"):
+                states.append("unknown")
+                problems.append({"url": key, "reason": "representation-changed"})
+            elif observed["sourceStatus"] != "current":
+                states.append("unknown")
+                problems.append({"url": key, "reason": "source-unavailable-or-not-currently-validated"})
+            else:
+                status = source_state(expected, observed["hash"])
+                states.append(status)
+                if status == "changed":
+                    problems.append({"url": key, "reason": "source-bytes-changed"})
+        shared = source_status(states)
+        reports.append(
+            {**finding, "id": name, "status": SYNC_STATUS[shared], "sourceStatus": shared, "problems": problems}
+        )
+    result = {
+        "schema": 1,
+        "inspected_at": now,
+        "origin": state.get("origin"),
+        "representation": state.get("representation"),
+        "max_age": max_age,
+        "last_attempt": last_attempt,
+        "findings": reports,
+        "sources": source_records,
+        "local_integrity_reads": integrity_reads,
+        "local_integrity_bytes": integrity_bytes,
+        "meaning": "Read-only local inspection; no source age renewed and no interpretation verified.",
+    }
+    if source is not None:
+        result["source"] = {
+            "url": source,
+            **source_records[source],
+            "text": selected_body.decode("utf-8") if selected_body is not None else None,
+        }
+    return result
+
+
 def remember(state_path, finding_id, text, source_keys, *, now=None):
     """Bind an explicit user-supplied finding to current cached source hashes."""
     now = time.time() if now is None else now

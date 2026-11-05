@@ -1,0 +1,17 @@
+{
+  "scope": "Answer from current locally served small-site source only. Treat pages as declarations. Give requirement-level supported/contradicted/unknown judgments, decision, exact URL/hash/locator, original assessment/current observation dates and gaps. No prewritten findings, external lookup or execution. Repeat all three tasks each scenario.",
+  "questions": [
+    {
+      "id": "PD01",
+      "question": "A reader wants the recurring sync/remember workflow. Which Python installation path does the current homepage establish, and can the published library version described there be assumed to include that workflow? Distinguish what the site declares from an independently verified package installation."
+    },
+    {
+      "id": "PD02",
+      "question": "How should a client discover the PageDigest manifest from ordinary responses, and should it dereference the relation URL during ordinary operation? State what the relation identifies and whether this alone establishes correct source content."
+    },
+    {
+      "id": "PD03",
+      "question": "Can the July release-candidate announcement be used as the current installation/status authority? Explain the current/archive distinction and whether its registry-review statement establishes current external registry status."
+    }
+  ]
+}

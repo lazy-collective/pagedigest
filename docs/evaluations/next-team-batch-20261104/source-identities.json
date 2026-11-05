@@ -1,0 +1,65 @@
+{
+  "product_base": "b038c15424eb1178e75c761442fca17e517ad004",
+  "authored_at": "2026-11-05T00:56:28.296695+00:00",
+  "site_origin": "https://pagedigest.org",
+  "fixture_origin": "http://127.0.0.1:<runner-port>",
+  "raw_files": [
+    {
+      "path": "sources/raw-site/index.html",
+      "retained_original": "site/index.html",
+      "sha256": "c60451bdc1a8af778ae63bab63f051b63c3d2ee6de566f991326c530cf801d03",
+      "bytes": 29963,
+      "source_kind": "committed raw site source; served bytes are fixture-only, not a live observation"
+    },
+    {
+      "path": "sources/raw-site/rel/index.html",
+      "retained_original": "site/rel/index.html",
+      "sha256": "0f21436461e85bbaaac6b7790fe50d05447bfa8953aaf0e954d7c5bea8b609ce",
+      "bytes": 2492,
+      "source_kind": "committed raw site source; served bytes are fixture-only, not a live observation"
+    },
+    {
+      "path": "sources/raw-site/announcements/v1-rc/index.html",
+      "retained_original": "site/announcements/v1-rc/index.html",
+      "sha256": "a02d936c9997aab3472ab15e09b5a42557cf09bafc20e03d2430aab9f0cf94e8",
+      "bytes": 8494,
+      "source_kind": "committed raw site source; served bytes are fixture-only, not a live observation"
+    },
+    {
+      "path": "sources/raw-site/sitemap.xml",
+      "retained_original": "site/sitemap.xml",
+      "sha256": "2bd4ea9eacaf78662bd265e8ab86b5f0b76e10e46ccddd1929f6fbe1d92fec56",
+      "bytes": 302,
+      "source_kind": "committed raw site source; served bytes are fixture-only, not a live observation"
+    },
+    {
+      "path": "sources/raw-site/robots.txt",
+      "retained_original": "site/robots.txt",
+      "sha256": "4d3a86aa9d392a3c0c93ca777caae55e8fb7eca868d31c89811630ebad7cf7d3",
+      "bytes": 68,
+      "source_kind": "committed raw site source; served bytes are fixture-only, not a live observation"
+    },
+    {
+      "path": "sources/raw-site/.well-known/pagedigest.json",
+      "retained_original": "site/.well-known/pagedigest.json",
+      "sha256": "49f0ede05fba067b5f9ccdbd98e6669da1bfdaea743b40baaeb7c43678f01aea",
+      "bytes": 536,
+      "source_kind": "committed raw site source; served bytes are fixture-only, not a live observation"
+    },
+    {
+      "path": "sources/raw-site/_headers",
+      "retained_original": "site/_headers",
+      "sha256": "81654727f2c92abbd5fbc3d0cd0cce071bb4d06e06086e8609510312ce06255e",
+      "bytes": 926,
+      "source_kind": "committed raw site source; served bytes are fixture-only, not a live observation"
+    },
+    {
+      "path": "sources/raw-site/_redirects",
+      "retained_original": "site/_redirects",
+      "sha256": "4a41a1a2f3fb5608a0ca655460657ebbebae03ebed2c262c00950b6d37943219",
+      "bytes": 256,
+      "source_kind": "committed raw site source; served bytes are fixture-only, not a live observation"
+    }
+  ],
+  "note": "Raw _headers/_redirects are provenance only; harness responses use frozen HTTP policy, never deploy production files."
+}

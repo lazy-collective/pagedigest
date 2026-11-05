@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PageDigest — check what changed, keep useful work</title>
+<meta name="description" content="Publish change signals from existing site builds. Reuse complete local results, investigate changes, and keep audits and fallback explicit.">
+<link rel="canonical" href="https://pagedigest.org/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://pagedigest.org/">
+<meta property="og:title" content="PageDigest — check what changed, keep useful work">
+<meta property="og:description" content="Website change manifests and tools for publishers and recurring consumers.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PageDigest — check what changed, keep useful work">
+<meta name="twitter:description" content="Check what changed, reuse usable results, and investigate what needs rereading.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='10' y='10' width='44' height='44' rx='8' fill='%23152228'/%3E%3Ctext x='32' y='42' font-family='monospace' font-size='26' fill='%23F2F5F6' text-anchor='middle'%3E%E2%86%91%3C/text%3E%3C/svg%3E">
+<style>
+  :root {
+    --paper: #F2F5F6;
+    --paper-deep: #E6ECEE;
+    --ink: #152228;
+    --ink-soft: #47585F;
+    --publisher: #9A5B00;
+    --publisher-wash: #F6EBDA;
+    --crawler: #0E6E62;
+    --crawler-wash: #DFEEEB;
+    --line: #C9D4D8;
+    --display: "Space Grotesk", system-ui, sans-serif;
+    --body: "Source Serif 4", Georgia, serif;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 1.06rem;
+    line-height: 1.65;
+  }
+  a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--crawler);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 22px; }
+
+  header.top {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 26px 0 0;
+    font-family: var(--mono); font-size: 0.9rem;
+  }
+  .wordmark { font-family: var(--mono); font-weight: 600; font-size: 1.05rem; text-decoration: none; }
+  .wordmark .dot { color: var(--crawler); }
+  nav.top-links { display: flex; gap: 18px; }
+  nav.top-links a { text-decoration: none; color: var(--ink-soft); }
+  nav.top-links a:hover { color: var(--ink); }
+
+  /* Hero */
+  .hero { padding: 72px 0 20px; }
+  .hero h1 {
+    font-family: var(--display); font-weight: 700;
+    font-size: clamp(2rem, 5.4vw, 3.4rem);
+    line-height: 1.06; letter-spacing: -0.015em;
+    margin: 0 0 18px; max-width: 21ch;
+  }
+  .hero p.lede { max-width: 62ch; margin: 0 0 8px; font-size: 1.14rem; color: var(--ink-soft); }
+  .hero p.lede code { font-family: var(--mono); font-size: 0.86em; background: var(--paper-deep); padding: 1px 6px; border-radius: 4px; }
+
+  /* The mirrored argument — signature element */
+  .argument {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+    margin: 44px 0 0;
+    border: 1px solid var(--line); border-radius: 14px; overflow: hidden;
+  }
+  .argument figure { margin: 0; padding: 28px 28px 24px; }
+  .argument figure.publisher { background: var(--publisher-wash); border-right: 1px solid var(--line); }
+  .argument figure.crawler { background: var(--crawler-wash); }
+  .argument blockquote {
+    margin: 0; font-size: 1.16rem; font-weight: 600; line-height: 1.45;
+    text-wrap: balance;
+  }
+  .argument figcaption {
+    margin-top: 14px; font-family: var(--mono); font-size: 0.8rem;
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .publisher figcaption { color: var(--publisher); }
+  .crawler figcaption { color: var(--crawler); }
+  .argument-note {
+    text-align: center; font-family: var(--mono); font-size: 0.88rem;
+    color: var(--ink-soft); margin: 14px 0 0;
+  }
+
+  section { padding: 56px 0 8px; }
+  h2 {
+    font-family: var(--display); font-weight: 700;
+    font-size: clamp(1.4rem, 3vw, 1.9rem); letter-spacing: -0.01em;
+    margin: 0 0 14px;
+  }
+  section > .wrap > p { max-width: 66ch; }
+  .muted { color: var(--ink-soft); }
+
+  /* Manifest example */
+  .manifest {
+    background: var(--ink); color: #DDE7EA;
+    border-radius: 14px; padding: 22px 24px;
+    font-family: var(--mono); font-size: 0.86rem; line-height: 1.6;
+    overflow-x: auto; margin: 22px 0 10px;
+  }
+  .manifest .k { color: #8FB6C4; }
+  .manifest .v { color: #E4C989; }
+  .manifest .rev { color: #7FD8C6; font-weight: 600; }
+  .manifest .row-changed {
+    display: inline-block; width: 100%;
+    background: rgba(127, 216, 198, 0.12);
+    border-left: 3px solid #7FD8C6;
+    margin-left: -24px; padding-left: 21px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .manifest .row-changed { animation: settle 1.6s ease-out 0.6s backwards; }
+    @keyframes settle {
+      0% { background: rgba(127, 216, 198, 0); border-left-color: transparent; }
+      35% { background: rgba(127, 216, 198, 0.3); border-left-color: #7FD8C6; }
+      100% { background: rgba(127, 216, 198, 0.12); }
+    }
+  }
+  .manifest-caption { font-family: var(--mono); font-size: 0.85rem; color: var(--ink-soft); }
+
+  /* Prior art */
+  .comparison { width: 100%; border-collapse: collapse; margin-top: 22px; font-size: 0.94rem; }
+  .comparison th, .comparison td { text-align: left; vertical-align: top; padding: 12px 14px; border-top: 1px solid var(--line); }
+  .comparison th { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.05em; text-transform: uppercase; }
+  .comparison td:first-child { font-family: var(--mono); white-space: nowrap; }
+  .comparison.visits td:first-child { font-family: var(--body); white-space: normal; }
+  .state-header { background: var(--ink); color: #DDE7EA; border-radius: 10px; padding: 13px 16px; overflow-x: auto; font-family: var(--mono); font-size: 0.86rem; }
+
+  /* Steps — a real sequence */
+  ol.steps { list-style: none; counter-reset: step; margin: 26px 0 0; padding: 0; display: grid; gap: 0; }
+  ol.steps li {
+    counter-increment: step;
+    display: grid; grid-template-columns: 64px 1fr; gap: 18px;
+    padding: 20px 0; border-top: 1px solid var(--line);
+  }
+  ol.steps li::before {
+    content: counter(step);
+    font-family: var(--mono); font-size: 1.5rem; font-weight: 600;
+    color: var(--crawler);
+  }
+  ol.steps strong { font-family: var(--display); font-weight: 700; display: block; margin-bottom: 2px; }
+  ol.steps p { margin: 0; color: var(--ink-soft); max-width: 62ch; }
+  ol.steps code { font-family: var(--mono); font-size: 0.86em; }
+
+  /* Live proof */
+  .proof {
+    border: 1px solid var(--line); border-radius: 14px;
+    background: white; padding: 26px 28px; margin-top: 22px;
+  }
+  .proof .stamp {
+    font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.07em;
+    text-transform: uppercase; color: var(--crawler); margin-bottom: 10px;
+  }
+  .proof p { margin: 0 0 14px; max-width: 62ch; }
+  p a code { overflow-wrap: anywhere; }
+  .bargain pre, .example-command {
+    background: var(--paper-deep); border-radius: 8px;
+    padding: 12px 16px; overflow-x: auto; max-width: 100%;
+    font-family: var(--mono); font-size: 0.8rem; line-height: 1.5; margin: 0 0 14px;
+  }
+  .bargain .side { min-width: 0; }
+  .proof pre {
+    background: var(--paper-deep); border-radius: 8px;
+    padding: 12px 16px; overflow-x: auto;
+    font-family: var(--mono); font-size: 0.86rem; margin: 0;
+  }
+
+  /* The bargain */
+  .bargain { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 22px; }
+  .bargain .side { border-radius: 14px; padding: 24px 26px; }
+  .bargain .side.publisher { background: var(--publisher-wash); }
+  .bargain .side.crawler { background: var(--crawler-wash); }
+  .bargain h3 {
+    font-family: var(--mono); font-size: 0.8rem; font-weight: 600;
+    letter-spacing: 0.07em; text-transform: uppercase; margin: 0 0 12px;
+  }
+  .side.publisher h3 { color: var(--publisher); }
+  .side.crawler h3 { color: var(--crawler); }
+  .bargain ul { margin: 0; padding-left: 18px; }
+  .bargain li { margin-bottom: 8px; }
+  .bargain li:last-child { margin-bottom: 0; }
+
+  /* Status */
+  .status-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px; margin-top: 22px;
+  }
+  .status-grid .cell { border-top: 2px solid var(--ink); padding-top: 12px; }
+  .status-grid h3 { font-family: var(--display); font-size: 1.02rem; margin: 0 0 6px; }
+  .status-grid p { margin: 0; font-size: 0.96rem; color: var(--ink-soft); }
+  .status-grid code { font-family: var(--mono); font-size: 0.84em; background: var(--paper-deep); padding: 1px 5px; border-radius: 4px; }
+
+  footer {
+    margin-top: 72px; padding: 28px 0 44px; border-top: 1px solid var(--line);
+    font-family: var(--mono); font-size: 0.84rem; color: var(--ink-soft);
+    display: flex; flex-wrap: wrap; gap: 8px 26px;
+  }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 26px; width: 100%; }
+
+  @media (max-width: 720px) {
+    header.top { align-items: flex-start; flex-direction: column; gap: 12px; }
+    nav.top-links { flex-wrap: wrap; gap: 8px 14px; max-width: 100%; }
+    nav.top-links a { display: inline-block; }
+    .argument { grid-template-columns: 1fr; }
+    .argument figure.publisher { border-right: 0; border-bottom: 1px solid var(--line); }
+    .bargain { grid-template-columns: 1fr; }
+    .comparison { display: block; }
+    .comparison thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+    .comparison tbody, .comparison tr, .comparison td { display: block; }
+    .comparison tr { padding: 14px 0; border-bottom: 1px solid var(--line); }
+    .comparison td { padding: 5px 0; border: 0; }
+    .comparison td:first-child { font-weight: 600; }
+    .comparison td:nth-child(2)::before { content: "Its job: "; font-weight: 600; }
+    .comparison td:nth-child(3)::before { content: "Tradeoff: "; font-weight: 600; }
+    .comparison.visits td:nth-child(2)::before { content: "Reader: "; }
+    .comparison.visits td:nth-child(3)::before { content: "Requests: "; }
+    ol.steps li { grid-template-columns: 40px 1fr; }
+  }
+  @media (max-width: 460px) {
+    .wrap { padding: 0 18px; }
+    .hero { padding-top: 54px; }
+    .manifest { font-size: 0.78rem; padding: 18px 20px; }
+    .manifest .row-changed { margin-left: -20px; padding-left: 17px; }
+  }
+</style>
+<link rel="stylesheet" href="/assets/lazy-collective/v1/family.css">
+<link rel="stylesheet" href="/assets/site-family.css">
+</head>
+<body>
+<a class="lc-skip" href="#main">Skip to content</a>
+
+<div class="wrap">
+  <header class="top">
+    <a class="wordmark" href="/">PageDigest</a>
+    <nav class="top-links" aria-label="Page navigation">
+      <a href="#start">Start here</a>
+      <a href="#how">How it works</a>
+      <a href="#different">Tradeoffs</a>
+      <a href="#live">Evidence</a>
+      <a href="https://github.com/lazy-collective/pagedigest">GitHub</a>
+    </nav>
+  </header>
+
+  <main id="main" tabindex="-1">
+  <section class="hero hero--split">
+    <div>
+    <p class="lc-eyebrow">Website change. Useful work retained.</p>
+    <h1>Check what changed.<br>Keep useful work.</h1>
+    <p class="lede">Publish a change manifest from your site build, so returning readers
+    can identify what changed and reuse results they still have.</p>
+    <div class="hero-actions"><a class="lc-button" href="#publish">Publish a manifest</a>
+    <a class="lc-button lc-button--plain" href="#consume">Integrate a consumer</a></div>
+    <p><a href="#try">See what happens across three visits</a></p>
+    </div>
+    <aside class="fit" aria-labelledby="fit-title">
+      <h2 id="fit-title">Who it helps</h2>
+      <ul>
+        <li><strong>Publishers</strong> of mostly static sites, docs and data exports that are
+        read again and again by crawlers, mirrors, indexers and agents.</li>
+        <li><strong>Recurring readers</strong> that keep results between runs: one manifest
+        helps plan reads across the covered pages. Missing results, audits and fallback still require work.</li>
+      </ul>
+      <p class="fit-not">Not for one-off fetches or personalized pages. Ordinary HTTP caching
+      still comes first.</p>
+    </aside>
+  </section>
+
+  <section id="try" aria-labelledby="try-title">
+    <h2 id="try-title">One website, three visits</h2>
+    <p>Try a local two-page site with the persistent consumer. The example downloads
+    and checks real bodies, keeps them between visits, then changes one page.</p>
+    <table class="comparison visits">
+      <thead><tr><th scope="col">Visit</th><th scope="col">What the reader does</th><th scope="col">Requests</th></tr></thead>
+      <tbody>
+        <tr><td data-label="Visit">1. First read</td><td data-label="What the reader does">Fetch <code>/guide</code> and <code>/about</code>; save both.</td><td data-label="Requests">1 manifest + 2 pages</td></tr>
+        <tr><td data-label="Visit">2. Nothing changed</td><td data-label="What the reader does">Check retained bodies and reuse both.</td><td data-label="Requests">1 manifest + 0 pages</td></tr>
+        <tr><td data-label="Visit">3. Guide updated</td><td data-label="What the reader does">Fetch <code>/guide</code>; keep <code>/about</code>.</td><td data-label="Requests">1 manifest + 1 page</td></tr>
+      </tbody>
+    </table>
+    <p>From a source checkout, run:</p>
+<pre class="example-command"><code>uv run --project implementations/python-consumer --locked \
+  python implementations/python-consumer/examples/three_visits.py</code></pre>
+    <p>The script starts its own loopback server and temporary cache; it needs no
+    website or credentials. <a href="https://github.com/lazy-collective/pagedigest/blob/main/implementations/python-consumer/examples/three_visits.py">Read the complete example</a>.</p>
+    <p>This controlled example disables random audits to make each step reproducible.
+    Real readers also pay for audits, cache checks and fallback. These counts demonstrate
+    behavior; they are not a comparison with HTTP caching or a savings claim.</p>
+  </section>
+
+  <section id="start">
+    <h2>Meet in the middle</h2>
+    <p>Less repeated work for both sides is the goal. A manifest adds what HTTP caches
+    lack: one statement of which pages changed across the whole covered set.</p>
+
+    <div class="bargain">
+      <div class="side publisher" id="publish">
+        <h3>Publish from your build</h3>
+        <p>Run the generator on your final build output. Its state file is your durable
+        revision history: keep it in backed-up storage, not an evictable CI cache.
+        There is no second page catalog to maintain.</p>
+<pre><code>cargo install pagedigest --version 0.3.0 --locked
+# once, for an origin that has never published:
+pagedigest-generator ./dist --state /durable/state.json --init --with-digest
+# every later build:
+pagedigest-generator ./dist --state /durable/state.json --with-digest</code></pre>
+        <p>Also available as <code>npx pagedigest@0.3.0</code> and an Astro hook. Deploy pages
+        before or with the manifest, then check the bytes your host actually serves.
+        <a href="https://github.com/lazy-collective/pagedigest#publish-a-manifest">Full publisher guide</a></p>
+      </div>
+      <div class="side crawler" id="consume">
+        <h3>Keep what you already have</h3>
+        <p>Keep the pages and results from your last run. Fetch only new, changed or
+        missing pages, audit a small sample, and fall back to ordinary crawling when
+        anything looks wrong.</p>
+        <p><strong>Integration sketch:</strong> your application supplies the cache,
+        fetching and audit handling. Install <code>pagedigest==0.2.0</code> first.
+        For a complete runnable example, start with <a href="#try">three visits</a>.</p>
+<pre><code>from pagedigest import check_site
+plan = check_site("https://example.com", last_site_rev, completed_revs,
+                  cached_manifest=last_manifest, sample_audit_rate=0.01)
+if plan["fallback"]:
+    ...  # crawl normally
+else:
+    fetch(plan["new"] + plan["changed"]); audit(plan["audit_candidates"])</code></pre>
+        <p>Record a revision only after its download and processing succeed.
+        <a href="https://github.com/lazy-collective/pagedigest#integrate-a-consumer">Full consumer guide</a></p>
+      </div>
+    </div>
+    <p><strong>Experimental:</strong> a recurring workflow reports what changed and what to
+    reread, and remembers notes tied to the exact pages they came from. In this local evaluation fixture, it is included in Python 0.3.0;
+    the source repository remains available. <a href="https://github.com/lazy-collective/pagedigest/blob/main/docs/recurring-consumer.md">Read the workflow guide</a>.</p>
+  </section>
+
+  <section id="manifest">
+    <div class="wrap" style="padding:0">
+      <h2>The manifest</h2>
+      <p>For an established cache covering 10,000 pages with 20 changes per cycle, the ideal
+      count is one manifest plus twenty page fetches. A 1% audit adds roughly 100 requests.
+      Initial synchronization and missing local results require additional fetches.
+      <code style="font-family:var(--mono);font-size:0.9em">site_rev</code> is the one-request
+      fast path: an unchanged value permits reuse of complete local results for covered resources.</p>
+
+<pre class="manifest" aria-label="Example pagedigest manifest">{
+  <span class="k">"version"</span>: <span class="v">1</span>,
+  <span class="k">"generated"</span>: <span class="v">"YYYY-MM-DDThh:mm:ssZ"</span>,
+  <span class="k">"site_rev"</span>: <span class="rev">18294</span>,
+  <span class="k">"entries"</span>: {
+    <span class="k">"/"</span>: { <span class="k">"rev"</span>: <span class="rev">47</span> },
+    <span class="k">"/about"</span>: { <span class="k">"rev"</span>: <span class="rev">12</span> },
+<span class="row-changed">    <span class="k">"/blog/hello-world"</span>: {</span>
+<span class="row-changed">      <span class="k">"rev"</span>: <span class="rev">4</span>,</span>
+<span class="row-changed">      <span class="k">"digest"</span>: <span class="v">"sha256:2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824"</span></span>
+<span class="row-changed">    }</span>
+  }
+}</pre>
+      <p class="manifest-caption">Illustrative timestamp placeholder; use an actual UTC timestamp when publishing.
+      The optional <span style="color:var(--crawler)">digest</span> lets
+      consumers spot-check selected representations. A matching sample does not prove
+      correct revision history or every skipped resource.</p>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="wrap" style="padding:0">
+      <h2>How a consumer uses it</h2>
+      <ol class="steps">
+        <li><div><strong>Fetch the manifest</strong>
+          <p>One GET to <code>/.well-known/pagedigest.json</code>. If it&rsquo;s missing or
+          malformed, fall back to ordinary crawling. Missing local results still require work.</p>
+        </div></li>
+        <li><div><strong>Compare <code>site_rev</code></strong>
+          <p>The same integer describes the covered set, not local cache completeness.
+          Reuse only results that remain available at their recorded revisions.</p>
+        </div></li>
+        <li><div><strong>Complete required work</strong>
+          <p>Fetch new, changed, missing, or invalid local results. An unchanged entry whose
+          digest matches your stored copy is the publisher&rsquo;s revalidation of that page,
+          like a 304
+          (<a href="https://github.com/lazy-collective/pagedigest/blob/main/SPEC.md#512-interaction-with-http-caching">SPEC §5.1.2</a>).
+          Unlisted pages keep ordinary discovery and validation. Skipping a download must not
+          hide missing content or links to changed pages.</p>
+        </div></li>
+        <li><div><strong>Audit occasionally</strong>
+          <p>Hash a sampled page and compare it to the manifest&rsquo;s <code>digest</code>.
+          Compare with stored representation evidence too. Retry inconclusive checks and
+          deployment races; refresh or fall back when evidence conflicts. Audit even on no-change cycles.</p>
+        </div></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="different">
+    <div class="wrap" style="padding:0">
+      <h2>A small change-manifest format</h2>
+      <p>PageDigest adds ordered revisions and explicit coverage to a small JSON manifest.
+      Batching can avoid some per-resource revalidation, but maintaining counters and
+      reading the manifest also cost work. Compare against the caches and sitemaps you already use.</p>
+      <table class="comparison">
+        <thead><tr><th>Mechanism</th><th>Its job</th><th>Tradeoff for recurring consumers</th></tr></thead>
+        <tbody>
+          <tr><td>sitemap + lastmod</td><td>Discovery and incremental refresh timestamps</td><td>No monotonic site-wide fast path or audit model</td></tr>
+          <tr><td>ResourceSync</td><td>Lists, changes, hashes, and synchronization discovery</td><td>PageDigest offers a smaller JSON surface with fewer capabilities</td></tr>
+          <tr><td>Fingerprint manifest</td><td>Bulk byte comparison and manifest ETags</td><td>Counters add ordering and optional semantic separation, with durable-history cost</td></tr>
+          <tr><td>HTTP freshness</td><td>Reuse an eligible fresh cached response</td><td>No network request while fresh; compare at the same freshness target</td></tr>
+          <tr><td>ETag / 304</td><td>Per-resource validation when needed</td><td>Revalidation needs a request; an unchanged response can reuse cached bytes</td></tr>
+          <tr><td>RSS / Atom</td><td>Recent-entry feed</td><td>Cannot establish that older or omitted pages stayed unchanged</td></tr>
+          <tr><td>IndexNow</td><td>Publisher push to participating search engines</td><td>Not a pullable manifest for arbitrary consumers</td></tr>
+          <tr><td>WebSub</td><td>Hub-mediated push</td><td>Requires subscription and callback state</td></tr>
+          <tr><td>Shared HTTP cache / CDN</td><td>Reuse responses across clients</td><td>Can reduce origin work; downstream parsing and retained findings are separate concerns</td></tr>
+        </tbody>
+      </table>
+      <p><a href="https://www.rfc-editor.org/rfc/rfc9111.html#section-4.2">HTTP freshness rules</a> are the baseline, not a missing feature. After a manifest check, a consumer can optionally record its observed state:</p>
+      <pre class="state-header">PageDigest-State: site_rev=18294</pre>
+      <p>This is an observation signal, not authentication or proof of efficient use.
+      Audits, missing caches and separate users can all require repeated reads.</p>
+    </div>
+  </section>
+
+  <section id="live">
+    <div class="wrap" style="padding:0">
+      <h2>Evidence and deployments</h2>
+      <div class="proof" style="margin-bottom:14px">
+        <div class="stamp">Local research update · October 29, 2026</div>
+        <p>A bounded-freshness comparison found PageDigest transferred 38.6% more
+        response bytes than ordinary HTTP freshness caching on the tested workload.
+        It passed the stated freshness controls but failed its savings gate.
+        Its PageDigest arm already planned from the manifest, so the SPEC §5.1.2 rule
+        below does not change this result.
+        Batching is available; a general bandwidth or economic advantage is not established.</p>
+      </div>
+      <div class="proof">
+        <div class="stamp">Controlled comparison · local HTTP</div>
+        <p>Seven consumer strategies across six scenarios reproduced the same current resource
+        set and bytes before savings were counted. For 100 unchanged pages, an accurate sitemap
+        or fingerprint manifest needed one request. With the same 1% audit policy, both the
+        fingerprint and PageDigest strategies needed two.</p>
+        <p>The persistent consumer also read and hashed all 100 cached bodies. The comparison
+        counts that local work separately from network traffic. These are controlled fixture
+        results; independent recurring-consumer evidence remains open.</p>
+        <p><a href="https://github.com/lazy-collective/pagedigest/blob/main/docs/benchmarks/README.md">Read the comparison, raw results, and limits</a>.</p>
+      </div>
+      <div class="proof" style="margin-top:14px">
+        <div class="stamp">Dated export estimate · July 3, 2026</div>
+        <p>The <a href="https://github.com/lazy-collective/pagedigest/blob/main/docs/case-studies/dotrepo.md">dotrepo case study</a>
+        covers 2,453 repository JSON records. It estimates 136 requests including the manifest,
+        versus 2,453 full record fetches, before audits. Estimated payload-byte reduction is 70.8%
+        including the manifest. These are export-derived figures, not an independently measured
+        production consumer or model-token savings. The live manifest may now describe a different snapshot.</p>
+        <pre>curl -s https://dotrepo.org/.well-known/pagedigest.json | jq .site_rev</pre>
+      </div>
+      <div class="proof" style="margin-top:14px">
+        <div class="stamp">Live warm cycle · November 3, 2026</div>
+        <p>On 16 live dotrepo.org records served <code>no-cache</code>, a warm cycle of the
+        experimental recurring consumer made 17 requests and re-downloaded 42.7 KB before
+        SPEC §5.1.2, and one manifest request with no body downloads after it.
+        This is one observed cycle, not a savings result against HTTP freshness caching.</p>
+      </div>
+      <div class="proof" style="margin-top:14px">
+        <div class="stamp">This site, too</div>
+        <p>pagedigest.org publishes its own manifest at
+        <a href="/.well-known/pagedigest.json"><code style="font-family:var(--mono);font-size:0.9em">/.well-known/pagedigest.json</code></a>,
+        generated by the reference generator at build time. Its Worker counts incoming
+        <code>PageDigest-State</code> headers at <a href="/__pagedigest/cooperation.json"><code style="font-family:var(--mono);font-size:0.9em">/__pagedigest/cooperation.json</code></a>.</p>
+        <p id="cooperation-observer" class="muted">Observer counts load with JavaScript.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="status">
+    <div class="wrap" style="padding:0">
+      <h2>Status</h2>
+      <p>Released packages implement the v1 protocol. The recurring workflow and publisher
+      preview are experimental and not yet packaged.</p>
+      <div class="status-grid">
+        <div class="cell">
+          <h3>v1.0</h3>
+          <p>The wire format is final. Generator and launcher 0.3.0, plus Python and Astro 0.2.0,
+          ship the consumer safety release. See the
+          <a href="https://github.com/lazy-collective/pagedigest/blob/main/docs/releases/consumer-safety.md">migration notes and verification</a>.
+          The RC path is archived in the
+          <a href="/announcements/v1-rc/">release-candidate announcement</a>.</p>
+        </div>
+        <div class="cell">
+          <h3>Version 1 wire format</h3>
+          <p>Field names, semantics, and the
+          <code>/.well-known/pagedigest.json</code> location are stable for v1.0.</p>
+        </div>
+        <div class="cell">
+          <h3>Discovery</h3>
+          <p>Publishers advertise the manifest with
+          <code>Link: &lt;/.well-known/pagedigest.json&gt;; rel="https://pagedigest.org/rel"</code>
+          on ordinary responses.</p>
+        </div>
+        <div class="cell">
+          <h3>Reference implementations</h3>
+          <p>A Rust generator and a Python consumer library exist today, with a conformance
+          vector suite. Source is on
+          <a href="https://github.com/lazy-collective/pagedigest">GitHub</a>.</p>
+        </div>
+        <div class="cell">
+          <h3>Get involved</h3>
+          <p>Crawler operators and publishers can report adoption notes in the
+          <a href="https://github.com/lazy-collective/pagedigest/issues/1">adoption feedback issue</a>
+          or email <span class="contact" aria-label="hello at pagedigest dot org">hello [at] pagedigest.org</span>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  </main>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>PageDigest — website change signals and reusable work</span>
+    <span>Sister project: <a href="https://dotrepo.org">DotRepo</a> — repository facts, sources and age.</span>
+    <span>A <a href="https://lazycollective.org/">Lazy Collective</a> project: conservation through cooperation. <a href="https://github.com/lazy-collective/pagedigest/blob/main/docs/ecosystem.md">How the projects relate</a>.</span>
+  </div>
+</footer>
+
+<script>
+  (async () => {
+    const target = document.getElementById("cooperation-observer");
+    if (!target) return;
+    try {
+      const response = await fetch("/__pagedigest/cooperation.json", { cache: "no-store" });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const stats = await response.json();
+      if (!stats.configured) {
+        target.textContent = "Observer Worker deployed; bind PAGEDIGEST_OBSERVATIONS KV to persist counters.";
+        return;
+      }
+      target.textContent = `Observed ${stats.stateValid} requests carrying syntactically valid PageDigest-State headers, and ${stats.manifestRequests} manifest requests. These separate, approximate counters do not establish independent use or savings.`;
+    } catch {
+      target.textContent = "Observer endpoint unavailable in this static preview.";
+    }
+  })();
+</script>
+
+</body>
+</html>

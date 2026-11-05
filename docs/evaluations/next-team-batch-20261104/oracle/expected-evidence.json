@@ -1,0 +1,74 @@
+{
+  "raw_initial": {
+    "PD01": [
+      {
+        "status": "supported",
+        "url": "/",
+        "locator": "Try the workflow / recurring source paragraph",
+        "assertion": "Homepage declares recurring workflow exists in source checkout and is not yet in Python 0.2.0."
+      },
+      {
+        "status": "contradicted",
+        "url": "/",
+        "locator": "Python 0.2.0 boundary",
+        "assertion": "Published Python 0.2.0 can be assumed to include sync/remember."
+      },
+      {
+        "status": "unknown",
+        "url": "/",
+        "locator": "bounded site source",
+        "assertion": "No actual package install/run success or released artifact verification is established by site prose."
+      }
+    ],
+    "PD02": [
+      {
+        "status": "supported",
+        "url": "/rel/",
+        "locator": "Link example",
+        "assertion": "Ordinary response Link: < /.well-known/pagedigest.json > with rel=https://pagedigest.org/rel identifies a manifest for the origin; path syntax must be quoted accurately without inserted spaces."
+      },
+      {
+        "status": "contradicted",
+        "url": "/rel/",
+        "locator": "Clients should treat this URL",
+        "assertion": "Clients should dereference the relation identifier in ordinary operation; page says identifier, not ordinary dereference resource."
+      },
+      {
+        "status": "unknown",
+        "url": "/rel/",
+        "locator": "relation semantics only",
+        "assertion": "Discovery/monotonic declarations alone do not establish source correctness or all publisher history."
+      }
+    ],
+    "PD03": [
+      {
+        "status": "contradicted",
+        "url": "/announcements/v1-rc/",
+        "locator": "Historical announcement; current status link",
+        "assertion": "Archived July RC page is current installation/status authority."
+      },
+      {
+        "status": "supported",
+        "url": "/announcements/v1-rc/",
+        "locator": "Historical announcement and original claims",
+        "assertion": "It preserves historical scope/claims and directs readers to current site; current homepage supplies current site declarations."
+      },
+      {
+        "status": "unknown",
+        "url": "/announcements/v1-rc/",
+        "locator": "remaining registry review paragraph",
+        "assertion": "Historical registry review statement does not establish current external registry outcome; no external current evidence in fixture."
+      }
+    ]
+  },
+  "relevant_change": {
+    "PD01": "Source paragraph synthetically declares recurring workflow included in Python 0.3.0. Reopen prior exclusion and identify page-local changed claim, while actual package availability/run remains unknown; other references to 0.2.0 remain, so report version/scope inconsistency rather than silently rewrite entire site."
+  },
+  "irrelevant_change": "Archive nav aria-label change changes its bytes/hash. Reopen/rebind archive dependency after inspection but preserve same semantic PD03 judgments; retain unchanged PD02 and stable parts of PD01.",
+  "cache_loss": "Delete cached /rel/ body only, retain its metadata, saved note and original assessment date. Reacquire/verify body before relying on it; fail if metadata or old note alone is treated as available source.",
+  "failed_deployment_recovery": {
+    "failure": "Manifest advertises home4 digest/rev while endpoint still serves home3. Detect mismatch via changed fetch/audit and preserve conflict. Do not claim home4 text was observed. Answer from verified home3 with explicit unresolved publisher mismatch or withhold affected PD01 current conclusion; PD02/PD03 usable sources retained. Mismatch is not proof which deployment was intended.",
+    "recovery": "Endpoint serves home4 with a new site_rev 104 and home rev103. Refetch and verify, then page-local recurring claim is Python0.4.0; actual package/run still unknown and other version references remain inconsistent. Retain failed attempt and original observation dates."
+  },
+  "raw_vs_interpretation": "All site prose describes declarations; scoring identifies what those declarations justify for a bounded reader decision, never external package/registry or performance proof."
+}

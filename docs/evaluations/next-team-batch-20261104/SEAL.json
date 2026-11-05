@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "sealed_at_utc": "2026-11-05T00:56:28.341138+00:00",
+  "inventory_sha256": "fb5dd154496c83aef6ac6466ef382fbf3148ab888e21c358f4fe67ddbb5e9c1d",
+  "inventory_files": 60,
+  "scope": "preparation only; zero treatment/baseline outcome runs",
+  "independence": "raw retained sources and selected instructions/roadmaps only; no treatment answers or earlier study transcripts; expected answers must remain hidden from consumer contexts",
+  "authorization": "local preparation only; no spend, external contact, publication or deployment"
+}
