@@ -8,15 +8,17 @@ The next outcome is a returning reader completing useful work, retaining its
 source dependencies and revisiting the right material after a change. The stable
 protocol and generators exist; experimental `sync`/`remember` and publisher
 helpers supply the starting implementation. Python 0.2.0 does not contain these
-commands. The packets below are planned outcome work, not new shipped capability.
+commands. The graph distinguishes locally accepted implementation from remaining
+outcome work; the local candidate is not a new published package.
 
 Choose ready work from the graph, with one coordinator integrating disjoint
 worker lanes. Preparation can overlap; acceptance still needs the specified
 inputs. [Execution guide](docs/agent-execution.md) owns dispatch and joins;
 [validation guide](docs/validation.md) owns check selection.
 
-**November 4 local batch checkpoint:** This branch implements PD1's source
-install and local `0.3.0.dev1` wheel candidate with read-only saved-answer/source
+**November 4 local batch checkpoint:** PD1 source install and the local
+`0.3.0.dev1` wheel candidate are accepted at
+`e38084da3727c31cf921874102412a5eb08bf3e9`, with read-only saved-answer/source
 inspection and restart, legacy-cache and missing-body recovery controls. See
 [the recurring guide](docs/recurring-consumer.md) and
 [local acceptance artifacts](/Users/maxwell/Documents/Codex/2026-11-04/task/next-team-batch/acceptance/).
@@ -42,19 +44,25 @@ flowchart LR
 
 | Packet | Ready work and file ownership | Acceptance and join |
 | --- | --- | --- |
-| **PD1 — Reproducible recurring reader** | Start now. Consumer lane owns CLI/recurring/cache files and their tests in `implementations/python-consumer/`, excluding publisher-helper tests, plus `docs/recurring-consumer.md`. Extend the three-visit demo to a maintained source-install path, an inspectable saved answer, restart/recovery instructions and a versioned local wheel candidate. | A fresh environment answers a small-site question, saves its declared sources, exits and returns to identify what needs rereading. Exercise old-cache migration and missing-body recovery. Coordinator freezes a minimum CLI/storage interface for PD2; PD1 packaging/docs can continue alongside evaluation. Package release remains a separate delivery action. |
-| **PD2 — Useful work over six cycles** | Start question, oracle and baseline preparation now in a new dated evaluation directory and dedicated harness files. Freeze three recurring questions, equal discovery/cache opportunities and a freshness/audit policy before observing outcomes. Run against PD1's minimum path when ready. | Initial read, unchanged revisit, relevant change, irrelevant change, cache loss and failed-deployment recovery produce evaluated answers and omissions. Relevant evidence is reread and unrelated usable work retained. Include all attempts, failures, requests/bytes, local integrity reads, parsing and unfinished work. Combine PD3 publisher effort before accepting an all-in cost conclusion. Fix the largest observed gap before expanding. Supplied finding text alone is insufficient. |
-| **PD3 — Maintainable publisher path** | Start independently. Publisher lane owns `tools/publisher_workflow.py`, `implementations/python-consumer/tests/test_publisher_workflow.py` and `docs/publisher-workflow.md`; book Astro/generator changes with coordinator before touching shared files. Exercise two existing builds, including Astro, through setup and two updates. | Build inventories derive automatically; state restoration and served-byte verification work without a second page catalog. Lost state never silently restarts history. Record operator time, interventions, unexpected revision churn and recovery cost for PD2/PD5. Consumer readiness is not a prerequisite for publisher work. |
+| **PD1 — Reproducible recurring reader** | Locally accepted source-install path, saved-answer/source inspection, restart/recovery guide and `0.3.0.dev1` wheel candidate. Preserve them; assign consumer files only for a demonstrated repair. Hosted CI and source integration remain delivery work, and a package release remains separate. | A fresh environment answers a small-site question, saves its declared sources, exits and returns to identify what needs rereading. Exercise old-cache migration and missing-body recovery. Use the accepted minimum CLI/storage interface for PD2; any repair needs focused review before dependent execution continues. Package release remains a separate delivery action. |
+| **PD2 — Useful work over six cycles** | Execute the existing sealed three-question/six-cycle packet against accepted PD1 with equal discovery/cache opportunities and its frozen freshness/audit policy. Use fresh outcome consumers and acceptance contexts; keep oracles, future cycles and other arms out of consumer sessions. | Initial read, unchanged revisit, relevant change, irrelevant change, cache loss and failed-deployment recovery produce evaluated answers and omissions. Relevant evidence is reread and unrelated usable work retained. Include all attempts, failures, requests/bytes, local integrity reads, parsing and unfinished work. Combine PD3 publisher effort before accepting an all-in cost conclusion. Fix the largest observed gap before expanding. Supplied finding text alone is insufficient. |
+| **PD3 — Maintainable publisher path** | Start independently. Publisher lane owns `tools/publisher_workflow.py`, `implementations/python-consumer/tests/test_publisher_workflow.py` and `docs/publisher-workflow.md`; book Astro/generator changes with coordinator before touching shared files. Run two actual existing builds, including a full Astro build, through setup and two updates. Disposable fixture controls are preparation only. | Build inventories derive automatically; state restoration and served-byte verification work without a second page catalog. Lost state never silently restarts history. Record operator time, interventions, unexpected revision churn and recovery cost for PD2/PD5. Consumer readiness is not a prerequisite for publisher work. |
 | **PD4 — Finding handed to another reader** | Start handoff schema/policy/counterexample preparation independently in dedicated draft files, coordinated with DotRepo D4. After the minimum consumer interface is frozen, integrate file export/import into two isolated stores under the coordinator's consumer-file ownership handoff. | A useful **evaluated PD2 finding** is required to accept the real handoff. Carry claim, scope, sources/hashes, assumptions and original observation time; recipient validates under its own policy. Exercise relevant change, missing source and conflicting interpretation. Compare with sharing the same cached source alone. Unchanged sources do not prove a conclusion correct. |
 | **PD5 — Independent recurring use** | Prepare the finite pilot protocol and operating-guide outline now. Actual independent use waits for PD1 readiness, PD2 useful-work evaluation and PD3 publisher readiness; PD4 is required only when findings cross readers. | Freeze useful outputs, freshness, run count and spending ceiling. Compare total publisher + intermediary + consumer work against competent HTTP/sitemap/fingerprint alternatives, including setup, audits, fallback and maintenance. Report favorable and unfavorable workload regions separately. Outreach, paid activity and package release need task-specific authorization; this plan grants none. |
 
-**First dispatch:** PD1 plus PD2 question/baseline preparation and PD3 publisher
-preparation, as slots permit. For a four-slot team spanning both projects, reserve
-one coordinator, prioritize DotRepo D1 + PageDigest PD1, and rotate the third
-worker through ready evaluation/publisher preparation. Refill slots after a small
-accepted handoff; do not allocate a standing agent to every role or make workers
-repeat the full integration gate. The parent coordinator owns cross-project
-contract joins; standalone PageDigest work uses the same local graph.
+**Current dispatch:** Execute PD2 from its sealed questions/baseline and run
+PD3 on actual builds. Do not reimplement accepted PD1 or author replacement
+questions. For a joint four-slot team, reserve one coordinator and use the other
+slots for ready evaluation and actual publisher work, refilling after bounded
+handoffs. Resolve retained test reliability failures before broad integration
+gates; workers run focused checks. The parent coordinator owns cross-project
+joins. Source integration requires its hosted checks; package release is outside
+this continuation's implementation scope.
+
+Before selecting fresh work after a restart, reconcile canonical main, open PRs,
+linked worktrees and accepted but unmerged receipts. Verify actual heads and dirty
+state, then continue the earliest unmet join; an old dispatch instruction does
+not establish that accepted implementation is missing.
 
 **Go/no-go rule:** completion, freshness and correct invalidation come first;
 economic benefit includes publisher work. Preserve the [38.6% byte overhead](docs/benchmarks/digest-exchange-p1-20261029/README.md)
