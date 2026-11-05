@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pagedigest"
-version = "0.3.0.dev1"
+version = "0.3.0.dev2"
 description = "PageDigest manifest validation, download planning and digest audits for recurring website consumers"
 readme = "README.md"
 license = "MIT"

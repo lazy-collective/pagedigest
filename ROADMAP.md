@@ -24,7 +24,10 @@ inspection and restart, legacy-cache and missing-body recovery controls. See
 [local acceptance artifacts](/Users/maxwell/Documents/Codex/2026-11-04/task/next-team-batch/acceptance/).
 The [PD2 preparation](docs/evaluations/next-team-batch-20261104/README.md) freezes
 three questions and six cycles, including failure/recovery, with a same-cache
-baseline and separate oracle. Outcome runs, PD3 publisher costs and independent
+baseline and separate oracle. The [corrected PD2 comparison](docs/evaluations/pd2-results-20261105.md)
+is independently scored: 18/18 useful task/cycles and 108/108 points per arm,
+with higher measured treatment request/body cost and no combined-cost benefit.
+Actual PD3 builds passed engineering controls; human upkeep and independent
 operation remain open. The local wheel is not a package release. Source integration
 passed hosted CI in [PR12](https://github.com/lazy-collective/pagedigest/pull/12),
 merged at `51a3e1b9`, and passed main checks and existing strict website deployment.
@@ -47,19 +50,22 @@ flowchart LR
 | Packet | Ready work and file ownership | Acceptance and join |
 | --- | --- | --- |
 | **PD1 — Reproducible recurring reader** | Locally accepted source-install path, saved-answer/source inspection, restart/recovery guide and `0.3.0.dev1` wheel candidate. Preserve them; assign consumer files only for a demonstrated repair. Source is merged in PR12 with hosted checks and existing site deployment passed; package publication remains separate and excluded. | A fresh environment answers a small-site question, saves its declared sources, exits and returns to identify what needs rereading. Exercise old-cache migration and missing-body recovery. Use the accepted minimum CLI/storage interface for PD2; any repair needs focused review before dependent execution continues. Package release remains a separate delivery action. |
-| **PD2 — Useful work over six cycles** | Execute the existing sealed three-question/six-cycle packet against accepted PD1 with equal discovery/cache opportunities and its frozen freshness/audit policy. Use fresh outcome consumers and acceptance contexts; keep oracles, future cycles and other arms out of consumer sessions. | Initial read, unchanged revisit, relevant change, irrelevant change, cache loss and failed-deployment recovery produce evaluated answers and omissions. Relevant evidence is reread and unrelated usable work retained. Include all attempts, failures, requests/bytes, local integrity reads, parsing and unfinished work. Combine PD3 publisher effort before accepting an all-in cost conclusion. Fix the largest observed gap before expanding. Supplied finding text alone is insufficient. |
-| **PD3 — Maintainable publisher path** | Start independently. Publisher lane owns `tools/publisher_workflow.py`, `implementations/python-consumer/tests/test_publisher_workflow.py` and `docs/publisher-workflow.md`; book Astro/generator changes with coordinator before touching shared files. Run two actual existing builds, including a full Astro build, through setup and two updates. Disposable fixture controls are preparation only. | Build inventories derive automatically; state restoration and served-byte verification work without a second page catalog. Lost state never silently restarts history. Record operator time, interventions, unexpected revision churn and recovery cost for PD2/PD5. Consumer readiness is not a prerequisite for publisher work. |
-| **PD4 — Finding handed to another reader** | Start handoff schema/policy/counterexample preparation independently in dedicated draft files, coordinated with DotRepo D4. After the minimum consumer interface is frozen, integrate file export/import into two isolated stores under the coordinator's consumer-file ownership handoff. | A useful **evaluated PD2 finding** is required to accept the real handoff. Carry claim, scope, sources/hashes, assumptions and original observation time; recipient validates under its own policy. Exercise relevant change, missing source and conflicting interpretation. Compare with sharing the same cached source alone. Unchanged sources do not prove a conclusion correct. |
+| **PD2 — Useful work over six cycles** | Completed independently scored [corrected comparison](docs/evaluations/pd2-results-20261105.md). Preserve invalid run1, failed-deployment phase, recovery and all costs; no new primary run required. Prefer the measured competent HTTP baseline for this small workload; no efficiency claim or coverage expansion is justified | Initial read, unchanged revisit, relevant change, irrelevant change, cache loss and failed-deployment recovery produce evaluated answers and omissions. Relevant evidence is reread and unrelated usable work retained. Include all attempts, failures, requests/bytes, local integrity reads, parsing and unfinished work. Combine PD3 publisher effort before accepting an all-in cost conclusion. Fix the largest observed gap before expanding. Supplied finding text alone is insufficient. |
+| **PD3 — Maintainable publisher path** | Actual maintained Astro and umbrella full builds, setup/updates/lost-state refusal/restoration and exact served-byte controls are independently accepted engineering; preserve the [publisher receipt](/Users/maxwell/Documents/Codex/2026-11-04/task/continuation/acceptance/adapter-publisher-review/publisher-receipt.json). No new build-trial packet is needed. Human upkeep/combined economics need an independent real operator/task, unavailable per user. | Build inventories derive automatically; state restoration and served-byte verification work without a second page catalog. Lost state never silently restarts history. Record operator time, interventions, unexpected revision churn and recovery cost for PD2/PD5. Consumer readiness is not a prerequisite for publisher work. |
+| **PD4 — Finding handed to another reader** | Adapter repair review and [actual useful PD03 transfer/source-only comparison](docs/evaluations/pd4-results-20261105.md) are independently accepted. Combined20-stage and separate dev2 wheel checks passed. No further implementation or primary comparison is ready for this bounded finding; source/site delivery receipts are tracked by the parent | A useful **evaluated PD2 finding** is required to accept the real handoff. Carry claim, scope, sources/hashes, assumptions and original observation time; recipient validates under its own policy. Exercise relevant change, missing source and conflicting interpretation. Compare with sharing the same cached source alone. Unchanged sources do not prove a conclusion correct. |
 | **PD5 — Independent recurring use** | Prepare the finite pilot protocol and operating-guide outline now. Actual independent use waits for PD1 readiness, PD2 useful-work evaluation and PD3 publisher readiness; PD4 is required only when findings cross readers. | Freeze useful outputs, freshness, run count and spending ceiling. Compare total publisher + intermediary + consumer work against competent HTTP/sitemap/fingerprint alternatives, including setup, audits, fallback and maintenance. Report favorable and unfavorable workload regions separately. Outreach, paid activity and package release need task-specific authorization; this plan grants none. |
 
-**Current dispatch:** Execute PD2 from its sealed questions/baseline and run
-PD3 on actual builds. Do not reimplement accepted PD1 or author replacement
-questions. For a joint four-slot team, reserve one coordinator and use the other
-slots for ready evaluation and actual publisher work, refilling after bounded
-handoffs. Resolve retained test reliability failures before broad integration
-gates; workers run focused checks. The parent coordinator owns cross-project
-joins. PD1 source integration and existing website deployment are complete; package
-release is outside this continuation's implementation scope.
+**Current dispatch:** PD1/PD2 and the bounded PD4 adapter/two-reader trial are
+accepted; preserve their exact artifacts, failed attempts and independent
+receipts. The new local dev2 wheel has a separate identity from the original PD2
+dev1 wheel. Track checked source/site delivery separately in the parent's
+canonical map; do not restart accepted implementation or evaluations. D3 actual publisher
+builds have engineering evidence, while human upkeep and combined economics
+remain unknown. The user confirmed that no independent PD5 operator is available.
+Keep that external dependency open; the finite operating protocol and guide are
+prepared. Reserve a coordinator and refill workers only with genuinely ready
+authorized work. Do not reimplement PD1 or author replacement questions. Package publication
+remains outside this continuation's scope.
 
 Before selecting fresh work after a restart, reconcile canonical main, open PRs,
 linked worktrees and accepted but unmerged receipts. Verify actual heads and dirty

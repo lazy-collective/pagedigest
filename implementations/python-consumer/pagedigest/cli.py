@@ -134,9 +134,55 @@ def main(argv: Sequence[str] | None = None, stdout: TextIO | None = None, stderr
     inspect_parser.add_argument("--id", dest="finding_id", help="Return one saved finding")
     inspect_parser.add_argument("--source", help="Include one retained UTF-8 source body by origin-relative URL")
 
+    export_parser = subcommands.add_parser("handoff-export", help="Export one experimental offline finding")
+    export_parser.add_argument("state", type=Path)
+    export_parser.add_argument("--id", required=True, dest="finding_id")
+    export_parser.add_argument("--metadata-file", required=True, type=Path)
+    export_parser.add_argument("--store", required=True, type=Path)
+    export_parser.add_argument("--evidence-root", type=Path)
+    export_parser.add_argument("--original-receipt")
+
+    receive_parser = subcommands.add_parser("handoff-receive", help="Check an offline finding against own cache")
+    receive_parser.add_argument("state", type=Path)
+    receive_parser.add_argument("envelope", type=Path)
+    receive_parser.add_argument("--scope", required=True)
+    receive_parser.add_argument("--policy-id", required=True)
+    receive_parser.add_argument("--max-age", required=True, type=float)
+    receive_parser.add_argument("--store", required=True, type=Path)
+    receive_parser.add_argument("--review-file", type=Path)
+
     args = parser.parse_args(argv)
     if args.command == "verify-live":
         return _run_verify_live(args, stdout or sys.stdout, stderr or sys.stderr)
+    if args.command in ("handoff-export", "handoff-receive"):
+        from .handoff import export_finding, receive_finding
+
+        try:
+            if args.command == "handoff-export":
+                result = export_finding(
+                    args.state,
+                    args.finding_id,
+                    args.metadata_file,
+                    args.store,
+                    evidence_root=args.evidence_root,
+                    original_receipt=args.original_receipt,
+                )
+            else:
+                result = receive_finding(
+                    args.state,
+                    args.envelope,
+                    args.scope,
+                    args.policy_id,
+                    args.max_age,
+                    args.store,
+                    review_file=args.review_file,
+                )
+            print(json.dumps(result, indent=2), file=stdout or sys.stdout)
+            return 0
+        except (OSError, ValueError) as exc:
+            print(f"workflow error: {exc}", file=stderr or sys.stderr)
+            return 1
+
     if args.command in ("sync", "remember", "inspect"):
         from .recurring import inspect_state, remember, sync
 

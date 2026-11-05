@@ -20,7 +20,7 @@ claims depend on durable revision history; samples do not prove every skip.
 **Experimental:** the [recurring source workflow](docs/recurring-consumer.md)
 reports what changed, what needs rereading and which prior findings retain their
 declared source bindings. `pagedigest inspect` reads saved findings and retained
-source text after restart. The local wheel candidate is `0.3.0.dev1`; these
+source text after restart. The local wheel candidate is `0.3.0.dev2`; these
 commands are not part of the published Python 0.2.0 package.
 Unchanged dependencies do not establish that a conclusion is true.
 
@@ -103,10 +103,14 @@ source age. It uses HTTP freshness/validators, optional sitemap discovery and Pa
 signals with bounded validation and fallback. See the
 [recurring workflow](docs/recurring-consumer.md). These commands are not in the
 published Python 0.2.0 package. The maintained source-install and local
-`0.3.0.dev1` wheel paths are in the recurring guide. The
-[frozen PD2 preparation](docs/evaluations/next-team-batch-20261104/README.md)
-has questions and scoring for a later six-cycle comparison; no useful-work or
-cost outcome is established by preparing it. [PR2](https://github.com/lazy-collective/pagedigest/pull/2)
+`0.3.0.dev2` wheel paths are in the recurring guide. The
+[sealed questions](docs/evaluations/next-team-batch-20261104/README.md) and
+[independently scored six-cycle comparison](docs/evaluations/pd2-results-20261105.md)
+retain useful scoped answers in both arms and higher measured treatment network
+cost. The [finding handoff](docs/finding-handoff.md) adds offline original-date
+export and recipient-local review. The [accepted two-reader trial](docs/evaluations/pd4-results-20261105.md)
+preserves original dates; both readers succeed without a measured cost advantage.
+[PR2](https://github.com/lazy-collective/pagedigest/pull/2)
 records implementation and validation history. Source publication, site deployment
 and package releases remain separate events.
 
@@ -118,7 +122,7 @@ and package releases remain separate events.
 | Protocol status | Final v1 specification on main; no `v1.0.0` tag published | Package releases use their own versioned tags |
 | `pagedigest-generator` / `npx pagedigest` / crates.io `pagedigest` | `0.3.0` | Publisher CLI; explicit initialization and recovery |
 | Python consumer (PyPI `pagedigest`) | `0.2.0` | Validated-manifest conditional requests and per-URL cache checks |
-| Python source / local wheel candidate | `0.3.0.dev1` | Unreleased recurring sync, remember and read-only inspect; local installation only |
+| Python source / local wheel candidate | `0.3.0.dev2` | Unreleased recurring sync, remember and read-only inspect; local installation only |
 | `@pagedigest/astro` | `0.2.0` | Static HTML subset; explicit initialization and recovery |
 | Scrapy middleware | experimental in-tree | Depends on consumer `>=0.1.0`; not on PyPI |
 
@@ -250,9 +254,10 @@ Checks cover conformance, failed and incomplete syncs, generator state progressi
 Astro parity, real Scrapy traversal, clean wheel/tarball installation, and equivalent
 benchmark outcomes. Protocol and package versions remain separate.
 
-Start with PD1’s reproducible recurring reader while preparing PD2’s questions
-and baseline and PD3’s publisher path in parallel. Independent use follows useful
-evaluated work and publisher readiness. The [validation guide](docs/validation.md)
+The [independent six-cycle comparison](docs/evaluations/pd2-results-20261105.md)
+completed useful scoped answers in both arms with higher treatment request/body
+cost. Keep the competent HTTP baseline for that small workload. Current work
+finishes the bounded finding handoff; independent use needs an available operator. The [validation guide](docs/validation.md)
 explains focused checks, the narrow prose-only PR gate and coordinated integration.
 See the [roadmap graph](./ROADMAP.md), [release gates](./RELEASE_CHECKLIST.md), and
 [the documentation index](./docs/README.md). Cooperation and optional operational

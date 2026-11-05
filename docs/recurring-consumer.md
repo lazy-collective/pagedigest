@@ -1,7 +1,7 @@
 # Recurring source and finding updates (experimental source workflow)
 
 This checkout adds `pagedigest sync`, `pagedigest remember` and read-only
-`pagedigest inspect`. They are included in the local Python **0.3.0.dev1** source
+`pagedigest inspect`. They are included in the local Python **0.3.0.dev2** source
 candidate, and are not in the published 0.2.0 consumer. They reuse the existing
 atomic persistent-cache helpers and PageDigest validation; they add no wire-format
 fields or hosted service.
@@ -32,7 +32,7 @@ outside the checkout:
 uv build --wheel --out-dir /tmp/pagedigest-pd1-dist implementations/python-consumer
 uv venv /tmp/pagedigest-pd1-reader
 uv pip install --python /tmp/pagedigest-pd1-reader/bin/python \
-  /tmp/pagedigest-pd1-dist/pagedigest-0.3.0.dev1-py3-none-any.whl
+  /tmp/pagedigest-pd1-dist/pagedigest-0.3.0.dev2-py3-none-any.whl
 /tmp/pagedigest-pd1-reader/bin/pagedigest inspect --help
 ```
 
@@ -200,7 +200,11 @@ saved policy and performs no migration.
 
 The local restart and wheel-install checks use controlled site questions and
 user-supplied answers. They establish reproducibility and recovery behavior;
-independent useful-work evaluation remains the PD2 outcome gate.
+the [independent PD2 comparison](evaluations/pd2-results-20261105.md) supplies
+separate scoped useful-work evidence and preserves its unfavorable network-cost
+result. The original evaluation used the immutable `0.3.0.dev1` wheel; this
+`0.3.0.dev2` source candidate adds the [finding handoff](finding-handoff.md).
+Neither local wheel is a published package or independent adoption.
 
 ## Freshness and failure rules
 

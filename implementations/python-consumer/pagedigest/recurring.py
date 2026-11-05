@@ -471,6 +471,7 @@ def remember(state_path, finding_id, text, source_keys, *, now=None):
             "text": text,
             "created_at": now,
             "sources": {key: state["body_hashes"][key] for key in keys},
+            "original_observed_at": {key: state["resources"][key]["validated_at"] for key in keys},
             "representation": state["representation"],
             "meaning": (
                 "User-supplied interpretation; source binding is not verification "

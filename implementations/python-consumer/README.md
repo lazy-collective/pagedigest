@@ -28,7 +28,7 @@ uv sync --locked
 
 Requires Python ≥3.9. Runtime dependency: `requests`.
 
-The current source candidate is **0.3.0.dev1**, a local development version.
+The current source candidate is **0.3.0.dev2**, a local development version.
 It adds a recurring reader: `sync` observes a bounded source scope, `remember`
 stores a user-authored answer bound to exact source bodies, and read-only
 `inspect STATE [--id ID] [--source URL]` reopens saved text and freshness status
@@ -137,3 +137,8 @@ The example serializes writers using a state lock. Content-addressed orphan bodi
 from interrupted cycles are harmless and can be garbage-collected offline after
 checking all live state references. Use one state file per origin. Restoring old
 consumer metadata without corresponding bodies never authorizes skipping.
+
+The [finding handoff guide](../../docs/finding-handoff.md) describes experimental
+immutable export and recipient-local review. The independently evaluated PD2
+artifact remains the earlier exact `0.3.0.dev1` wheel; the current `0.3.0.dev2`
+candidate has a separate artifact identity. Published Python remains `0.2.0`.
