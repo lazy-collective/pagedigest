@@ -50,6 +50,15 @@ at their declared joins. This checkout's [coordination skill](.agents/skills/roa
 routes that workflow without adding another plan. Carry the parent's shared goal
 and current task authorization when working across projects.
 
+Follow the execution guide for [measurement and product decisions](docs/agent-execution.md#measure-before-comparing)
+and [delivery and closure](docs/agent-execution.md#review-delivery-and-closure).
+Plan collection before evaluation, retain its product decision, and review
+related delivery wording together before merge. Goal closure needs a fresh
+review against the original criteria, explicit user scope changes and the
+remaining executable work. The [current pilot lane](ROADMAP.md#active-outcome-priorities--november-5-2026)
+allows owner/agent operation while missing cost data and scheduled history are
+tracked separately; independent adoption remains an evidence claim.
+
 Use `uv` for Python. Workers run focused checks against their exposing cases;
 the coordinator runs the appropriate integrated gate on the joined tree. Follow
 [validation and CI](docs/validation.md) for the narrow prose-only path and full
