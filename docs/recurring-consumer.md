@@ -252,6 +252,16 @@ manifest without its legacy validators to establish that binding.
   digest, or with a different digest at the same `rev`, validates nothing here.
   Otherwise the workflow revalidates with ETag/Last-Modified when a usable body exists. Manifest validation never permits
   retaining `no-store`, `private`, `Set-Cookie` or unsupported `Vary` responses.
+- A changed or distrusted manifest does not require downloading an intact,
+  non-suspect cached body again when it has a strong ETag. The consumer can request
+  conditional HTTP validation; a 304 must return the same strong ETag and still
+  passes response-policy and advertised digest checks. A missing, weak or different
+  response ETag triggers one unconditional retry, charged to the existing budget.
+  A conflicting digest leaves the source unknown and its earlier
+  validation date intact. Weak/malformed ETags and Last-Modified alone do not
+  enable this additional recovery path. Selected audits and suspect, missing or
+  corrupt cached bodies still require unconditional requests. See the bounded
+  [failure/recovery measurement](evaluations/recovery-cost-20261105.md).
 - `--max-age` bounds time since body validation, even when a manifest repeatedly
   returns 304. Default: one hour. No metadata poll resets that deadline.
 - Default audit probability is 0.01 per cached source per cycle. `--audit-rate 1`

@@ -65,6 +65,16 @@ def digest(body):
     return "sha256:" + hashlib.sha256(body).hexdigest()
 
 
+def strong_etag(value):
+    """A quoted HTTP entity tag with byte-identity rather than weak semantics."""
+    return (
+        isinstance(value, str)
+        and len(value) >= 2
+        and value[0] == value[-1] == '"'
+        and all(char == "!" or "#" <= char <= "~" or "\x80" <= char <= "\xff" for char in value[1:-1])
+    )
+
+
 @contextmanager
 def locked(state_path):
     state_path.parent.mkdir(parents=True, exist_ok=True)
@@ -731,16 +741,45 @@ def _sync(
             report["reused"].append({"url": key, "basis": "http-freshness" if http_fresh else "pagedigest-unchanged"})
             continue
         request_headers = {}
-        if valid_body and key not in suspect and not audit_now and not changed_hint and not state.get("distrusted"):
+        ordinary_conditional = not changed_hint and not state.get("distrusted")
+        # A strong ETag can validate retained bytes even when the manifest is
+        # changed or distrusted. A 304 still passes policy and digest checks
+        # below. Weak tags/timestamps cannot establish that exact-byte identity;
+        # audits and suspect/missing bodies still require an unconditional GET.
+        if (
+            valid_body
+            and key not in suspect
+            and not audit_now
+            and (ordinary_conditional or strong_etag(previous.get("etag")))
+        ):
             if previous.get("etag"):
                 request_headers["If-None-Match"] = previous["etag"]
             elif previous.get("last_modified"):
                 request_headers["If-Modified-Since"] = previous["last_modified"]
+        recovery_conditional = bool(request_headers) and not ordinary_conditional
         response = None
         try:
             response = meter.get(
                 resolve_url_key(base_url, key), headers=request_headers, timeout=15, stream=True, allow_redirects=False
             )
+            if (
+                response.status_code == 304
+                and recovery_conditional
+                and response.headers.get("ETag") != request_headers["If-None-Match"]
+            ):
+                # If-None-Match uses weak comparison. Only the same strong
+                # response tag confirms exact bytes; otherwise fetch once more
+                # without validators, preserving retention rules and budgets.
+                response_policy(
+                    requests.structures.CaseInsensitiveDict({**previous.get("headers", {}), **dict(response.headers)}),
+                    now,
+                )
+                response.close()
+                response = None
+                request_headers = {}
+                response = meter.get(
+                    resolve_url_key(base_url, key), headers={}, timeout=15, stream=True, allow_redirects=False
+                )
             if response.status_code in (404, 410):
                 removed.add(key)
                 continue
@@ -750,7 +789,6 @@ def _sync(
                 body = available[key]
                 # A 304 updates only supplied fields; preserve constraints otherwise.
                 retained_headers = {**previous.get("headers", {}), **dict(response.headers)}
-                report["revalidated"].append(key)
             elif response.status_code == 200:
                 body = body_bytes(response, MAX_PAGE_BYTES)
                 retained_headers = dict(response.headers)
@@ -788,6 +826,8 @@ def _sync(
                 state["revs"].pop(key, None)
             current.add(key)
             suspect.discard(key)
+            if response.status_code == 304:
+                report["revalidated"].append(key)
             if old_hash != actual:
                 report["new" if old_hash is None else "changed"].append(key)
                 report["reread"].append(key)

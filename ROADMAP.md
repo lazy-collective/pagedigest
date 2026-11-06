@@ -2,7 +2,9 @@
 
 **Now:** v1.0 — stable wire format, shipped reference implementations and packages, dogfood on [pagedigest.org](https://pagedigest.org). Gates: [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md).
 
-## Active outcome priorities — November 4, 2026
+<a id="active-outcome-priorities--november-4-2026"></a>
+
+## Active outcome priorities — November 5, 2026
 
 The next outcome is a returning reader completing useful work, retaining its
 source dependencies and revisiting the right material after a change. The stable
@@ -15,6 +17,18 @@ Choose ready work from the graph, with one coordinator integrating disjoint
 worker lanes. Preparation can overlap; acceptance still needs the specified
 inputs. [Execution guide](docs/agent-execution.md) owns dispatch and joins;
 [validation guide](docs/validation.md) owns check selection.
+
+**November 5 user scope change:** Use `maxwellsantoro.com` for a bounded
+owner/agent-operated recurring pilot. Follow the parent's
+[pilot plan](/Users/maxwell/projects/lazy-collective/docs/pilots/maxwellsantoro-20261105.md)
+for the real task, permitted sources and measured attempts. Missing human effort
+or complete all-in cost data does not block pilot execution or demonstrated
+repairs; collect available measurements prospectively and leave gaps explicit.
+Independent third-party validation remains a separate claim, not a prerequisite
+to this first-party use. Scheduled operating history is an ongoing observation,
+not a seven-day wait before product work. Earlier independent-pilot criteria and
+sealed comparisons retain their historical meaning; this dated change authorizes
+a new execution scope without relabeling old evidence.
 
 **November 4 local batch checkpoint:** PD1 source install and the local
 `0.3.0.dev1` wheel candidate are accepted at
@@ -40,32 +54,48 @@ flowchart LR
   PD2 --> COST
   H[PD4: handoff policy and cases prep] --> PD4[PD4: two-reader evaluation]
   PD2 --> PD4
-  PILOT[PD5: bounded protocol prep] --> PD5[PD5: independent use]
+  PILOT[PD5: scoped real task and protocol] --> PD5[PD5: owner/agent pilot]
   PD1 --> PD5
-  COST --> PD5
-  P --> PD5
+  PD5 --> COST
   PD4 -. only if findings cross readers .-> PD5
+  PD5 -. separate qualified operator and evidence .-> INDEPENDENT[Independent validation]
 ```
 
 | Packet | Ready work and file ownership | Acceptance and join |
 | --- | --- | --- |
 | **PD1 — Reproducible recurring reader** | Locally accepted source-install path, saved-answer/source inspection, restart/recovery guide and `0.3.0.dev1` wheel candidate. Preserve them; assign consumer files only for a demonstrated repair. Source is merged in PR12 with hosted checks and existing site deployment passed; package publication remains separate and excluded. | A fresh environment answers a small-site question, saves its declared sources, exits and returns to identify what needs rereading. Exercise old-cache migration and missing-body recovery. Use the accepted minimum CLI/storage interface for PD2; any repair needs focused review before dependent execution continues. Package release remains a separate delivery action. |
 | **PD2 — Useful work over six cycles** | Completed independently scored [corrected comparison](docs/evaluations/pd2-results-20261105.md). Preserve invalid run1, failed-deployment phase, recovery and all costs; no new primary run required. Prefer the measured competent HTTP baseline for this small workload; no efficiency claim or coverage expansion is justified | Initial read, unchanged revisit, relevant change, irrelevant change, cache loss and failed-deployment recovery produce evaluated answers and omissions. Relevant evidence is reread and unrelated usable work retained. Include all attempts, failures, requests/bytes, local integrity reads, parsing and unfinished work. Combine PD3 publisher effort before accepting an all-in cost conclusion. Fix the largest observed gap before expanding. Supplied finding text alone is insufficient. |
-| **PD3 — Maintainable publisher path** | Actual maintained Astro and umbrella full builds, setup/updates/lost-state refusal/restoration and exact served-byte controls are independently accepted engineering; preserve the [publisher receipt](/Users/maxwell/Documents/Codex/2026-11-04/task/continuation/acceptance/adapter-publisher-review/publisher-receipt.json). No new build-trial packet is needed. Actual operator time/interventions and combined economics remain unmeasured. A maintainer can supply publisher-upkeep measurements; independence is required for PD5 recurring operation. | Build inventories derive automatically; state restoration and served-byte verification work without a second page catalog. Lost state never silently restarts history. Record operator time, interventions, unexpected revision churn and recovery cost for PD2/PD5. Consumer readiness is not a prerequisite for publisher work. |
+| **PD3 — Maintainable publisher path** | Preserve the accepted [Astro/umbrella publisher engineering](/Users/maxwell/Documents/Codex/2026-11-04/task/continuation/acceptance/adapter-publisher-review/publisher-receipt.json). Apply the existing publisher path to the authorized personal-site pilot and record setup/update/recovery attempts alongside PD5; do not replay the earlier build trial. A maintainer or agent may operate this pilot. | Build inventories derive automatically; state restoration and served-byte verification work without a second page catalog. Lost state never silently restarts history. Record available elapsed/counter/intervention evidence from the first attempt; human attention and unavailable costs stay unknown. Complete human/all-in measurements constrain economic claims, not pilot readiness or local improvements. |
 | **PD4 — Finding handed to another reader** | Adapter repair review and [actual useful PD03 transfer/source-only comparison](docs/evaluations/pd4-results-20261105.md) are independently accepted. Combined20-stage and separate dev2 wheel checks passed. No further implementation or primary comparison is ready for this bounded finding; source/site delivery receipts are tracked by the parent | A useful **evaluated PD2 finding** is required to accept the real handoff. Carry claim, scope, sources/hashes, assumptions and original observation time; recipient validates under its own policy. Exercise relevant change, missing source and conflicting interpretation. Compare with sharing the same cached source alone. Unchanged sources do not prove a conclusion correct. |
-| **PD5 — Independent recurring use** | Finite protocol, [operating guide](/Users/maxwell/Documents/Codex/2026-11-04/task/continuation/acceptance/pilot-preparation/operating-guide.md), unsent brief and cost ledger are prepared; no repeat preparation packet is ready. User confirmed no independent operator exists. Real use needs an independent operator, existing recurring task/source scope and PD1/PD2 plus publisher upkeep evidence; PD4 is required only when findings cross readers. | Freeze useful outputs, freshness, run count and spending ceiling. Compare total publisher + intermediary + consumer work against competent HTTP/sitemap/fingerprint alternatives, including setup, audits, fallback and maintenance. Report favorable and unfavorable workload regions separately. Outreach, paid activity and package release need task-specific authorization; this plan grants none. |
+| **PD5 — Recurring pilot and separate independent validation** | Continue the authorized owner/agent pilot on `maxwellsantoro.com` from its accepted first-session receipt on the next real task, using the accepted consumer entrypoint and reusable [operating guide](/Users/maxwell/Documents/Codex/2026-11-04/task/continuation/acceptance/pilot-preparation/operating-guide.md), with the new task/source scope frozen before execution. Collect PD3 measurements concurrently. An independent operator, complete cost record and seven scheduled days are not prerequisites. PD4 is required only when findings cross readers. | Complete the declared bounded task and retain actual initial/revisit outputs, source dates, failures and available publisher/intermediary/consumer costs against a competent baseline. Label owner/agent operation accurately; independent adoption and all-in savings require their own evidence. Keep future real work occasions and operating-history observations distinct from local replay. Outreach, paid activity and package release remain separately authorized actions. |
+
+**Pilot checkpoint:** The [initial owner/agent maintenance session](/Users/maxwell/projects/lazy-collective/docs/pilots/maxwellsantoro-20261105.md#evidence)
+is independently accepted and the two website-description edits are integrated
+locally. Both modes identified the two changed pages and retained the historical
+trace. Prefer ordinary HTTP for this small full-audit workload; reuse retained
+findings on the next real task rather than repeating setup or this comparison.
+
+**Recovery repair checkpoint:** The user authorized reducing the measured
+failure/recovery overhead. The [new engineering replay](docs/evaluations/recovery-cost-20261105.md)
+preserves the original failed-deployment case, external audits and manual fallback.
+Strong-ETag conditional validation reduces its body transfers from 130,657 to
+78,656 bytes with the same 12 requests. Full-audit and missing/corrupt-body controls
+remain intact. The original PD2 score and owner-pilot results are unchanged;
+the linked delivery record distinguishes review, checked source and deployment.
 
 **Current dispatch:** PD1/PD2 and the bounded PD4 adapter/two-reader trial are
 accepted; preserve their exact artifacts, failed attempts and independent
 receipts. The new local dev2 wheel has a separate identity from the original PD2
 dev1 wheel. Track checked source/site delivery separately in the parent's
-canonical map; do not restart accepted implementation or evaluations. D3 actual publisher
-builds have engineering evidence, while human upkeep and combined economics
-remain unknown. The user confirmed that no independent PD5 operator is available.
-Keep that external dependency open; the finite operating protocol and guide are
-prepared. Reserve a coordinator and refill workers only with genuinely ready
-authorized work. Do not reimplement PD1 or author replacement questions. Package publication
-remains outside this continuation's scope.
+canonical map; do not restart accepted implementation or evaluations. Continue the
+authorized personal-site pilot from its accepted first-session receipts on the
+next real maintenance task, carrying the bounded recovery repair once accepted
+in its delivery record. Capture available costs while
+working; incomplete human/all-in measurements and scheduled history cannot freeze
+this lane. The absence of an independent operator limits independent-validation
+claims, not first-party execution. Preserve the prior PD2/PD4 evidence and use a
+new pilot identity. Reserve a coordinator and refill workers with ready authorized
+work. Package publication remains outside this continuation's scope.
 
 Before selecting fresh work after a restart, reconcile canonical main, open PRs,
 linked worktrees and accepted but unmerged receipts. Verify actual heads and dirty
@@ -112,5 +142,6 @@ Earlier section links resolve here. See the archived [consumer safety milestone]
 ## Contribute
 
 Open an issue referencing a ready packet, its owned files and acceptance evidence.
-Start with a bounded deliverable from the graph; independent operation follows a
-usable, evaluated candidate. Keep implementation/test counts separate from utility.
+Start with a bounded deliverable from the graph; owner/agent operation can proceed
+with the accepted candidate and declared source scope. Keep independent validation,
+implementation/test counts and measured utility separate.
