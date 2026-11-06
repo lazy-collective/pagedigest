@@ -113,7 +113,8 @@ absence claims are outside this bounded workflow.
 
 ## Repeat and inspect the result
 
-After `sync`, read the actual cached source before writing an answer:
+For a first answer, or when the current task requires reading evidence, inspect
+the actual cached source after `sync`:
 
 ```sh
 uv run --project implementations/python-consumer --locked python -m pagedigest.cli inspect \
@@ -128,11 +129,12 @@ For example, a reader can answer “Which runtime does this setup require?” fr
 the cached setup page, then save its own answer with `remember` and the complete
 declared dependency list.
 
-Exit the process, then reopen the answer and its source bindings:
+On return with a known finding ID, request the brief view once to reopen the
+answer, its source bindings and per-dependency read guidance:
 
 ```sh
 uv run --project implementations/python-consumer --locked python -m pagedigest.cli inspect \
-  ./research/example.json --id setup-note-1
+  ./research/example.json --id setup-note-1 --brief
 ```
 
 Inspection returns JSON with `schema: 1`, the saved finding text, `created_at`,
@@ -147,13 +149,6 @@ never renews source validation or the finding's original creation date. Its
 inspection; they exclude state reads, filesystem metadata and physical I/O.
 Run with no concurrent writer; an existing writer lock refuses inspection.
 
-For a returning task with a known finding ID, request a focused view:
-
-```sh
-uv run --project implementations/python-consumer --locked python -m pagedigest.cli inspect \
-  ./research/example.json --id setup-note-1 --brief
-```
-
 `--brief` requires `--id` and cannot accompany `--source`. It preserves the
 selected finding's complete saved text, original dates, dependency hashes,
 representation, status, problems and interpretation warning. `sources` contains
@@ -161,11 +156,34 @@ only that finding's dependencies. `last_attempt` preserves the cycle time and
 completion flag, limits its availability/errors to those dependencies (including
 global errors), and reports unrelated errors as `other_error_count`. The
 `view: "finding-brief"` marker distinguishes this projection from full inspection.
-Use ordinary `inspect --source` when the status or task requires reading evidence;
-the command does not decide that a prior interpretation answers a new question.
+The same response includes all selected source metadata, so a separate metadata
+inspection is unnecessary for checking these bindings. `read_guidance.dependencies`
+lists every declared URL with an `action` and `reason`; `read_guidance.actions`
+explains those actions and `read_guidance.review` preserves the required task and
+interpretation review.
 
-This source-only addition changes output selection, not validation. It runs the
-same full state/body checks before projecting, retains their actual
+| Per-dependency action | What to do next |
+| --- | --- |
+| `no-binding-reread` | Current, intact bytes and representation match the saved binding. No reread is needed solely to establish that match. |
+| `read-current-source` | Current bytes differ from the finding's binding. Read that source with ordinary `inspect STATE --source URL` before using the finding, including changes to declared contextual sources. |
+| `validate-or-recover-source` | Evidence is unavailable, stale, missing, corrupt or differently represented. Run `sync` or direct validation for the intended scope and representation, then inspect again. Reading retained old text cannot restore freshness or integrity. |
+
+Validation or recovery takes priority over a byte change when the current source
+is unknown. Reasons distinguish missing/corrupt bodies, a source unavailable in
+the last sync, missing/future/expired validation times and representation changes.
+An incomplete cycle and its selected/global errors remain visible even when an
+individual dependency's binding is current. The guidance never removes a declared
+dependency because it appears irrelevant to the saved conclusion.
+
+Review the complete saved text against the current task, including its scope,
+assumptions, limitations, attribution and external premises. A matching binding
+does not verify interpretation or complete dependency coverage; that review may
+still require reading unchanged or additional evidence. The command does not
+decide that a prior interpretation answers a new question. Omit `--brief` for full
+inspection whenever that broader view is needed.
+
+This source-only addition changes output selection and guidance, not validation.
+It runs the same full state/body checks before projecting, retains their actual
 `local_integrity_reads`/`local_integrity_bytes`, and never changes freshness,
 audit rules, saved bytes or original dates. It does not claim fewer local reads
 or agent tokens; token savings require a matched measured workflow. Default

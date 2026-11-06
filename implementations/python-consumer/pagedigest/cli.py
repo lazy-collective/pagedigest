@@ -136,7 +136,7 @@ def main(argv: Sequence[str] | None = None, stdout: TextIO | None = None, stderr
     inspect_parser.add_argument(
         "--brief",
         action="store_true",
-        help="Project one finding and its dependencies; requires --id, excludes --source",
+        help="Show one finding, its dependencies and read/recovery guidance; requires --id, excludes --source",
     )
 
     export_parser = subcommands.add_parser("handoff-export", help="Export one experimental offline finding")

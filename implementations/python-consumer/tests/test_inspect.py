@@ -75,9 +75,99 @@ class InspectTests(unittest.TestCase):
         self.assertEqual(brief["local_integrity_reads"], full["local_integrity_reads"])
         self.assertEqual(brief["local_integrity_bytes"], full["local_integrity_bytes"])
         self.assertNotIn("source", brief)
+        self.assertNotIn("read_guidance", full)
         self.assertNotIn("/news", json.dumps(brief))
         self.assertNotIn("Unrelated news interpretation", json.dumps(brief))
         self.assertEqual(before, {p.name: p.read_bytes() for p in self.state.parent.rglob("*") if p.is_file()})
+
+    def test_brief_guidance_identifies_only_changed_binding_for_reread_in_one_response(self):
+        text = (
+            "Claim: use Python 3.9 or newer. Task scope: local setup with the news context. "
+            "Assumption: public default representation. Limitation: no inventory-wide claim. "
+            "Attribution: user-authored interpretation of /setup and /news."
+        )
+        remember(self.state, "combined", text, ["/setup", "/news"], now=100)
+        self.origin.page("/setup", b"<p>Requires Python 3.12 or newer.</p>", cache="no-cache")
+        self.cycle(now=110)
+        before = {p.name: p.read_bytes() for p in self.state.parent.rglob("*") if p.is_file()}
+        with patch("pagedigest.recurring.requests.Session", side_effect=AssertionError("unexpected HTTP")):
+            brief = inspect_state(self.state, finding_id="combined", brief=True, now=111)
+            full = inspect_state(self.state, finding_id="combined", now=111)
+        self.assertEqual(
+            brief["read_guidance"]["dependencies"],
+            {
+                "/news": {"action": "no-binding-reread", "reason": "source-binding-current"},
+                "/setup": {"action": "read-current-source", "reason": "source-bytes-changed"},
+            },
+        )
+        self.assertEqual(brief["findings"], full["findings"])
+        self.assertEqual(brief["findings"][0]["text"], text)
+        self.assertEqual(brief["findings"][0]["created_at"], 100)
+        self.assertEqual(brief["findings"][0]["original_observed_at"], {"/news": 100, "/setup": 100})
+        self.assertEqual(brief["sources"], full["sources"])
+        self.assertEqual(brief["sources"]["/setup"]["validated_at"], 110)
+        self.assertEqual(brief["sources"]["/setup"]["validation_expires_at"], 170)
+        self.assertNotEqual(brief["sources"]["/setup"]["hash"], brief["findings"][0]["sources"]["/setup"])
+        self.assertIn("no separate metadata inspection", brief["read_guidance"]["review"])
+        self.assertIn("do not verify interpretation", brief["read_guidance"]["review"])
+        self.assertEqual(brief["local_integrity_reads"], full["local_integrity_reads"])
+        self.assertEqual(brief["local_integrity_bytes"], full["local_integrity_bytes"])
+        self.assertEqual(before, {p.name: p.read_bytes() for p in self.state.parent.rglob("*") if p.is_file()})
+        current = inspect_state(self.state, source="/setup", now=111)
+        self.assertIn("Python 3.12", current["source"]["text"])
+
+    def test_brief_guidance_keeps_changed_context_and_unknown_sources_in_read_set(self):
+        remember(self.state, "combined", "Setup conclusion with /news context.", ["/setup", "/news"], now=100)
+        self.origin.page("/news", b"Context changed without mentioning Python", cache="no-cache")
+        self.cycle(now=110)
+        brief = inspect_state(self.state, finding_id="combined", brief=True, now=111)
+        self.assertEqual(brief["read_guidance"]["dependencies"]["/news"]["action"], "read-current-source")
+        self.assertEqual(brief["read_guidance"]["dependencies"]["/setup"]["action"], "no-binding-reread")
+        sync(
+            "https://example.com",
+            self.state,
+            urls=["/news"],
+            session=self.origin,
+            now=120,
+            audit_rate=0,
+            http_only=True,
+            max_age=60,
+        )
+        brief = inspect_state(self.state, finding_id="combined", brief=True, now=121)
+        self.assertEqual(brief["findings"][0]["status"], "needs_reread")
+        self.assertEqual(set(brief["read_guidance"]["dependencies"]), {"/setup", "/news"})
+        self.assertEqual(brief["read_guidance"]["dependencies"]["/news"]["action"], "read-current-source")
+        self.assertEqual(
+            brief["read_guidance"]["dependencies"]["/setup"],
+            {"action": "validate-or-recover-source", "reason": "source-not-available-in-last-sync"},
+        )
+
+    def test_brief_guidance_requires_validation_before_reading_changed_stale_evidence(self):
+        self.origin.page("/setup", b"<p>Requires Python 3.12 or newer.</p>", cache="no-cache")
+        self.cycle(now=110)
+        for now, reason in ((109, "validation-time-in-future"), (170, "validation-expired")):
+            with self.subTest(now=now):
+                brief = inspect_state(self.state, finding_id="python", brief=True, now=now)
+                self.assertEqual(
+                    brief["read_guidance"]["dependencies"]["/setup"],
+                    {"action": "validate-or-recover-source", "reason": reason},
+                )
+                self.assertEqual(brief["findings"][0]["status"], "unknown")
+                self.assertEqual(brief["sources"]["/setup"]["validated_at"], 110)
+                retained = inspect_state(self.state, source="/setup", now=now)
+                self.assertIn("Python 3.12", retained["source"]["text"])
+                again = inspect_state(self.state, finding_id="python", brief=True, now=now)
+                self.assertEqual(brief, again)
+
+    def test_brief_guidance_requires_recovery_when_validation_time_is_missing(self):
+        state = read_state(self.state)
+        state["resources"]["/setup"].pop("validated_at")
+        save_state(self.state, state)
+        brief = inspect_state(self.state, finding_id="python", brief=True, now=110)
+        self.assertEqual(
+            brief["read_guidance"]["dependencies"]["/setup"],
+            {"action": "validate-or-recover-source", "reason": "validation-time-missing"},
+        )
 
     def test_brief_preserves_whole_body_change_and_freshness_rules(self):
         def assert_status(now, expected):
@@ -110,6 +200,7 @@ class InspectTests(unittest.TestCase):
         self.assertFalse(brief["last_attempt"]["complete"])
         self.assertEqual(brief["last_attempt"]["other_error_count"], 1)
         self.assertEqual(brief["last_attempt"]["errors"], [])
+        self.assertEqual(brief["read_guidance"]["dependencies"]["/setup"]["action"], "no-binding-reread")
         self.assertNotIn("/news", json.dumps(brief))
         self.origin.routes["/setup"] = (503, b"unavailable")
         self.assertFalse(self.cycle(now=120)["complete"])
@@ -117,6 +208,10 @@ class InspectTests(unittest.TestCase):
         self.assertEqual(brief["findings"][0]["status"], "unknown")
         self.assertEqual(brief["last_attempt"]["errors"][0]["url"], "/setup")
         self.assertEqual(brief["last_attempt"]["other_error_count"], 1)
+        self.assertEqual(
+            brief["read_guidance"]["dependencies"]["/setup"],
+            {"action": "validate-or-recover-source", "reason": "source-not-available-in-last-sync"},
+        )
 
     def test_brief_never_hides_missing_corrupt_or_differently_represented_evidence(self):
         state_bytes = self.state.read_bytes()
@@ -135,6 +230,13 @@ class InspectTests(unittest.TestCase):
                 brief = inspect_state(self.state, finding_id="python", brief=True, now=110)
                 self.assertEqual(brief["findings"][0]["status"], "unknown")
                 self.assertTrue(brief["findings"][0]["problems"])
+                self.assertEqual(
+                    brief["read_guidance"]["dependencies"]["/setup"],
+                    {
+                        "action": "validate-or-recover-source",
+                        "reason": "representation-changed" if damage == "representation" else "body-missing-or-corrupt",
+                    },
+                )
                 if damage != "representation":
                     self.assertFalse(brief["sources"]["/setup"]["retained"])
                 path.write_bytes(body)
@@ -148,6 +250,8 @@ class InspectTests(unittest.TestCase):
         brief = inspect_state(self.state, finding_id="python", brief=True, now=110)
         self.assertEqual(brief["last_attempt"]["errors"], [{"url": None, "reason": "global failure"}])
         self.assertEqual(brief["last_attempt"]["other_error_count"], 0)
+        self.assertFalse(brief["last_attempt"]["complete"])
+        self.assertEqual(brief["read_guidance"]["dependencies"]["/setup"]["action"], "no-binding-reread")
         state["resources"]["/news"]["validated_at"] = "invalid"
         save_state(self.state, state)
         before = self.state.read_bytes()
@@ -242,6 +346,10 @@ class InspectTests(unittest.TestCase):
         self.assertEqual(result["local_integrity_reads"], 2)
         self.assertEqual(result["sources"]["/setup"]["validated_at"], 100)
         self.assertEqual(set(result["sources"]), {"/setup"})
+        self.assertEqual(
+            result["read_guidance"]["dependencies"]["/setup"],
+            {"action": "no-binding-reread", "reason": "source-binding-current"},
+        )
         self.assertEqual(err.getvalue(), "")
 
     def test_malformed_saved_policy_resource_or_finding_refuses_without_writes(self):
