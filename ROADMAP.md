@@ -6,6 +6,25 @@
 
 ## Active outcome priorities — November 5, 2026
 
+### Savings first — November 6, 2026
+
+The current user priority is **less actual agent work at unchanged quality and
+freshness**, measured against competent HTTP plus the same cache and ordinary
+retained notes. This supersedes the earlier dispatch below without rescoring
+PD2, recovery or owner-pilot receipts. The new comparison has its own identity.
+
+| Priority | Next bounded work | Acceptance |
+| --- | --- | --- |
+| **S1 — Task-focused reuse** | Add a small selected-finding view using existing source-binding checks, with the saved interpretation, original dates, current status and only its relevant evidence metadata. Give the returning agent a usable starting point without unrelated findings or whole-page dumps. | Independent unchanged, relevant/irrelevant-change, stale, missing and corrupt-body checks. Preserve full inspection, fallback, exact-byte integrity, audit policy and direct-validation deadlines. Matching bytes never approve meaning automatically. |
+| **S2 — Native-token comparison** | Run fresh agents against HTTP plus the same cache and equivalent ordinary notes; isolate finding-workflow value from manifest overhead. Use the actual task's unchanged freshness and quality rules. Record initial work, revisits, every failed attempt and native input/cached/output usage; reasoning usage stays unknown if unavailable. | Independent answer/source scoring precedes cost interpretation. Require equal useful completion and no stale/unsupported reuse before interpreting a declared token reduction. Report request/body bytes and publisher/verification effort separately. |
+| **S3 — Optimize only the measured bottleneck** | Select the next improvement from S2: task selection, evidence projection, broad invalidation or acquisition overhead. Keep the manifest optional when HTTP serves the task better. | No lower audit rate, longer freshness window, weaker baseline or favorable workload expansion to claim savings. Smaller evidence bindings require context-change counterexamples before adoption. |
+
+S1 implementation and independent S2 protocol preparation run simultaneously;
+measurement waits for candidate review and frozen inputs. Independent adoption,
+complete human-cost accounting and scheduled history remain separate evidence
+claims. The coordinator's batch ledger is
+`/Users/maxwell/Documents/Codex/2026-11-06/task/measured-savings/acceptance/ledger.md`.
+
 The next outcome is a returning reader completing useful work, retaining its
 source dependencies and revisiting the right material after a change. The stable
 protocol and generators exist; experimental `sync`/`remember` and publisher

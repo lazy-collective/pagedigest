@@ -133,6 +133,11 @@ def main(argv: Sequence[str] | None = None, stdout: TextIO | None = None, stderr
     inspect_parser.add_argument("state", type=Path)
     inspect_parser.add_argument("--id", dest="finding_id", help="Return one saved finding")
     inspect_parser.add_argument("--source", help="Include one retained UTF-8 source body by origin-relative URL")
+    inspect_parser.add_argument(
+        "--brief",
+        action="store_true",
+        help="Project one finding and its dependencies; requires --id, excludes --source",
+    )
 
     export_parser = subcommands.add_parser("handoff-export", help="Export one experimental offline finding")
     export_parser.add_argument("state", type=Path)
@@ -188,7 +193,7 @@ def main(argv: Sequence[str] | None = None, stdout: TextIO | None = None, stderr
 
         try:
             if args.command == "inspect":
-                result = inspect_state(args.state, finding_id=args.finding_id, source=args.source)
+                result = inspect_state(args.state, finding_id=args.finding_id, source=args.source, brief=args.brief)
             elif args.command == "remember":
                 if args.text_file.stat().st_size > 32768:
                     raise ValueError("finding text exceeds32KiB")
