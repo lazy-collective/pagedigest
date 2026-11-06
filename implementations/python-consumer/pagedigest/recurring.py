@@ -320,12 +320,17 @@ def findings_report(state, pages_dir, available, now):
     return result
 
 
-def inspect_state(state_path, *, finding_id=None, source=None, now=None):
+def inspect_state(state_path, *, finding_id=None, source=None, brief=False, now=None):
     """Read saved work without fetching, migrating, persisting or renewing age.
 
     Status applies to the saved source binding under the last sync's policy.
     A retained finding's text remains an unverified user interpretation.
+    Brief output projects one finding after the same full integrity checks.
     """
+    if brief and finding_id is None:
+        raise ValueError("brief-inspection-requires-finding-id")
+    if brief and source is not None:
+        raise ValueError("brief-inspection-excludes-source-body-use-full-inspection")
     now = time.time() if now is None else now
     if not math.isfinite(now):
         raise ValueError("finite-inspection-time-required")
@@ -439,6 +444,26 @@ def inspect_state(state_path, *, finding_id=None, source=None, now=None):
         "local_integrity_bytes": integrity_bytes,
         "meaning": "Read-only local inspection; no source age renewed and no interpretation verified.",
     }
+    if brief:
+        selected_keys = set(reports[0]["sources"])
+        errors = last_attempt.get("errors", [])
+        if not isinstance(errors, list) or any(
+            not isinstance(error, dict) or (error.get("url") is not None and not isinstance(error["url"], str))
+            for error in errors
+        ):
+            raise ValueError("invalid-saved-sync-errors")
+        selected_errors = [error for error in errors if error.get("url") is None or error.get("url") in selected_keys]
+        result.update(
+            view="finding-brief",
+            sources={key: source_records[key] for key in sorted(selected_keys)},
+            last_attempt={
+                "at": last_attempt.get("at"),
+                "complete": last_attempt.get("complete"),
+                "available": sorted(selected_keys.intersection(available)),
+                "errors": selected_errors,
+                "other_error_count": len(errors) - len(selected_errors),
+            },
+        )
     if source is not None:
         result["source"] = {
             "url": source,

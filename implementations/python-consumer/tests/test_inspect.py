@@ -61,6 +61,100 @@ class InspectTests(unittest.TestCase):
                 self.assertEqual(result["findings"][0]["status"], "unknown")
                 self.assertTrue(result["sources"]["/setup"]["retained"])
 
+    def test_brief_projects_selected_finding_without_reducing_checks_or_changing_state(self):
+        remember(self.state, "news", "Unrelated news interpretation", ["/news"], now=100)
+        before = {p.name: p.read_bytes() for p in self.state.parent.rglob("*") if p.is_file()}
+        with patch("pagedigest.recurring.requests.Session", side_effect=AssertionError("unexpected HTTP")):
+            full = inspect_state(self.state, finding_id="python", now=110)
+            brief = inspect_state(self.state, finding_id="python", brief=True, now=110)
+        self.assertEqual(brief["view"], "finding-brief")
+        self.assertEqual(brief["findings"], full["findings"])
+        self.assertEqual(brief["findings"][0]["original_observed_at"], {"/setup": 100})
+        self.assertEqual(brief["sources"], {"/setup": full["sources"]["/setup"]})
+        self.assertEqual(brief["last_attempt"]["available"], ["/setup"])
+        self.assertEqual(brief["local_integrity_reads"], full["local_integrity_reads"])
+        self.assertEqual(brief["local_integrity_bytes"], full["local_integrity_bytes"])
+        self.assertNotIn("source", brief)
+        self.assertNotIn("/news", json.dumps(brief))
+        self.assertNotIn("Unrelated news interpretation", json.dumps(brief))
+        self.assertEqual(before, {p.name: p.read_bytes() for p in self.state.parent.rglob("*") if p.is_file()})
+
+    def test_brief_preserves_whole_body_change_and_freshness_rules(self):
+        def assert_status(now, expected):
+            brief = inspect_state(self.state, finding_id="python", brief=True, now=now)
+            full = inspect_state(self.state, finding_id="python", now=now)
+            self.assertEqual(brief["findings"], full["findings"])
+            self.assertEqual(brief["findings"][0]["status"], expected)
+            self.assertEqual(brief["findings"][0]["created_at"], 100)
+            self.assertEqual(brief["findings"][0]["original_observed_at"], {"/setup": 100})
+
+        self.origin.page("/news", b"Different news", cache="no-cache")
+        self.cycle(now=110)
+        assert_status(111, "usable")
+        # The conclusion remains supported, but even an unrelated footer in a
+        # bound page still reopens it: brief mode cannot narrow dependencies.
+        self.origin.page("/setup", b"<p>Requires Python 3.9 or newer.</p><footer>Updated</footer>", cache="no-cache")
+        self.cycle(now=120)
+        assert_status(121, "needs_reread")
+        self.origin.page("/setup", b"<p>Requires Python 3.12 or newer.</p>", cache="no-cache")
+        self.cycle(now=130)
+        assert_status(131, "needs_reread")
+        assert_status(129, "unknown")
+        assert_status(190, "unknown")
+
+    def test_brief_preserves_failed_source_and_discloses_other_cycle_errors(self):
+        self.origin.routes["/news"] = (503, b"unavailable")
+        self.assertFalse(self.cycle(now=110)["complete"])
+        brief = inspect_state(self.state, finding_id="python", brief=True, now=111)
+        self.assertEqual(brief["findings"][0]["status"], "usable")
+        self.assertFalse(brief["last_attempt"]["complete"])
+        self.assertEqual(brief["last_attempt"]["other_error_count"], 1)
+        self.assertEqual(brief["last_attempt"]["errors"], [])
+        self.assertNotIn("/news", json.dumps(brief))
+        self.origin.routes["/setup"] = (503, b"unavailable")
+        self.assertFalse(self.cycle(now=120)["complete"])
+        brief = inspect_state(self.state, finding_id="python", brief=True, now=121)
+        self.assertEqual(brief["findings"][0]["status"], "unknown")
+        self.assertEqual(brief["last_attempt"]["errors"][0]["url"], "/setup")
+        self.assertEqual(brief["last_attempt"]["other_error_count"], 1)
+
+    def test_brief_never_hides_missing_corrupt_or_differently_represented_evidence(self):
+        state_bytes = self.state.read_bytes()
+        state = read_state(self.state)
+        path = Path(str(self.state) + ".pages") / state["pages"]["/setup"]
+        body = path.read_bytes()
+        for damage in ("missing", "corrupt", "representation"):
+            with self.subTest(damage=damage):
+                if damage == "missing":
+                    path.unlink()
+                elif damage == "corrupt":
+                    path.write_bytes(b"corrupt")
+                else:
+                    state["representation"] = "another representation"
+                    save_state(self.state, state)
+                brief = inspect_state(self.state, finding_id="python", brief=True, now=110)
+                self.assertEqual(brief["findings"][0]["status"], "unknown")
+                self.assertTrue(brief["findings"][0]["problems"])
+                if damage != "representation":
+                    self.assertFalse(brief["sources"]["/setup"]["retained"])
+                path.write_bytes(body)
+                self.state.write_bytes(state_bytes)
+
+    def test_brief_retains_global_errors_and_refuses_malformed_unselected_state(self):
+        state = read_state(self.state)
+        state["last_attempt"]["complete"] = False
+        state["last_attempt"]["errors"] = [{"url": None, "reason": "global failure"}]
+        save_state(self.state, state)
+        brief = inspect_state(self.state, finding_id="python", brief=True, now=110)
+        self.assertEqual(brief["last_attempt"]["errors"], [{"url": None, "reason": "global failure"}])
+        self.assertEqual(brief["last_attempt"]["other_error_count"], 0)
+        state["resources"]["/news"]["validated_at"] = "invalid"
+        save_state(self.state, state)
+        before = self.state.read_bytes()
+        with self.assertRaisesRegex(ValueError, "invalid-saved-resource-time"):
+            inspect_state(self.state, finding_id="python", brief=True, now=110)
+        self.assertEqual(before, self.state.read_bytes())
+
     def test_unrelated_change_preserves_finding_relevant_change_requires_reread(self):
         self.origin.page("/news", b"<p>New news</p>", cache="no-cache")
         self.cycle(now=110)
@@ -111,6 +205,9 @@ class InspectTests(unittest.TestCase):
         cases = [
             (["--id", "absent"], "finding-not-found"),
             (["--source", "/absent"], "source-not-found"),
+            (["--brief"], "brief-inspection-requires-finding-id"),
+            (["--brief", "--id", "python", "--source", "/setup"], "brief-inspection-excludes-source-body"),
+            (["--brief", "--id", "absent"], "finding-not-found"),
         ]
         for extra, message in cases:
             out, err = io.StringIO(), io.StringIO()
@@ -132,6 +229,19 @@ class InspectTests(unittest.TestCase):
             code = cli.main(["inspect", str(self.state), "--id", "python"], stdout=out, stderr=err)
         self.assertEqual(code, 0)
         self.assertEqual(json.loads(out.getvalue())["findings"][0]["status"], "usable")
+        self.assertEqual(err.getvalue(), "")
+
+    def test_cli_brief_prints_selected_finding_with_integrity_and_age(self):
+        out, err = io.StringIO(), io.StringIO()
+        with patch("pagedigest.recurring.time.time", return_value=110):
+            code = cli.main(["inspect", str(self.state), "--id", "python", "--brief"], stdout=out, stderr=err)
+        self.assertEqual(code, 0)
+        result = json.loads(out.getvalue())
+        self.assertEqual(result["view"], "finding-brief")
+        self.assertEqual(result["findings"][0]["status"], "usable")
+        self.assertEqual(result["local_integrity_reads"], 2)
+        self.assertEqual(result["sources"]["/setup"]["validated_at"], 100)
+        self.assertEqual(set(result["sources"]), {"/setup"})
         self.assertEqual(err.getvalue(), "")
 
     def test_malformed_saved_policy_resource_or_finding_refuses_without_writes(self):

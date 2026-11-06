@@ -147,6 +147,30 @@ never renews source validation or the finding's original creation date. Its
 inspection; they exclude state reads, filesystem metadata and physical I/O.
 Run with no concurrent writer; an existing writer lock refuses inspection.
 
+For a returning task with a known finding ID, request a focused view:
+
+```sh
+uv run --project implementations/python-consumer --locked python -m pagedigest.cli inspect \
+  ./research/example.json --id setup-note-1 --brief
+```
+
+`--brief` requires `--id` and cannot accompany `--source`. It preserves the
+selected finding's complete saved text, original dates, dependency hashes,
+representation, status, problems and interpretation warning. `sources` contains
+only that finding's dependencies. `last_attempt` preserves the cycle time and
+completion flag, limits its availability/errors to those dependencies (including
+global errors), and reports unrelated errors as `other_error_count`. The
+`view: "finding-brief"` marker distinguishes this projection from full inspection.
+Use ordinary `inspect --source` when the status or task requires reading evidence;
+the command does not decide that a prior interpretation answers a new question.
+
+This source-only addition changes output selection, not validation. It runs the
+same full state/body checks before projecting, retains their actual
+`local_integrity_reads`/`local_integrity_bytes`, and never changes freshness,
+audit rules, saved bytes or original dates. It does not claim fewer local reads
+or agent tokens; token savings require a matched measured workflow. Default
+inspection remains unchanged.
+
 To observe changes, run another sync with the intended policy:
 
 ```sh
