@@ -320,12 +320,59 @@ def findings_report(state, pages_dir, available, now):
     return result
 
 
+def _brief_read_guidance(finding, sources, representation, available, now):
+    """Explain already-checked bindings without approving the saved interpretation."""
+    dependencies = {}
+    for key, bound in sorted(finding["sources"].items()):
+        observed = sources[key]
+        action = "validate-or-recover-source"
+        if finding["representation"] != representation:
+            reason = "representation-changed"
+        elif key not in available:
+            reason = "source-not-available-in-last-sync"
+        elif not observed["retained"]:
+            reason = "body-missing-or-corrupt"
+        elif observed["validated_at"] is None:
+            reason = "validation-time-missing"
+        elif now < observed["validated_at"]:
+            reason = "validation-time-in-future"
+        elif observed["sourceStatus"] != "current":
+            reason = "validation-expired"
+        elif observed["hash"] != bound:
+            action, reason = "read-current-source", "source-bytes-changed"
+        else:
+            action, reason = "no-binding-reread", "source-binding-current"
+        dependencies[key] = {"action": action, "reason": reason}
+    return {
+        "dependencies": dependencies,
+        "actions": {
+            "no-binding-reread": (
+                "Current bytes match the saved binding; no reread is needed solely to check that binding."
+            ),
+            "read-current-source": (
+                "Read the changed current evidence with inspect --source URL before using the finding."
+            ),
+            "validate-or-recover-source": (
+                "Run sync/direct validation for the intended scope and representation, then inspect again. "
+                "Reading retained old text does not renew freshness."
+            ),
+        },
+        "review": (
+            "This brief includes the complete saved finding and all declared dependency metadata; "
+            "no separate metadata inspection is needed. "
+            "Check the complete saved finding against this task, including scope, assumptions, limitations, "
+            "attribution and external premises. Read further evidence when that review requires it. "
+            "Matching bindings do not verify interpretation or complete dependency coverage."
+        ),
+    }
+
+
 def inspect_state(state_path, *, finding_id=None, source=None, brief=False, now=None):
     """Read saved work without fetching, migrating, persisting or renewing age.
 
     Status applies to the saved source binding under the last sync's policy.
     A retained finding's text remains an unverified user interpretation.
-    Brief output projects one finding after the same full integrity checks.
+    Brief output projects one finding and read guidance after the same full integrity checks.
     """
     if brief and finding_id is None:
         raise ValueError("brief-inspection-requires-finding-id")
@@ -456,6 +503,7 @@ def inspect_state(state_path, *, finding_id=None, source=None, brief=False, now=
         result.update(
             view="finding-brief",
             sources={key: source_records[key] for key in sorted(selected_keys)},
+            read_guidance=_brief_read_guidance(reports[0], source_records, state.get("representation"), available, now),
             last_attempt={
                 "at": last_attempt.get("at"),
                 "complete": last_attempt.get("complete"),
