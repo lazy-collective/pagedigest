@@ -15,14 +15,19 @@ PD2, recovery or owner-pilot receipts. The new comparison has its own identity.
 
 | Priority | Next bounded work | Acceptance |
 | --- | --- | --- |
-| **S1 — Task-focused reuse** | Add a small selected-finding view using existing source-binding checks, with the saved interpretation, original dates, current status and only its relevant evidence metadata. Give the returning agent a usable starting point without unrelated findings or whole-page dumps. | Independent unchanged, relevant/irrelevant-change, stale, missing and corrupt-body checks. Preserve full inspection, fallback, exact-byte integrity, audit policy and direct-validation deadlines. Matching bytes never approve meaning automatically. |
-| **S2 — Native-token comparison** | Run fresh agents against HTTP plus the same cache and equivalent ordinary notes; isolate finding-workflow value from manifest overhead. Use the actual task's unchanged freshness and quality rules. Record initial work, revisits, every failed attempt and native input/cached/output usage; reasoning usage stays unknown if unavailable. | Independent answer/source scoring precedes cost interpretation. Require equal useful completion and no stale/unsupported reuse before interpreting a declared token reduction. Report request/body bytes and publisher/verification effort separately. |
-| **S3 — Optimize only the measured bottleneck** | Select the next improvement from S2: task selection, evidence projection, broad invalidation or acquisition overhead. Keep the manifest optional when HTTP serves the task better. | No lower audit rate, longer freshness window, weaker baseline or favorable workload expansion to claim savings. Smaller evidence bindings require context-change counterexamples before adoption. |
+| **S1 — Accepted selected-finding view** | `inspect --id FINDING --brief` projects one finding after complete existing integrity/freshness checks. Preserve it and repair demonstrated defects; do not rebuild it. | Independent unchanged, changed, stale, missing/corrupt-body and error-visibility controls passed. Original dates, full inspection, audit/deadline policy and semantic uncertainty remain. Source/package/site delivery are separate. |
+| **S2 — Completed native comparison** | Preserve the [November 6 result](docs/evaluations/native-tokens-20261106.md), original attempts and historical replay boundary. Both arms passed all five cases. | Initial + return: uncached input + output fell 22.7%, but total tokens rose 18.0%; the joint savings rule failed. Prefer ordinary HTTP/cache/notes for this measured workload. Provider-cache variation is not an interface saving. |
+| **S3 — Next: clarify required reads and remove repeated work** | Make dependency/read guidance actionable while keeping semantic review explicit. The product reader reread both unchanged required pages and requested extra metadata; the baseline read only the relevant changed page. Inspect that reader-strategy difference before changing acquisition or integrity checks. | Replay the exposing cases, including stale/context-change counterexamples, without lower audits, longer deadlines or narrower undisclosed scope. Use a new bounded, counterbalanced native comparison with a working runtime and the same competent source-cache/note baseline; retain setup and all attempts and require complete quality plus the declared token reduction before promotion. |
 
-S1 implementation and independent S2 protocol preparation run simultaneously;
-measurement waits for candidate review and frozen inputs. Independent adoption,
-complete human-cost accounting and scheduled history remain separate evidence
-claims. The coordinator's batch ledger is
+S1 implementation and independent S2 preparation were executed in parallel. S3
+guidance/projection work and independent protocol preparation are the next ready
+parallel lanes. The observed extra reads are not proof that the interface forced
+them; preserve reader-strategy and provider-cache uncertainty. Both arms performed
+the same metered integrity work, so do not weaken that work to claim a saving.
+Keep the manifest optional when ordinary HTTP better serves the task, and defer
+catalog/framework expansion. Independent adoption, complete human-cost accounting
+and scheduled history remain separate evidence claims, not prerequisites. The
+coordinator's batch ledger is
 `/Users/maxwell/Documents/Codex/2026-11-06/task/measured-savings/acceptance/ledger.md`.
 
 The next outcome is a returning reader completing useful work, retaining its
