@@ -67,20 +67,35 @@ flowchart LR
 | **PD2 — Useful work over six cycles** | Completed independently scored [corrected comparison](docs/evaluations/pd2-results-20261105.md). Preserve invalid run1, failed-deployment phase, recovery and all costs; no new primary run required. Prefer the measured competent HTTP baseline for this small workload; no efficiency claim or coverage expansion is justified | Initial read, unchanged revisit, relevant change, irrelevant change, cache loss and failed-deployment recovery produce evaluated answers and omissions. Relevant evidence is reread and unrelated usable work retained. Include all attempts, failures, requests/bytes, local integrity reads, parsing and unfinished work. Combine PD3 publisher effort before accepting an all-in cost conclusion. Fix the largest observed gap before expanding. Supplied finding text alone is insufficient. |
 | **PD3 — Maintainable publisher path** | Preserve the accepted [Astro/umbrella publisher engineering](/Users/maxwell/Documents/Codex/2026-11-04/task/continuation/acceptance/adapter-publisher-review/publisher-receipt.json). Apply the existing publisher path to the authorized personal-site pilot and record setup/update/recovery attempts alongside PD5; do not replay the earlier build trial. A maintainer or agent may operate this pilot. | Build inventories derive automatically; state restoration and served-byte verification work without a second page catalog. Lost state never silently restarts history. Record available elapsed/counter/intervention evidence from the first attempt; human attention and unavailable costs stay unknown. Complete human/all-in measurements constrain economic claims, not pilot readiness or local improvements. |
 | **PD4 — Finding handed to another reader** | Adapter repair review and [actual useful PD03 transfer/source-only comparison](docs/evaluations/pd4-results-20261105.md) are independently accepted. Combined20-stage and separate dev2 wheel checks passed. No further implementation or primary comparison is ready for this bounded finding; source/site delivery receipts are tracked by the parent | A useful **evaluated PD2 finding** is required to accept the real handoff. Carry claim, scope, sources/hashes, assumptions and original observation time; recipient validates under its own policy. Exercise relevant change, missing source and conflicting interpretation. Compare with sharing the same cached source alone. Unchanged sources do not prove a conclusion correct. |
-| **PD5 — Recurring pilot and separate independent validation** | Continue the authorized owner/agent pilot on `maxwellsantoro.com` from its accepted first-session receipt on the next real task, using the accepted consumer entrypoint and reusable [operating guide](/Users/maxwell/Documents/Codex/2026-11-04/task/continuation/acceptance/pilot-preparation/operating-guide.md), with the new task/source scope frozen before execution. Collect PD3 measurements concurrently. An independent operator, complete cost record and seven scheduled days are not prerequisites. PD4 is required only when findings cross readers. | Complete the declared bounded task and retain actual initial/revisit outputs, source dates, failures and available publisher/intermediary/consumer costs against a competent baseline. Label owner/agent operation accurately; independent adoption and all-in savings require their own evidence. Keep future real work occasions and operating-history observations distinct from local replay. Outreach, paid activity and package release remain separately authorized actions. |
+| **PD5 — Recurring pilot and separate independent validation** | Continue the authorized owner/agent pilot on `maxwellsantoro.com` from the latest retained review state on the next real task, using the accepted consumer entrypoint and reusable [operating guide](/Users/maxwell/Documents/Codex/2026-11-04/task/continuation/acceptance/pilot-preparation/operating-guide.md), with the new task/source scope frozen before execution. Collect PD3 measurements concurrently. An independent operator, complete cost record and seven scheduled days are not prerequisites. PD4 is required only when findings cross readers. | Complete the declared bounded task and retain actual initial/revisit outputs, source dates, failures and available publisher/intermediary/consumer costs against a competent baseline. Label owner/agent operation accurately; independent adoption and all-in savings require their own evidence. Keep future real work occasions and operating-history observations distinct from local replay. Outreach, paid activity and package release remain separately authorized actions. |
 
-**Pilot checkpoint:** The [initial owner/agent maintenance session](/Users/maxwell/projects/lazy-collective/docs/pilots/maxwellsantoro-20261105.md#evidence)
-is independently accepted and the two website-description edits are integrated
-locally. Both modes identified the two changed pages and retained the historical
-trace. Prefer ordinary HTTP for this small full-audit workload; reuse retained
-findings on the next real task rather than repeating setup or this comparison.
+**Initial pilot checkpoint:** The [first owner/agent maintenance session](/Users/maxwell/projects/lazy-collective/docs/pilots/maxwellsantoro-20261105.md#evidence)
+is independently accepted; its two website-description edits were integrated
+locally at that session. Both modes identified the two changed pages and retained
+the historical trace. That initial source and result remain historical evidence.
+
+**Second real review checkpoint:** The [November 5 revisit](/Users/maxwell/Documents/Codex/2026-11-05/task/next-owner-batch/acceptance/pilot/report.md)
+reviewed the later personal-site snapshot `ab4a68b0` plus its two recorded MDX
+edits against the same three URLs, using the merged recovery source `52025dd0`.
+Both readers found two changed project bodies and the unchanged trace, then
+saved three reviewed successor findings each; all original objects and dates
+remain intact. Under the declared 100% body-audit policy, ordinary HTTP used
+3 requests / 55,237 response-body bytes; PageDigest used 4 / 66,179. The entire
+10,942-byte difference was its manifest, followed by the same three full bodies.
+Prefer ordinary HTTP for this measured full-audit task. This second local
+owner/agent work occasion establishes no quality or all-in cost advantage or
+independent adoption. It made no canonical website changes or deployment. Reuse
+the latest retained state on the next real task; keep the original receipts.
 
 **Recovery repair checkpoint:** The user authorized reducing the measured
 failure/recovery overhead. The [new engineering replay](docs/evaluations/recovery-cost-20261105.md)
 preserves the original failed-deployment case, external audits and manual fallback.
 Strong-ETag conditional validation reduces its body transfers from 130,657 to
-78,656 bytes with the same 12 requests. Full-audit and missing/corrupt-body controls
-remain intact. The original PD2 score and owner-pilot results are unchanged;
+78,656 bytes (39.8%) with the same 12 requests, limited to that original
+failure/recovery pair. The repair is merged in
+[PR16](https://github.com/lazy-collective/pagedigest/pull/16); it does not remove
+the second review's required full-audit transfers. Full-audit and missing/corrupt-body controls
+remain intact. The original PD2 score and initial owner-pilot results are unchanged;
 the linked delivery record distinguishes review, checked source and deployment.
 
 **Current dispatch:** PD1/PD2 and the bounded PD4 adapter/two-reader trial are
@@ -88,9 +103,10 @@ accepted; preserve their exact artifacts, failed attempts and independent
 receipts. The new local dev2 wheel has a separate identity from the original PD2
 dev1 wheel. Track checked source/site delivery separately in the parent's
 canonical map; do not restart accepted implementation or evaluations. Continue the
-authorized personal-site pilot from its accepted first-session receipts on the
-next real maintenance task, carrying the bounded recovery repair once accepted
-in its delivery record. Capture available costs while
+authorized personal-site pilot from its latest retained review state on the
+next real maintenance task, selecting current checked source from the parent's
+canonical map. The bounded recovery repair is already merged; do not reimplement
+or repeat its accepted replay. Capture available costs while
 working; incomplete human/all-in measurements and scheduled history cannot freeze
 this lane. The absence of an independent operator limits independent-validation
 claims, not first-party execution. Preserve the prior PD2/PD4 evidence and use a
